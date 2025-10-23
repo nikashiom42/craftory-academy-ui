@@ -4,15 +4,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { User } from "@supabase/supabase-js";
-import { Mail, Phone, MapPin, Calendar, UserCheck, Clock, XCircle, CheckCircle } from "lucide-react";
+import { Mail, Phone, MapPin, Calendar, UserCheck, Clock, XCircle, CheckCircle, Search } from "lucide-react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AdminSidebar } from "@/components/AdminSidebar";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -22,6 +19,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface Registration {
   id: string;
@@ -40,6 +46,8 @@ export default function AdminLeads() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [registrations, setRegistrations] = useState<Registration[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -136,6 +144,20 @@ export default function AdminLeads() {
   if (!isAdmin) {
     return null;
   }
+
+  // Filter registrations
+  const filteredRegistrations = registrations.filter(reg => {
+    const matchesSearch = 
+      reg.first_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      reg.last_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      reg.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      reg.phone.includes(searchQuery) ||
+      reg.personal_id.includes(searchQuery);
+    
+    const matchesStatus = statusFilter === "all" || reg.status === statusFilter;
+    
+    return matchesSearch && matchesStatus;
+  });
 
   const totalLeads = registrations.length;
   const newLeads = registrations.filter(r => r.status === 'new').length;
@@ -244,11 +266,37 @@ export default function AdminLeads() {
               </Card>
             </div>
 
-            {/* Registrations Grid */}
+            {/* Search and Filters */}
             <div className="mb-6">
-              <h2 className="text-2xl font-bold text-foreground mb-6">All Registrations</h2>
+              <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-foreground">All Registrations</h2>
+                <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                  <div className="relative flex-1 sm:w-64">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search by name, email, phone..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-9"
+                    />
+                  </div>
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger className="w-full sm:w-40">
+                      <SelectValue placeholder="Filter by status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Status</SelectItem>
+                      <SelectItem value="new">New</SelectItem>
+                      <SelectItem value="contacted">Contacted</SelectItem>
+                      <SelectItem value="enrolled">Enrolled</SelectItem>
+                      <SelectItem value="rejected">Rejected</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
             </div>
 
+            {/* Registrations Table */}
             {registrations.length === 0 ? (
               <Card className="shadow-soft border-2 border-dashed">
                 <CardContent className="flex flex-col items-center justify-center py-20">
@@ -262,63 +310,81 @@ export default function AdminLeads() {
                 </CardContent>
               </Card>
             ) : (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {registrations.map((registration) => (
-                  <Card key={registration.id} className="shadow-soft hover:shadow-medium transition-all">
-                    <CardHeader>
-                      <div className="flex justify-between items-start mb-2">
-                        {getStatusBadge(registration.status)}
-                        <span className="text-xs text-muted-foreground flex items-center gap-1">
-                          <Calendar className="h-3 w-3" />
-                          {new Date(registration.created_at).toLocaleDateString('ka-GE')}
-                        </span>
-                      </div>
-                      <CardTitle className="text-xl">
-                        {registration.first_name} {registration.last_name}
-                      </CardTitle>
-                      <CardDescription>ID: {registration.personal_id}</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="space-y-3 text-sm">
-                        <div className="flex items-center gap-2 text-muted-foreground">
-                          <Mail className="h-4 w-4 flex-shrink-0" />
-                          <a href={`mailto:${registration.email}`} className="hover:text-foreground transition-colors">
-                            {registration.email}
-                          </a>
-                        </div>
-                        <div className="flex items-center gap-2 text-muted-foreground">
-                          <Phone className="h-4 w-4 flex-shrink-0" />
-                          <a href={`tel:${registration.phone}`} className="hover:text-foreground transition-colors">
-                            {registration.phone}
-                          </a>
-                        </div>
-                        <div className="flex items-center gap-2 text-muted-foreground">
-                          <MapPin className="h-4 w-4 flex-shrink-0" />
-                          <span>{registration.city}</span>
-                        </div>
-                      </div>
-
-                      <div className="pt-4 border-t border-border">
-                        <label className="text-sm font-medium mb-2 block">Update Status</label>
-                        <Select
-                          value={registration.status}
-                          onValueChange={(value) => updateStatus(registration.id, value)}
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="new">New</SelectItem>
-                            <SelectItem value="contacted">Contacted</SelectItem>
-                            <SelectItem value="enrolled">Enrolled</SelectItem>
-                            <SelectItem value="rejected">Rejected</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+              <Card className="shadow-soft">
+                <CardContent className="p-0">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Personal ID</TableHead>
+                        <TableHead>Contact</TableHead>
+                        <TableHead>City</TableHead>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredRegistrations.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                            No registrations found matching your filters
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        filteredRegistrations.map((registration) => (
+                          <TableRow key={registration.id}>
+                            <TableCell className="font-medium">
+                              {registration.first_name} {registration.last_name}
+                            </TableCell>
+                            <TableCell>{registration.personal_id}</TableCell>
+                            <TableCell>
+                              <div className="flex flex-col gap-1 text-sm">
+                                <a href={`mailto:${registration.email}`} className="hover:text-primary transition-colors flex items-center gap-1">
+                                  <Mail className="h-3 w-3" />
+                                  {registration.email}
+                                </a>
+                                <a href={`tel:${registration.phone}`} className="hover:text-primary transition-colors flex items-center gap-1">
+                                  <Phone className="h-3 w-3" />
+                                  {registration.phone}
+                                </a>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-1">
+                                <MapPin className="h-3 w-3 text-muted-foreground" />
+                                {registration.city}
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-sm text-muted-foreground">
+                              {new Date(registration.created_at).toLocaleDateString('ka-GE')}
+                            </TableCell>
+                            <TableCell>
+                              {getStatusBadge(registration.status)}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <Select
+                                value={registration.status}
+                                onValueChange={(value) => updateStatus(registration.id, value)}
+                              >
+                                <SelectTrigger className="w-32 ml-auto">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="new">New</SelectItem>
+                                  <SelectItem value="contacted">Contacted</SelectItem>
+                                  <SelectItem value="enrolled">Enrolled</SelectItem>
+                                  <SelectItem value="rejected">Rejected</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
             )}
           </div>
         </main>
