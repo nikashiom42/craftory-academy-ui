@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { motion, useScroll, useTransform, useSpring, useReducedMotion } from "framer-motion";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import lazieriLogo from "@/assets/partners/lazieri-logo.png";
@@ -40,29 +40,8 @@ const steps: StepCard[] = [
 ];
 
 export function ScrollytellingWhySection() {
-  const containerRef = useRef<HTMLDivElement>(null);
   const [activeStep, setActiveStep] = useState(0);
   const shouldReduceMotion = useReducedMotion();
-
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"],
-  });
-
-  const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001,
-  });
-
-  useEffect(() => {
-    const unsubscribe = smoothProgress.on("change", (latest) => {
-      const step = Math.min(Math.floor(latest * steps.length), steps.length - 1);
-      setActiveStep(step);
-    });
-
-    return () => unsubscribe();
-  }, [smoothProgress]);
 
   const navigateStep = (direction: "next" | "prev") => {
     const newStep = direction === "next" 
@@ -70,21 +49,16 @@ export function ScrollytellingWhySection() {
       : Math.max(activeStep - 1, 0);
     
     setActiveStep(newStep);
-    
-    // Scroll to the step
-    const stepHeight = window.innerHeight * 0.8;
-    const targetScroll = containerRef.current?.offsetTop! + (newStep * stepHeight);
-    window.scrollTo({ top: targetScroll, behavior: "smooth" });
   };
 
   return (
-    <section ref={containerRef} className="relative py-20 bg-cream">
+    <section className="relative py-20 bg-cream">
       {/* Desktop Layout */}
       <div className="hidden lg:block">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 gap-12 min-h-[400vh]">
+          <div className="grid grid-cols-2 gap-12 max-w-6xl mx-auto">
             {/* Left Column - Sticky */}
-            <div className="sticky top-24 h-fit">
+            <div className="sticky top-24 self-start">
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -106,13 +80,9 @@ export function ScrollytellingWhySection() {
                   <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
                     <motion.div
                       className="h-full bg-primary"
-                      style={{
-                        width: useTransform(
-                          smoothProgress,
-                          [0, 1],
-                          ["0%", "100%"]
-                        ),
-                      }}
+                      initial={{ width: 0 }}
+                      animate={{ width: `${((activeStep + 1) / steps.length) * 100}%` }}
+                      transition={{ duration: 0.3 }}
                     />
                   </div>
                 </div>
@@ -144,14 +114,14 @@ export function ScrollytellingWhySection() {
             </div>
 
             {/* Right Column - Scrolling Cards */}
-            <div className="relative">
+            <div className="space-y-6">
               {steps.map((step, index) => (
-                <StepCard
+                <DesktopStepCard
                   key={index}
                   step={step}
                   index={index}
                   activeStep={activeStep}
-                  scrollProgress={smoothProgress}
+                  setActiveStep={setActiveStep}
                   shouldReduceMotion={shouldReduceMotion}
                 />
               ))}
@@ -199,69 +169,35 @@ export function ScrollytellingWhySection() {
   );
 }
 
-interface StepCardProps {
+interface DesktopStepCardProps {
   step: StepCard;
   index: number;
   activeStep: number;
-  scrollProgress: any;
+  setActiveStep: (step: number) => void;
   shouldReduceMotion: boolean | null;
 }
 
-function StepCard({ step, index, activeStep, scrollProgress, shouldReduceMotion }: StepCardProps) {
+function DesktopStepCard({ step, index, activeStep, setActiveStep, shouldReduceMotion }: DesktopStepCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const isActive = index <= activeStep;
-  const isPast = index < activeStep;
+  const isInView = useInView(cardRef, { amount: 0.5 });
+  const isActive = index === activeStep;
 
-  // Calculate individual card progress
-  const stepStart = index / 4;
-  const stepEnd = (index + 1) / 4;
-  
-  const cardProgress = useTransform(
-    scrollProgress,
-    [stepStart, stepEnd],
-    [0, 1]
-  );
-
-  const smoothCardProgress = useSpring(cardProgress, {
-    stiffness: 100,
-    damping: 30,
-  });
-
-  const scale = shouldReduceMotion 
-    ? 1 
-    : useTransform(
-        smoothCardProgress,
-        [0, 1],
-        isPast ? [0.98, 0.98] : [0.95, 1]
-      );
-
-  const opacity = shouldReduceMotion
-    ? 1
-    : useTransform(
-        smoothCardProgress,
-        [0, 1],
-        isPast ? [0.7, 0.7] : [0, 1]
-      );
-
-  const y = shouldReduceMotion
-    ? index * 120
-    : useTransform(
-        smoothCardProgress,
-        [0, 1],
-        [100, index * 120]
-      );
+  useEffect(() => {
+    if (isInView && !shouldReduceMotion) {
+      setActiveStep(index);
+    }
+  }, [isInView, index, setActiveStep, shouldReduceMotion]);
 
   return (
     <motion.div
       ref={cardRef}
-      style={{
-        scale,
-        opacity: isActive ? opacity : 0.3,
-        y,
-        position: "sticky",
-        top: `${100 + index * 120}px`,
-      }}
-      className="bg-background rounded-2xl p-8 shadow-elevated"
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: false, amount: 0.3 }}
+      transition={{ duration: 0.5, delay: 0.1 }}
+      className={`bg-background rounded-2xl p-8 shadow-elevated transition-all duration-300 ${
+        isActive ? 'ring-2 ring-primary' : ''
+      }`}
       role="article"
       aria-label={`Step ${index + 1}: ${step.title}`}
     >
@@ -277,24 +213,20 @@ function StepCard({ step, index, activeStep, scrollProgress, shouldReduceMotion 
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">მზადყოფნა</span>
-            <motion.span className="font-bold text-primary">
-              {useTransform(
-                smoothCardProgress,
-                [0, 1],
-                [0, step.targetProgress]
-              ).get().toFixed(0)}%
+            <motion.span
+              className="font-bold text-primary"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: isActive ? 1 : 0.5 }}
+            >
+              {step.targetProgress}%
             </motion.span>
           </div>
           <div className="h-3 bg-muted rounded-full overflow-hidden">
             <motion.div
               className="h-full bg-gradient-to-r from-primary to-accent rounded-full"
-              style={{
-                width: useTransform(
-                  smoothCardProgress,
-                  [0, 1],
-                  ["0%", `${step.targetProgress}%`]
-                ),
-              }}
+              initial={{ width: 0 }}
+              animate={{ width: isActive ? `${step.targetProgress}%` : '0%' }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
             />
           </div>
         </div>
@@ -329,31 +261,17 @@ interface MobileStepCardProps {
 
 function MobileStepCard({ step, index, shouldReduceMotion }: MobileStepCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(cardRef, { once: true, amount: 0.5 });
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    if (shouldReduceMotion) {
-      setProgress(step.targetProgress);
-      return;
+    if (isInView) {
+      const timer = setTimeout(() => {
+        setProgress(step.targetProgress);
+      }, 200);
+      return () => clearTimeout(timer);
     }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setProgress(step.targetProgress);
-          }
-        });
-      },
-      { threshold: 0.5 }
-    );
-
-    if (cardRef.current) {
-      observer.observe(cardRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, [step.targetProgress, shouldReduceMotion]);
+  }, [isInView, step.targetProgress]);
 
   return (
     <motion.div
