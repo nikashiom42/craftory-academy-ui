@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      course_enrollments: {
+        Row: {
+          course_id: string
+          created_at: string | null
+          enrolled_at: string | null
+          id: string
+          payment_status: Database["public"]["Enums"]["enrollment_status"]
+          price_paid: number
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          course_id: string
+          created_at?: string | null
+          enrolled_at?: string | null
+          id?: string
+          payment_status?: Database["public"]["Enums"]["enrollment_status"]
+          price_paid: number
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          course_id?: string
+          created_at?: string | null
+          enrolled_at?: string | null
+          id?: string
+          payment_status?: Database["public"]["Enums"]["enrollment_status"]
+          price_paid?: number
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_enrollments_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "course_enrollments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       course_registrations: {
         Row: {
           city: string
@@ -81,6 +129,7 @@ export type Database = {
           id: string
           image_url: string | null
           participant_number: number | null
+          price: number | null
           published: boolean | null
           skills: Json | null
           slug: string
@@ -105,6 +154,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           participant_number?: number | null
+          price?: number | null
           published?: boolean | null
           skills?: Json | null
           slug: string
@@ -129,6 +179,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           participant_number?: number | null
+          price?: number | null
           published?: boolean | null
           skills?: Json | null
           slug?: string
@@ -202,6 +253,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
+      enrollment_status: "pending" | "completed" | "test"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -330,6 +382,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
+      enrollment_status: ["pending", "completed", "test"],
     },
   },
 } as const

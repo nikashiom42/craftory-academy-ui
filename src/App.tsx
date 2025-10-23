@@ -14,6 +14,8 @@ import Admin from "./pages/Admin";
 import AdminLeads from "./pages/AdminLeads";
 import AdminCourses from "./pages/AdminCourses";
 import CourseManage from "./pages/CourseManage";
+import StudentDashboard from "./pages/StudentDashboard";
+import StudentCourseView from "./pages/StudentCourseView";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,11 +24,12 @@ const AppLayout = () => {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
   const isAuthRoute = location.pathname.startsWith('/auth');
+  const isStudentRoute = location.pathname.startsWith('/student');
 
   return (
     <div className="flex flex-col min-h-screen">
-      {!isAdminRoute && !isAuthRoute && <Header />}
-      <main className={isAdminRoute || isAuthRoute ? "" : "flex-grow"}>
+      {!isAdminRoute && !isAuthRoute && !isStudentRoute && <Header />}
+      <main className={isAdminRoute || isAuthRoute || isStudentRoute ? "" : "flex-grow"}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/courses" element={<Courses />} />
@@ -37,11 +40,13 @@ const AppLayout = () => {
           <Route path="/admin/courses" element={<AdminCourses />} />
           <Route path="/admin/leads" element={<AdminLeads />} />
           <Route path="/admin/courses/:id" element={<CourseManage />} />
+          <Route path="/student/dashboard" element={<StudentDashboard />} />
+          <Route path="/student/courses/:slug" element={<StudentCourseView />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
-      {!isAdminRoute && !isAuthRoute && <Footer />}
+      {!isAdminRoute && !isAuthRoute && !isStudentRoute && <Footer />}
     </div>
   );
 };

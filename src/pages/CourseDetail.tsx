@@ -10,12 +10,14 @@ import { InfoSessionCTA } from "@/components/InfoSessionCTA";
 import { TrainerCard } from "@/components/TrainerCard";
 import { SkillsGrid } from "@/components/SkillsGrid";
 import { SyllabusAccordion } from "@/components/SyllabusAccordion";
-import { RegistrationForm } from "@/components/RegistrationForm";
+import { EnrollmentButton } from "@/components/EnrollmentButton";
 
 interface Course {
   id: string;
   slug: string;
   title: string;
+  subtitle: string;
+  price: number;
   hero_claims: string[];
   cohort: any;
   target_audience: string[];
@@ -28,6 +30,7 @@ export default function CourseDetail() {
   const { slug } = useParams();
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isEnrolled, setIsEnrolled] = useState(false);
 
   useEffect(() => {
     loadCourse();
@@ -43,8 +46,23 @@ export default function CourseDetail() {
 
     if (!error && data) {
       setCourse(data as Course);
+      checkEnrollment(data.id);
     }
     setLoading(false);
+  };
+
+  const checkEnrollment = async (courseId: string) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+
+    const { data } = await supabase
+      .from("course_enrollments")
+      .select("id")
+      .eq("user_id", session.user.id)
+      .eq("course_id", courseId)
+      .maybeSingle();
+
+    setIsEnrolled(!!data);
   };
 
   if (loading) {
@@ -59,17 +77,12 @@ export default function CourseDetail() {
     return <Navigate to="/courses" replace />;
   }
 
-  const scrollToRegistration = () => {
-    const element = document.getElementById("registration");
-    element?.scrollIntoView({ behavior: "smooth" });
-  };
-
   return (
     <div className="min-h-screen">
       <CourseHero
         claims={course.hero_claims}
-        onRegisterClick={scrollToRegistration}
-        onInfoSessionClick={scrollToRegistration}
+        onRegisterClick={() => {}}
+        onInfoSessionClick={() => {}}
       />
       
       <PartnersMarquee />
@@ -78,17 +91,29 @@ export default function CourseDetail() {
       
       <CohortStrip cohort={course.cohort} />
       
+      {/* Enrollment Section */}
+      <section className="py-12 bg-background border-y">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold uppercase mb-4">{course.title}</h2>
+          <p className="text-xl text-muted-foreground mb-8">{course.subtitle}</p>
+          <EnrollmentButton
+            courseId={course.id}
+            courseTitle={course.title}
+            price={course.price || 0}
+            isEnrolled={isEnrolled}
+          />
+        </div>
+      </section>
+      
       <TargetAudienceSection audience={course.target_audience} />
       
       <SyllabusAccordion modules={course.syllabus} courseSlug={course.slug} />
       
       <SkillsGrid skills={course.skills} />
       
-      <InfoSessionCTA onRegisterClick={scrollToRegistration} />
+      <InfoSessionCTA onRegisterClick={() => {}} />
       
       <TrainerCard trainer={course.trainer} />
-      
-      <RegistrationForm />
     </div>
   );
 }

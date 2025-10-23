@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { academyConfig } from "@/config/academy";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
 import craftoryLogo from "@/assets/craftory-logo.png";
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -17,6 +19,20 @@ export function Header() {
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    // Check auth status
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsLoggedIn(!!session);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const handleNavClick = (path: string) => {
@@ -66,12 +82,23 @@ export function Header() {
 
           {/* CTA Button - Desktop */}
           <div className="hidden md:flex items-center gap-4">
-            <Button variant="ghost" size="sm" asChild>
-              <Link to="/auth">Admin</Link>
-            </Button>
-            <Button variant="default" size="default" asChild className="shadow-soft">
-              <Link to="#registration">რეგისტრაცია</Link>
-            </Button>
+            {isLoggedIn ? (
+              <Button variant="default" size="default" asChild className="shadow-soft gap-2">
+                <Link to="/student/dashboard">
+                  <BookOpen className="w-4 h-4" />
+                  My Courses
+                </Link>
+              </Button>
+            ) : (
+              <>
+                <Button variant="ghost" size="sm" asChild>
+                  <Link to="/auth">Login</Link>
+                </Button>
+                <Button variant="default" size="default" asChild className="shadow-soft">
+                  <Link to="/courses">Browse Courses</Link>
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -101,15 +128,26 @@ export function Header() {
                   )}
                 >
                   {item.name}
-                </Link>
+              </Link>
               ))}
               <div className="px-4 pt-4 space-y-2">
-                <Button variant="ghost" className="w-full" asChild>
-                  <Link to="/auth">Admin</Link>
-                </Button>
-                <Button variant="default" className="w-full shadow-soft" asChild>
-                  <Link to="#registration">რეგისტრაცია</Link>
-                </Button>
+                {isLoggedIn ? (
+                  <Button variant="default" className="w-full shadow-soft gap-2" asChild>
+                    <Link to="/student/dashboard">
+                      <BookOpen className="w-4 h-4" />
+                      My Courses
+                    </Link>
+                  </Button>
+                ) : (
+                  <>
+                    <Button variant="ghost" className="w-full" asChild>
+                      <Link to="/auth">Login</Link>
+                    </Button>
+                    <Button variant="default" className="w-full shadow-soft" asChild>
+                      <Link to="/courses">Browse Courses</Link>
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </nav>
