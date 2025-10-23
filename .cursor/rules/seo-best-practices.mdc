@@ -1,0 +1,344 @@
+---
+alwaysApply: true
+---
+# Cursor Rules: React 18 + TypeScript + Vite SEO Best Practices
+
+## Project Stack
+- React 18 with TypeScript
+- Vite for build tooling and dev server
+- Focus on SEO optimization
+
+## Meta Tags & Document Head Management
+
+### Always use react-helmet-async for meta tag management
+```typescript
+import { Helmet } from 'react-helmet-async';
+
+// Wrap root with HelmetProvider
+import { HelmetProvider } from 'react-helmet-async';
+```
+
+### Required meta tags for every page
+- Title (50-60 characters)
+- Description (150-160 characters)
+- Open Graph tags (og:title, og:description, og:image, og:url, og:type)
+- Twitter Card tags
+- Canonical URL
+- Viewport meta tag
+- Charset meta tag
+
+### Example implementation
+```typescript
+<Helmet>
+  <title>Page Title | Site Name</title>
+  <meta name="description" content="Page description" />
+  <link rel="canonical" href="https://example.com/page" />
+  <meta property="og:title" content="Page Title" />
+  <meta property="og:description" content="Page description" />
+  <meta property="og:image" content="https://example.com/image.jpg" />
+  <meta property="og:url" content="https://example.com/page" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Page Title" />
+  <meta name="twitter:description" content="Page description" />
+</Helmet>
+```
+
+## Routing & URLs
+
+### Use React Router v6+ for client-side routing
+- Always define clear, semantic URL structures
+- Use lowercase URLs with hyphens (kebab-case)
+- Avoid query parameters for main content pages
+
+### URL best practices
+```typescript
+// Good
+/blog/react-seo-best-practices
+/products/laptop-accessories
+
+// Avoid
+/blog?id=123
+/products/LaptopAccessories
+```
+
+## Performance Optimization
+
+### Code splitting and lazy loading
+```typescript
+import { lazy, Suspense } from 'react';
+
+const BlogPost = lazy(() => import('./pages/BlogPost'));
+
+<Suspense fallback={<LoadingSpinner />}>
+  <BlogPost />
+</Suspense>
+```
+
+### Image optimization
+- Use WebP format with fallbacks
+- Implement lazy loading with loading="lazy"
+- Always specify width and height attributes
+- Use srcset for responsive images
+- Compress images before deployment
+
+```typescript
+<img
+  src="/images/hero.webp"
+  alt="Descriptive alt text"
+  width="1200"
+  height="630"
+  loading="lazy"
+  srcSet="/images/hero-small.webp 400w, /images/hero-medium.webp 800w, /images/hero-large.webp 1200w"
+/>
+```
+
+## Semantic HTML
+
+### Use proper heading hierarchy
+- One h1 per page (main page title)
+- Follow sequential order (h1 → h2 → h3)
+- Never skip heading levels
+
+### Use semantic HTML5 elements
+```typescript
+<header>
+<nav>
+<main>
+<article>
+<section>
+<aside>
+<footer>
+```
+
+### Avoid div soup
+```typescript
+// Bad
+<div className="article">
+  <div className="header">...</div>
+</div>
+
+// Good
+<article>
+  <header>...</header>
+</article>
+```
+
+## Accessibility (Impacts SEO)
+
+### ARIA labels and roles
+- Add aria-label for icons and buttons without text
+- Use proper role attributes
+- Ensure keyboard navigation works
+
+### Focus management
+- Manage focus on route changes
+- Visible focus indicators
+- Skip to main content link
+
+```typescript
+<button aria-label="Close menu" onClick={closeMenu}>
+  <CloseIcon />
+</button>
+
+<a href="#main-content" className="skip-link">
+  Skip to main content
+</a>
+```
+
+## Structured Data (JSON-LD)
+
+### Implement Schema.org markup for rich results
+```typescript
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Article Title",
+  "author": {
+    "@type": "Person",
+    "name": "Author Name"
+  },
+  "datePublished": "2025-01-01",
+  "image": "https://example.com/image.jpg"
+};
+
+<Helmet>
+  <script type="application/ld+json">
+    {JSON.stringify(structuredData)}
+  </script>
+</Helmet>
+```
+
+### Common schema types to implement
+- Article/BlogPosting
+- Product
+- Organization
+- BreadcrumbList
+- FAQPage
+- LocalBusiness
+
+## Sitemap & Robots.txt
+
+### Generate sitemap.xml
+- Create sitemap in public folder or generate dynamically
+- Include all important pages
+- Update modification dates
+- Submit to Google Search Console
+
+### robots.txt configuration
+```
+User-agent: *
+Allow: /
+Sitemap: https://example.com/sitemap.xml
+```
+
+## Vite-Specific Configuration
+
+### vite.config.ts optimizations
+```typescript
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+
+export default defineConfig({
+  plugins: [react()],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+        },
+      },
+    },
+  },
+  server: {
+    port: 3000,
+  },
+});
+```
+
+### Preload critical resources
+```typescript
+// In index.html
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="dns-prefetch" href="https://analytics.google.com">
+```
+
+## Content Best Practices
+
+### Text content
+- Minimum 300 words for main pages
+- Use keywords naturally (avoid stuffing)
+- Write descriptive alt text for all images
+- Use internal linking with descriptive anchor text
+
+### Links
+- Use descriptive anchor text (avoid "click here")
+- Open external links in same tab (better UX)
+- Add rel="noopener noreferrer" for external links
+- Implement breadcrumb navigation
+
+```typescript
+<Link to="/blog/seo-guide">
+  Complete SEO Guide for React Apps
+</Link>
+
+<a href="https://external.com" rel="noopener noreferrer">
+  External Resource
+</a>
+```
+
+## SSR/SSG Considerations
+
+### For better SEO, consider
+- Vite SSR plugin for server-side rendering
+- Pre-rendering with vite-plugin-ssr
+- Static site generation for content-heavy sites
+- Use frameworks like Next.js or Remix for built-in SSR
+
+## Mobile Optimization
+
+### Responsive design requirements
+- Mobile-first approach
+- Viewport meta tag configured
+- Touch-friendly interactive elements (min 44x44px)
+- Fast mobile page speed (target < 3s)
+
+### Testing
+- Use Chrome DevTools mobile emulation
+- Test on real devices
+- Lighthouse mobile audits
+
+## Monitoring & Analytics
+
+### Essential tools
+- Google Search Console
+- Google Analytics 4
+- Lighthouse CI in development
+- Core Web Vitals monitoring
+
+### Performance budgets
+```typescript
+// Example performance targets
+// FCP: < 1.8s
+// LCP: < 2.5s
+// CLS: < 0.1
+// FID: < 100ms
+```
+
+## TypeScript Types for SEO
+
+### Create reusable types
+```typescript
+interface PageMeta {
+  title: string;
+  description: string;
+  keywords?: string[];
+  ogImage?: string;
+  canonical?: string;
+}
+
+interface StructuredDataProps {
+  type: 'Article' | 'Product' | 'Organization';
+  data: Record<string, any>;
+}
+```
+
+## Pre-deployment Checklist
+
+- [ ] All pages have unique titles and descriptions
+- [ ] Images optimized and have alt text
+- [ ] Proper heading hierarchy on all pages
+- [ ] Structured data implemented
+- [ ] Sitemap generated and submitted
+- [ ] robots.txt configured
+- [ ] Lighthouse score > 90
+- [ ] Mobile responsive
+- [ ] 404 page implemented
+- [ ] Loading states for async content
+- [ ] Internal linking structure
+- [ ] HTTPS enabled
+- [ ] Canonical URLs set
+- [ ] No broken links
+
+## Useful Packages
+
+```json
+{
+  "react-helmet-async": "^2.0.4",
+  "react-router-dom": "^6.20.0",
+  "@vitejs/plugin-react": "^4.2.0"
+}
+```
+
+## Development Workflow
+
+1. Create SEO utility component for consistent meta tags
+2. Define page metadata in route configuration
+3. Run Lighthouse audits during development
+4. Test with Google's Rich Results Test
+5. Validate structured data with Schema Markup Validator
+6. Monitor Core Web Vitals in development
+
+---
+
+**Remember**: SEO is an ongoing process. Regularly audit your site, monitor performance, and update content to maintain and improve r

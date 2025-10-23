@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { PartnersMarquee } from "@/components/PartnersMarquee";
 import { RegistrationForm } from "@/components/RegistrationForm";
 import { StatsSection } from "@/components/StatsSection";
-import { FeatureCards } from "@/components/FeatureCards";
+import { ScrollytellingWhySection } from "@/components/ScrollytellingWhySection";
 import { ArrowRight, BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
 import heroWorkshop from "@/assets/hero-workshop.jpg";
@@ -85,10 +85,10 @@ export default function Home() {
 
       <PartnersMarquee />
 
-      <FeatureCards />
+      <ScrollytellingWhySection />
 
       {/* CTA Section */}
-      <section id="home-cta" className="py-20 bg-cream">
+      <section id="home-cta" className="bg-cream">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

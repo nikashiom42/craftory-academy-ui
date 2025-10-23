@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from "react";
-import { motion, useInView, useReducedMotion } from "framer-motion";
-import { ChevronDown, ChevronUp } from "lucide-react";
+// ScrollytellingWhySection.tsx renders a simple auto-playing carousel for "რატომ Craftory Academy?" section.
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import lazieriLogo from "@/assets/partners/lazieri-logo.png";
 import internaLogo from "@/assets/partners/interna-logo.png";
@@ -14,6 +15,7 @@ interface StepCard {
   logos?: string[];
 }
 
+// steps stores the content for each card in the scrollytelling stack.
 const steps: StepCard[] = [
   {
     title: "ავეჯის კონსტრუქტორი დღითიდღე უფრო და უფრო მოთხოვნადი პროფესია ხდება",
@@ -40,236 +42,195 @@ const steps: StepCard[] = [
 ];
 
 export function ScrollytellingWhySection() {
-  const [activeStep, setActiveStep] = useState(0);
-  const shouldReduceMotion = useReducedMotion();
+  const [activeIndex, setActiveIndex] = useState(0);
 
-  const navigateStep = (direction: "next" | "prev") => {
-    const newStep = direction === "next" 
-      ? Math.min(activeStep + 1, steps.length - 1)
-      : Math.max(activeStep - 1, 0);
-    
-    setActiveStep(newStep);
+  // Auto-play carousel
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveIndex((current) => (current + 1) % steps.length);
+    }, 5000); // Change card every 5 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const goToNext = () => {
+    setActiveIndex((current) => (current + 1) % steps.length);
+  };
+
+  const goToPrev = () => {
+    setActiveIndex((current) => (current - 1 + steps.length) % steps.length);
   };
 
   return (
-    <section className="relative py-20 bg-cream overflow-hidden">
+    <section className="relative bg-cream overflow-hidden">
       {/* Desktop Layout */}
       <div className="hidden lg:block">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 gap-12 max-w-6xl mx-auto">
-            {/* Left Column - Sticky */}
-            <div className="sticky top-24 self-start">
+        <div className="container mx-auto px-8 lg:px-16">
+          <div className="grid grid-cols-2 gap-20 max-w-6xl mx-auto items-center min-h-[600px]">
+            {/* Left Column - Heading */}
+            <div>
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
               >
-                <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase leading-tight mb-6">
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase leading-tight">
                   რატომ უნდა გახდე ავეჯის კონსტრუქტორი
                 </h2>
-                <p className="text-lg text-muted-foreground mb-8">
-                  გაიგე რატომ არის ეს პროფესია შენთვის იდეალური
-                </p>
+                <div className="mt-6 w-24 h-1 bg-gradient-to-r from-accent to-primary rounded-full"></div>
                 
-                {/* Progress Indicator */}
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="text-2xl font-bold text-primary">
-                    {activeStep + 1} / {steps.length}
-                  </div>
-                  <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
-                    <motion.div
-                      className="h-full bg-primary"
-                      initial={{ width: 0 }}
-                      animate={{ width: `${((activeStep + 1) / steps.length) * 100}%` }}
-                      transition={{ duration: 0.3 }}
-                    />
-                  </div>
-                </div>
-
-                {/* Navigation Buttons */}
-                <div className="flex gap-3" role="group" aria-label="Step navigation">
+                {/* Navigation Controls */}
+                <div className="flex items-center gap-4 mt-8">
                   <Button
                     variant="outline"
-                    size="sm"
-                    onClick={() => navigateStep("prev")}
-                    disabled={activeStep === 0}
-                    aria-label="Previous step"
+                    size="icon"
+                    onClick={goToPrev}
+                    className="rounded-full"
                   >
-                    <ChevronUp className="h-4 w-4 mr-1" />
-                    წინა
+                    <ChevronLeft className="h-5 w-5" />
                   </Button>
+                  
+                  <div className="flex gap-2">
+                    {steps.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setActiveIndex(index)}
+                        className={`h-2 rounded-full transition-all ${
+                          index === activeIndex
+                            ? "w-8 bg-primary"
+                            : "w-2 bg-primary/30"
+                        }`}
+                        aria-label={`Go to card ${index + 1}`}
+                      />
+                    ))}
+                  </div>
+                  
                   <Button
                     variant="outline"
-                    size="sm"
-                    onClick={() => navigateStep("next")}
-                    disabled={activeStep === steps.length - 1}
-                    aria-label="Next step"
+                    size="icon"
+                    onClick={goToNext}
+                    className="rounded-full"
                   >
-                    შემდეგი
-                    <ChevronDown className="h-4 w-4 ml-1" />
+                    <ChevronRight className="h-5 w-5" />
                   </Button>
                 </div>
               </motion.div>
             </div>
 
-            {/* Right Column - Stacking Cards */}
-            <div className="relative min-h-[700px]">
-              {steps.map((step, index) => (
-                <DesktopStepCard
-                  key={index}
-                  step={step}
-                  index={index}
-                  activeStep={activeStep}
-                  setActiveStep={setActiveStep}
-                  shouldReduceMotion={shouldReduceMotion}
+            {/* Right Column - Animated Cards */}
+            <div className="relative h-[500px]">
+              <AnimatePresence mode="wait">
+                <CarouselCard
+                  key={activeIndex}
+                  step={steps[activeIndex]}
+                  index={activeIndex}
                 />
-              ))}
+              </AnimatePresence>
             </div>
           </div>
         </div>
       </div>
 
       {/* Mobile Layout */}
-      <div className="block lg:hidden">
+      <div className="block lg:hidden py-20">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-center mb-12"
+            className="mb-12"
           >
-            <h2 className="text-3xl md:text-4xl font-bold uppercase leading-tight mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold uppercase leading-tight">
               რატომ უნდა გახდე ავეჯის კონსტრუქტორი
             </h2>
-            <p className="text-lg text-muted-foreground">
-              გაიგე რატომ არის ეს პროფესია შენთვის იდეალური
-            </p>
           </motion.div>
 
           <div className="space-y-6">
             {steps.map((step, index) => (
-              <MobileStepCard
-                key={index}
-                step={step}
-                index={index}
-                shouldReduceMotion={shouldReduceMotion}
-              />
+              <MobileStepCard key={index} step={step} index={index} />
             ))}
           </div>
         </div>
-      </div>
-
-      {/* Screen Reader Announcements */}
-      <div className="sr-only" role="status" aria-live="polite" aria-atomic="true">
-        Step {activeStep + 1} of {steps.length}: {steps[activeStep].title}
       </div>
     </section>
   );
 }
 
-interface DesktopStepCardProps {
+interface CarouselCardProps {
   step: StepCard;
   index: number;
-  activeStep: number;
-  setActiveStep: (step: number) => void;
-  shouldReduceMotion: boolean | null;
 }
 
-function DesktopStepCard({ step, index, activeStep, setActiveStep, shouldReduceMotion }: DesktopStepCardProps) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(cardRef, { amount: 0.5 });
-  const isPassed = index <= activeStep;
-
-  useEffect(() => {
-    if (isInView && !shouldReduceMotion) {
-      setActiveStep(index);
-    }
-  }, [isInView, index, setActiveStep, shouldReduceMotion]);
-
-  // Rotation angles for stacking effect
-  const rotations = [2, -1.5, 1, -2];
-  const rotation = isPassed ? rotations[index % rotations.length] : 0;
-  
-  // Calculate stacking offset - each card moves down and slightly right
-  const offsetY = isPassed ? index * 20 : 0;
-  const offsetX = isPassed ? index * 8 : 0;
-
+// CarouselCard renders a simple animated card with fade transition.
+function CarouselCard({ step, index }: CarouselCardProps) {
   return (
     <motion.div
-      ref={cardRef}
-      initial={{ opacity: 0, y: 100, scale: 0.95 }}
-      animate={{
-        opacity: isPassed ? 1 : 0,
-        y: isPassed ? offsetY : 100,
-        x: offsetX,
-        scale: isPassed ? 1 : 0.95,
-        rotate: rotation,
-      }}
-      transition={{ 
-        duration: 0.5, 
-        ease: [0.25, 0.1, 0.25, 1],
-        delay: shouldReduceMotion ? 0 : index * 0.15 
-      }}
-      style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: index,
-      }}
-      className="bg-background rounded-3xl p-8 shadow-lg border-4 border-accent/40"
-      role="article"
-      aria-label={`Step ${index + 1}: ${step.title}`}
+      initial={{ opacity: 0, x: 100 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -100 }}
+      transition={{ duration: 0.5, ease: "easeInOut" }}
+      className="absolute inset-0 w-full flex items-center"
     >
-      <div className="space-y-6">
-        <div>
-          <h3 className="text-xl font-bold mb-3">{step.title}</h3>
-          <p className="text-muted-foreground leading-relaxed">
-            {step.description}
-          </p>
-        </div>
-
-        {/* Animated Progress Bar */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">მზადყოფნა</span>
-            <motion.span
-              className="font-bold text-primary"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: isPassed ? 1 : 0 }}
-            >
-              {step.targetProgress}%
-            </motion.span>
+      <div className="w-full bg-background rounded-3xl p-8 shadow-xl border-2 border-accent/20">
+        <div className="space-y-6">
+          {/* Card number indicator */}
+          <div className="absolute -top-3 -right-3 w-12 h-12 bg-accent rounded-full flex items-center justify-center text-accent-foreground font-bold text-lg shadow-lg">
+            {index + 1}
           </div>
-          <div className="h-3 bg-muted rounded-full overflow-hidden">
-            <motion.div
-              className="h-full bg-gradient-to-r from-primary to-accent rounded-full"
-              initial={{ width: 0 }}
-              animate={{ width: isPassed ? `${step.targetProgress}%` : '0%' }}
-              transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-            />
+          
+          <div>
+            <h3 className="text-2xl font-bold mb-3">{step.title}</h3>
+            <p className="text-muted-foreground leading-relaxed">
+              {step.description}
+            </p>
           </div>
-        </div>
 
-        {/* Partner Logos */}
-        {step.logos && (
-          <div className="flex gap-3 flex-wrap">
-            {step.logos.map((logo, logoIndex) => (
-              <div
-                key={logoIndex}
-                className="px-4 py-2 bg-muted/50 rounded-lg flex items-center"
+          {/* Progress Bar */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground font-medium">მზადყოფნა</span>
+              <motion.span
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="font-bold text-primary text-lg"
               >
-                <img
-                  src={logo}
-                  alt="Partner logo"
-                  className="h-6 object-contain opacity-60"
-                />
-              </div>
-            ))}
+                {step.targetProgress}%
+              </motion.span>
+            </div>
+            <div className="h-3 bg-muted rounded-full overflow-hidden">
+              <motion.div
+                initial={{ width: "0%" }}
+                animate={{ width: `${step.targetProgress}%` }}
+                transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
+                className="h-full bg-gradient-to-r from-primary to-accent rounded-full"
+              />
+            </div>
           </div>
-        )}
+
+          {/* Partner Logos */}
+          {step.logos && (
+            <div className="flex gap-3 flex-wrap">
+              {step.logos.map((logo, logoIndex) => (
+                <motion.div
+                  key={logoIndex}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.4 + logoIndex * 0.1 }}
+                  className="px-4 py-2 bg-muted/50 rounded-lg flex items-center"
+                >
+                  <img
+                    src={logo}
+                    alt="Partner logo"
+                    className="h-6 object-contain opacity-60"
+                  />
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </motion.div>
   );
@@ -278,29 +239,15 @@ function DesktopStepCard({ step, index, activeStep, setActiveStep, shouldReduceM
 interface MobileStepCardProps {
   step: StepCard;
   index: number;
-  shouldReduceMotion: boolean | null;
 }
 
-function MobileStepCard({ step, index, shouldReduceMotion }: MobileStepCardProps) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(cardRef, { once: true, amount: 0.5 });
-  const [progress, setProgress] = useState(0);
-
-  useEffect(() => {
-    if (isInView) {
-      const timer = setTimeout(() => {
-        setProgress(step.targetProgress);
-      }, 200);
-      return () => clearTimeout(timer);
-    }
-  }, [isInView, step.targetProgress]);
-
+// MobileStepCard provides simplified scrolling cards for mobile viewports.
+function MobileStepCard({ step, index }: MobileStepCardProps) {
   return (
     <motion.div
-      ref={cardRef}
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
+      viewport={{ once: true, amount: 0.5 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
       className="bg-background rounded-2xl p-6 shadow-medium"
     >
@@ -321,14 +268,15 @@ function MobileStepCard({ step, index, shouldReduceMotion }: MobileStepCardProps
         <div className="space-y-2">
           <div className="flex items-center justify-between text-xs">
             <span className="text-muted-foreground">მზადყოფნა</span>
-            <span className="font-bold text-primary">{progress}%</span>
+            <span className="font-bold text-primary">{step.targetProgress}%</span>
           </div>
           <div className="h-2 bg-muted rounded-full overflow-hidden">
             <motion.div
               className="h-full bg-gradient-to-r from-primary to-accent rounded-full"
-              initial={{ width: 0 }}
-              animate={{ width: `${progress}%` }}
-              transition={{ duration: 1, ease: "easeOut" }}
+              initial={{ width: "0%" }}
+              whileInView={{ width: `${step.targetProgress}%` }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
             />
           </div>
         </div>
