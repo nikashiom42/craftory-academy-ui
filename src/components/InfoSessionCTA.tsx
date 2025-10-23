@@ -23,7 +23,7 @@ export function InfoSessionCTA({ onRegisterClick }: InfoSessionCTAProps) {
             </div>
           </div>
           <h2 className="text-3xl md:text-4xl font-bold uppercase mb-6">
-            უფასო საინფორმაციო შეხვედრა
+            დარეგისტრირდი უფასო საინფორმაციო შეხვედრაზე ახლავე
           </h2>
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
             მიიღე სრული ინფორმაცია კურსის შესახებ, ისაუბრე ტრენერთან და დასვი შენთვის საინტერესო კითხვები

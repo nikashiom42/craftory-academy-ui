@@ -8,57 +8,58 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Craftory Academy Brand Colors */
+    /* Craftory Academy Brand Colors - Client Palette */
     --background: 0 0% 98%;
-    --foreground: 0 16% 25%;
+    --foreground: 11 59% 24%;
 
     --card: 0 0% 100%;
-    --card-foreground: 0 16% 25%;
+    --card-foreground: 11 59% 24%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 16% 25%;
+    --popover-foreground: 11 59% 24%;
 
-    /* Primary: Rich dark brown */
-    --primary: 11 59% 25%;
+    /* Primary: Dark brown #642215 */
+    --primary: 11 59% 24%;
     --primary-foreground: 0 0% 98%;
 
-    /* Secondary: Medium brown */
-    --secondary: 0 16% 32%;
+    /* Secondary: Medium brown #5c4545 */
+    --secondary: 0 16% 31%;
     --secondary-foreground: 0 0% 98%;
 
-    /* Muted: Light neutral */
-    --muted: 0 0% 95%;
+    /* Muted: Light gray #d4d4d4 */
+    --muted: 0 0% 83%;
     --muted-foreground: 0 16% 45%;
 
-    /* Accent: Golden highlight */
-    --accent: 44 74% 52%;
-    --accent-foreground: 11 59% 25%;
+    /* Accent: Warm terracotta for vibrancy */
+    --accent: 14 77% 52%;
+    --accent-foreground: 0 0% 100%;
 
     /* Cream background variant */
-    --cream: 36 60% 90%;
-    --cream-foreground: 0 16% 25%;
+    --cream: 30 20% 92%;
+    --cream-foreground: 11 59% 24%;
 
-    /* Light blue accent (subtle) */
-    --blue-accent: 207 62% 77%;
+    /* Secondary accent: Soft gold */
+    --gold-accent: 38 92% 50%;
     
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 90%;
+    --border: 0 0% 83%;
     --input: 0 0% 90%;
-    --ring: 11 59% 25%;
+    --ring: 11 59% 24%;
 
     --radius: 0.75rem;
 
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(11 59% 25%), hsl(0 16% 32%));
-    --gradient-subtle: linear-gradient(180deg, hsl(0 0% 98%), hsl(36 60% 90%));
-    --gradient-hero: linear-gradient(to bottom, hsl(0 0% 98%), hsl(0 0% 95%));
+    --gradient-primary: linear-gradient(135deg, hsl(11 59% 24%), hsl(0 16% 31%));
+    --gradient-subtle: linear-gradient(180deg, hsl(0 0% 98%), hsl(30 20% 92%));
+    --gradient-hero: linear-gradient(to right, hsl(0 0% 98% / 0.95), hsl(0 0% 98% / 0.7));
+    --gradient-accent: linear-gradient(135deg, hsl(14 77% 52%), hsl(38 92% 50%));
     
     /* Shadows */
-    --shadow-soft: 0 2px 8px -2px hsl(0 16% 25% / 0.08);
-    --shadow-medium: 0 4px 16px -4px hsl(0 16% 25% / 0.12);
-    --shadow-elevated: 0 8px 24px -8px hsl(0 16% 25% / 0.16);
+    --shadow-soft: 0 2px 8px -2px hsl(11 59% 24% / 0.08);
+    --shadow-medium: 0 4px 16px -4px hsl(11 59% 24% / 0.12);
+    --shadow-elevated: 0 8px 24px -8px hsl(11 59% 24% / 0.16);
     
     /* Transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);

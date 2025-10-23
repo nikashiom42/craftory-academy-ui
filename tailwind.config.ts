@@ -52,6 +52,7 @@ export default {
           foreground: "hsl(var(--cream-foreground))",
         },
         "blue-accent": "hsl(var(--blue-accent))",
+        "gold-accent": "hsl(var(--gold-accent))",
       },
       borderRadius: {
         lg: "var(--radius)",
