@@ -62,34 +62,25 @@ export function AdminSidebar({ userEmail }: AdminSidebarProps) {
             <SidebarMenu>
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild 
-                    disabled={item.disabled}
-                    className={`mb-1 ${item.disabled ? "opacity-50 cursor-not-allowed" : ""}`}
-                  >
-                    {item.disabled ? (
-                      <div className="flex items-center gap-3 px-3 py-2.5 text-muted-foreground rounded-md">
-                        <item.icon className="h-5 w-5" />
-                        <span className="text-sm font-medium">{item.title}</span>
-                        <span className="ml-auto text-xs bg-muted px-2 py-0.5 rounded">Soon</span>
-                      </div>
-                    ) : (
-                      <NavLink
-                        to={item.url}
-                        end
-                        className={({ isActive }) =>
-                          `flex items-center gap-3 px-3 py-2.5 rounded-md transition-all ${
-                            isActive
-                              ? "bg-primary text-primary-foreground font-semibold shadow-sm"
-                              : "hover:bg-muted text-foreground"
-                          }`
-                        }
-                      >
-                        <item.icon className="h-5 w-5" />
-                        <span className="text-sm font-medium">{item.title}</span>
-                      </NavLink>
-                    )}
-                  </SidebarMenuButton>
+                  {item.disabled ? (
+                    <SidebarMenuButton 
+                      disabled={item.disabled}
+                      className="mb-1 cursor-not-allowed"
+                    >
+                      <item.icon className="h-5 w-5" />
+                      <span className="text-sm font-medium">{item.title}</span>
+                      <span className="ml-auto text-xs bg-muted px-2 py-0.5 rounded">Soon</span>
+                    </SidebarMenuButton>
+                  ) : (
+                    <NavLink to={item.url} end>
+                      {({ isActive }) => (
+                        <SidebarMenuButton isActive={isActive} className="mb-1">
+                          <item.icon className="h-5 w-5" />
+                          <span className="text-sm font-medium">{item.title}</span>
+                        </SidebarMenuButton>
+                      )}
+                    </NavLink>
+                  )}
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>

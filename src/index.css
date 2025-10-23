@@ -63,6 +63,14 @@ All colors MUST be HSL.
     
     /* Transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Sidebar colors */
+    --sidebar: 0 0% 100%;
+    --sidebar-foreground: 0 0% 0%;
+    --sidebar-border: 0 0% 83%;
+    --sidebar-accent: 14 77% 52%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-ring: 0 0% 0%;
   }
 
   .dark {
@@ -96,6 +104,14 @@ All colors MUST be HSL.
     --border: 0 16% 25%;
     --input: 0 16% 25%;
     --ring: 44 74% 52%;
+    
+    /* Sidebar colors */
+    --sidebar: 0 16% 15%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-border: 0 16% 25%;
+    --sidebar-accent: 14 77% 52%;
+    --sidebar-accent-foreground: 0 16% 12%;
+    --sidebar-ring: 44 74% 52%;
   }
 }
 
