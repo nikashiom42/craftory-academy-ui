@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import craftoryLogo from "@/assets/craftory-logo-new.png";
+import craftoryLogo from "@/assets/craftory-logo.png";
 
 const menuItems = [
   { title: "Dashboard", url: "/admin", icon: LayoutGrid },
@@ -39,13 +39,7 @@ export function AdminSidebar({ userEmail }: AdminSidebarProps) {
     <Sidebar className="border-r border-border bg-card">
       <SidebarHeader className="border-b border-border p-6">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center overflow-hidden">
-            <img src={craftoryLogo} alt="Craftory" className="w-8 h-8 object-contain" />
-          </div>
-          <div>
-            <h2 className="text-lg font-bold text-foreground">Craftory</h2>
-            <p className="text-xs text-muted-foreground">Admin Panel</p>
-          </div>
+          <img src={craftoryLogo} alt="Craftory Academy" className="h-12 w-auto object-contain" />
         </div>
         {userEmail && (
           <div className="text-xs text-muted-foreground truncate bg-muted/30 px-3 py-2 rounded-md">

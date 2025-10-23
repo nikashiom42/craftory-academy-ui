@@ -4,6 +4,7 @@ import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { academyConfig } from "@/config/academy";
 import { cn } from "@/lib/utils";
+import craftoryLogo from "@/assets/craftory-logo.png";
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -39,9 +40,7 @@ export function Header() {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
-            <div className="text-xl md:text-2xl font-bold text-primary">
-              {academyConfig.siteName}
-            </div>
+            <img src={craftoryLogo} alt="Craftory Academy" className="h-10 w-auto object-contain" />
           </Link>
 
           {/* Desktop Navigation - Centered */}
