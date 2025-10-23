@@ -17,7 +17,6 @@ export const academyConfig = {
   nav: [
     { name: "მთავარი", path: "/" },
     { name: "კურსები", path: "/courses" },
-    { name: "სილაბუსი", path: "/syllabus/furniture-constructor" },
     { name: "კონტაქტი", path: "#contact" },
     { name: "რეგისტრაცია", path: "#registration" },
   ],
