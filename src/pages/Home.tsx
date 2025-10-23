@@ -15,21 +15,34 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="pt-32 pb-20 gradient-hero">
-        <div className="container mx-auto px-4">
-          <div className="max-w-5xl mx-auto text-center">
+      <section className="relative pt-32 pb-20 overflow-hidden">
+        {/* Subtle background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-background via-cream/30 to-background" />
+        
+        <div className="container mx-auto px-4 relative">
+          <div className="max-w-5xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
+              className="text-center space-y-6"
             >
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold uppercase tracking-tight mb-6">
-                საქართველოს პირველი
+              {/* Badge */}
+              <div className="flex justify-center">
+                <span className="inline-flex items-center px-4 py-2 rounded-full bg-accent/10 text-accent text-sm font-semibold">
+                  საქართველოს პირველი ავეჯის აკადემია
+                </span>
+              </div>
+
+              {/* Main heading - refined size */}
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+                გახდი პროფესიონალი
                 <br />
-                <span className="text-accent">ავეჯის აკადემია</span>
+                <span className="text-accent">ავეჯის ინდუსტრიაში</span>
               </h1>
-              <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto">
-                გახდი პროფესიონალი ავეჯის კონსტრუქტორი 2 თვეში და დაიწყე კარიერა მოთხოვნად ინდუსტრიაში
+              
+              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+                პრაქტიკული კურსები გამოცდილ ტრენერებთან და სტაჟირება წამყვან კომპანიებში
               </p>
             </motion.div>
 
@@ -37,7 +50,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center"
+              className="flex flex-col sm:flex-row gap-4 justify-center mt-10"
             >
               <Button size="lg" asChild className="group">
                 <Link to="/courses">
