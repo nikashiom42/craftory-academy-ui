@@ -45,24 +45,25 @@ export default function Home() {
 
               {/* Main heading */}
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-                გახდი პროფესიონალი
-                <br />
-                <span className="text-accent">ავეჯის ინდუსტრიაში</span>
+                ავეჯის კონსტრუირების პირველი კურსი საქართველოში
               </h1>
               
-              <p className="text-lg md:text-xl text-foreground/90 max-w-xl">
-                პრაქტიკული კურსები გამოცდილ ტრენერებთან და სტაჟირება წამყვან კომპანიებში
-              </p>
+              {/* Key points */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-accent flex-shrink-0" />
+                  <p className="text-lg md:text-xl font-medium">2 თვეში - 0-დან პროფესიონალამდე</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-accent flex-shrink-0" />
+                  <p className="text-lg md:text-xl font-medium">სტაჟირება პარტნიორ კომპანიებში</p>
+                </div>
+              </div>
 
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <Button size="lg" asChild className="group">
-                  <Link to="/courses">
-                    ნახე კურსები
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </Link>
-                </Button>
-                <Button size="lg" variant="outline" onClick={scrollToRegistration}>
-                  უფასო საინფორმაციო შეხვედრა
+                <Button size="lg" onClick={scrollToRegistration} className="group">
+                  დარეგისტრირდი ახლავე
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               </div>
             </motion.div>
