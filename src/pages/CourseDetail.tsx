@@ -40,13 +40,13 @@ export default function CourseDetail() {
       
       <TargetAudienceSection audience={course.targetAudience} />
       
-      <InfoSessionCTA onRegisterClick={scrollToRegistration} />
-      
-      <TrainerCard trainer={course.trainer} />
+      <SyllabusAccordion modules={course.syllabus} courseSlug={course.slug} />
       
       <SkillsGrid skills={course.skills} />
       
-      <SyllabusAccordion modules={course.syllabus} courseSlug={course.slug} />
+      <InfoSessionCTA onRegisterClick={scrollToRegistration} />
+      
+      <TrainerCard trainer={course.trainer} />
       
       <RegistrationForm />
     </div>
