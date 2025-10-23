@@ -79,42 +79,6 @@ export function ScrollytellingWhySection() {
                   რატომ უნდა გახდე ავეჯის კონსტრუქტორი
                 </h2>
                 <div className="mt-6 w-24 h-1 bg-gradient-to-r from-accent to-primary rounded-full"></div>
-                
-                {/* Navigation Controls */}
-                <div className="flex items-center gap-4 mt-8">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={goToPrev}
-                    className="rounded-full"
-                  >
-                    <ChevronLeft className="h-5 w-5" />
-                  </Button>
-                  
-                  <div className="flex gap-2">
-                    {steps.map((_, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setActiveIndex(index)}
-                        className={`h-2 rounded-full transition-all ${
-                          index === activeIndex
-                            ? "w-8 bg-primary"
-                            : "w-2 bg-primary/30"
-                        }`}
-                        aria-label={`Go to card ${index + 1}`}
-                      />
-                    ))}
-                  </div>
-                  
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={goToNext}
-                    className="rounded-full"
-                  >
-                    <ChevronRight className="h-5 w-5" />
-                  </Button>
-                </div>
               </motion.div>
             </div>
 
@@ -175,11 +139,6 @@ function CarouselCard({ step, index }: CarouselCardProps) {
     >
       <div className="w-full bg-background rounded-3xl p-8 shadow-xl border-2 border-accent/20">
         <div className="space-y-6">
-          {/* Card number indicator */}
-          <div className="absolute -top-3 -right-3 w-12 h-12 bg-accent rounded-full flex items-center justify-center text-accent-foreground font-bold text-lg shadow-lg">
-            {index + 1}
-          </div>
-          
           <div>
             <h3 className="text-2xl font-bold mb-3">{step.title}</h3>
             <p className="text-muted-foreground leading-relaxed">
@@ -252,16 +211,11 @@ function MobileStepCard({ step, index }: MobileStepCardProps) {
       className="bg-background rounded-2xl p-6 shadow-medium"
     >
       <div className="space-y-4">
-        <div className="flex items-start gap-3">
-          <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center flex-shrink-0 font-bold text-sm">
-            {index + 1}
-          </div>
-          <div className="flex-1">
-            <h3 className="text-lg font-bold mb-2">{step.title}</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              {step.description}
-            </p>
-          </div>
+        <div>
+          <h3 className="text-lg font-bold mb-2">{step.title}</h3>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            {step.description}
+          </p>
         </div>
 
         {/* Animated Progress Bar */}
