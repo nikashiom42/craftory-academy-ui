@@ -1,4 +1,4 @@
-import { LayoutGrid, Users, UserCheck, LogOut } from "lucide-react";
+import { LayoutGrid, Users, UserCheck, LogOut, BookOpen } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   Sidebar,
@@ -18,6 +18,7 @@ import craftoryLogo from "@/assets/craftory-logo-new.png";
 
 const menuItems = [
   { title: "Dashboard", url: "/admin", icon: LayoutGrid },
+  { title: "Courses", url: "/admin/courses", icon: BookOpen },
   { title: "Leads", url: "/admin/leads", icon: UserCheck },
   { title: "Customers", url: "/admin/customers", icon: Users, disabled: true },
 ];
