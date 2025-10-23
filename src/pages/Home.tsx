@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { PartnersMarquee } from "@/components/PartnersMarquee";
+import { RegistrationForm } from "@/components/RegistrationForm";
 import { ArrowRight, BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
 import { academyConfig } from "@/config/academy";
@@ -124,14 +125,16 @@ export default function Home() {
               დარეგისტრირდი უფასო საინფორმაციო შეხვედრაზე და გაიგე ყველაფერი კურსის შესახებ
             </p>
             <Button size="lg" asChild className="group">
-              <Link to="/courses/furniture-constructor">
-                გაიგე მეტი კურსის შესახებ
+              <Link to="/courses">
+                ნახე ყველა კურსი
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
             </Button>
           </motion.div>
         </div>
       </section>
+
+      <RegistrationForm />
     </div>
   );
 }
