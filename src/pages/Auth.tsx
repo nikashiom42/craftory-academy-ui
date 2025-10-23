@@ -24,10 +24,20 @@ export default function Auth() {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Check if user is already logged in
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // Check if user is already logged in and redirect to appropriate dashboard
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session) {
-        navigate("/admin");
+        const { data: roleData } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", session.user.id)
+          .single();
+        
+        if (roleData?.role === 'admin') {
+          navigate("/admin");
+        } else {
+          navigate("/student/dashboard");
+        }
       }
     });
   }, [navigate]);
@@ -55,7 +65,7 @@ export default function Auth() {
       }
 
       if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data: authData, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
@@ -69,11 +79,23 @@ export default function Auth() {
           return;
         }
 
+        // Check user role and redirect accordingly
+        const { data: roleData } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", authData.user.id)
+          .single();
+
         toast({
           title: "Success",
           description: "Logged in successfully!",
         });
-        navigate("/admin");
+
+        if (roleData?.role === 'admin') {
+          navigate("/admin");
+        } else {
+          navigate("/student/dashboard");
+        }
       } else {
         const { error } = await supabase.auth.signUp({
           email,

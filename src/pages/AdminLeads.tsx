@@ -43,7 +43,6 @@ interface Registration {
 
 export default function AdminLeads() {
   const [user, setUser] = useState<User | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -52,46 +51,27 @@ export default function AdminLeads() {
   const { toast } = useToast();
 
   useEffect(() => {
-    checkAuth();
+    loadData();
   }, []);
 
-  const checkAuth = async () => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        navigate("/auth");
-        return;
-      }
-
+  /**
+   * Load user session and registration data
+   * Auth and role verification handled by ProtectedRoute wrapper
+   */
+  const loadData = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (session) {
       setUser(session.user);
-
-      const { data: roles } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", session.user.id)
-        .eq("role", "admin")
-        .maybeSingle();
-
-      if (!roles) {
-        toast({
-          variant: "destructive",
-          title: "Access Denied",
-          description: "You need admin privileges to access this page.",
-        });
-        navigate("/");
-        return;
-      }
-
-      setIsAdmin(true);
-      loadRegistrations();
-    } catch (error) {
-      navigate("/auth");
-    } finally {
-      setLoading(false);
     }
+
+    await loadRegistrations();
+    setLoading(false);
   };
 
+  /**
+   * Fetch all course registrations/leads
+   */
   const loadRegistrations = async () => {
     const { data, error } = await supabase
       .from("course_registrations")
@@ -135,13 +115,12 @@ export default function AdminLeads() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p>Loading...</p>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-muted-foreground">Loading registrations...</p>
+        </div>
       </div>
     );
-  }
-
-  if (!isAdmin) {
-    return null;
   }
 
   // Filter registrations

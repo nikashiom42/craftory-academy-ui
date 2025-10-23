@@ -42,6 +42,18 @@ export default function StudentDashboard() {
         return;
       }
 
+      // Verify user has 'user' role (not admin)
+      const { data: roleData } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", session.user.id)
+        .single();
+
+      if (roleData?.role === 'admin') {
+        navigate("/admin");
+        return;
+      }
+
       const { data, error } = await supabase
         .from("course_enrollments")
         .select(`
@@ -63,14 +75,11 @@ export default function StudentDashboard() {
         .order("enrolled_at", { ascending: false });
 
       if (error) {
-        console.error("Error loading enrollments:", error);
         throw error;
       }
 
-      console.log("Loaded enrollments:", data);
       setEnrollments(data || []);
     } catch (error) {
-      console.error("Error loading enrollments:", error);
     } finally {
       setLoading(false);
     }
@@ -101,7 +110,7 @@ export default function StudentDashboard() {
     <div className="min-h-screen flex flex-col">
       <Header />
       
-      <main className="flex-1 py-12 bg-cream">
+      <main className="flex-1 pt-32 pb-12 bg-cream">
         <div className="container mx-auto px-4">
           <div className="mb-8">
             <h1 className="text-4xl font-bold uppercase mb-2">My Courses</h1>

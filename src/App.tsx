@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Home from "./pages/Home";
 import Courses from "./pages/Courses";
 import CourseDetail from "./pages/CourseDetail";
@@ -36,12 +37,12 @@ const AppLayout = () => {
           <Route path="/courses/:slug" element={<CourseDetail />} />
           <Route path="/syllabus/:slug" element={<Syllabus />} />
           <Route path="/auth" element={<Auth />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/admin/courses" element={<AdminCourses />} />
-          <Route path="/admin/leads" element={<AdminLeads />} />
-          <Route path="/admin/courses/:id" element={<CourseManage />} />
-          <Route path="/student/dashboard" element={<StudentDashboard />} />
-          <Route path="/student/courses/:slug" element={<StudentCourseView />} />
+          <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><Admin /></ProtectedRoute>} />
+          <Route path="/admin/courses" element={<ProtectedRoute requiredRole="admin"><AdminCourses /></ProtectedRoute>} />
+          <Route path="/admin/leads" element={<ProtectedRoute requiredRole="admin"><AdminLeads /></ProtectedRoute>} />
+          <Route path="/admin/courses/:id" element={<ProtectedRoute requiredRole="admin"><CourseManage /></ProtectedRoute>} />
+          <Route path="/student/dashboard" element={<ProtectedRoute requiredRole="user"><StudentDashboard /></ProtectedRoute>} />
+          <Route path="/student/courses/:slug" element={<ProtectedRoute requiredRole="user"><StudentCourseView /></ProtectedRoute>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
