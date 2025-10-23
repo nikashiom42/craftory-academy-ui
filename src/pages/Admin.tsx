@@ -4,15 +4,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { User } from "@supabase/supabase-js";
-import { LogOut, Plus } from "lucide-react";
+import { Plus, Calendar, Users as UsersIcon } from "lucide-react";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { AdminSidebar } from "@/components/AdminSidebar";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 interface Course {
   id: string;
@@ -110,80 +112,105 @@ export default function Admin() {
   }
 
   return (
-    <div className="min-h-screen bg-cream">
-      <header className="bg-background border-b">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Admin Panel</h1>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-muted-foreground">{user?.email}</span>
-            <Button variant="outline" size="sm" onClick={handleSignOut}>
-              <LogOut className="h-4 w-4 mr-2" />
-              Logout
-            </Button>
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-cream">
+        <AdminSidebar userEmail={user?.email} />
+        
+        <main className="flex-1 overflow-auto">
+          <div className="container mx-auto px-8 py-8">
+            {/* Header */}
+            <div className="flex justify-between items-center mb-8">
+              <div>
+                <h1 className="text-4xl font-bold text-foreground">Courses</h1>
+                <p className="text-muted-foreground mt-2">
+                  Manage your academy's course catalog
+                </p>
+              </div>
+              <Button asChild size="lg" className="shadow-medium">
+                <Link to="/admin/courses/new">
+                  <Plus className="h-5 w-5 mr-2" />
+                  Add Course
+                </Link>
+              </Button>
+            </div>
+
+            {/* Courses Grid */}
+            {courses.length === 0 ? (
+              <Card className="shadow-soft">
+                <CardContent className="flex flex-col items-center justify-center py-16">
+                  <div className="rounded-full bg-muted p-4 mb-4">
+                    <Plus className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">No courses yet</h3>
+                  <p className="text-muted-foreground mb-6 text-center max-w-sm">
+                    Get started by creating your first course
+                  </p>
+                  <Button asChild>
+                    <Link to="/admin/courses/new">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Create Course
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {courses.map((course) => (
+                  <Card 
+                    key={course.id} 
+                    className="hover-lift shadow-soft hover:shadow-medium transition-all cursor-pointer"
+                    onClick={() => navigate(`/admin/courses/${course.id}`)}
+                  >
+                    <CardHeader>
+                      <div className="flex justify-between items-start mb-2">
+                        <Badge 
+                          variant={course.published ? "default" : "secondary"}
+                          className="mb-2"
+                        >
+                          {course.published ? "Published" : "Draft"}
+                        </Badge>
+                      </div>
+                      <CardTitle className="text-xl line-clamp-2">
+                        {course.title}
+                      </CardTitle>
+                      <CardDescription className="line-clamp-2">
+                        {course.subtitle || "No subtitle"}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3 text-sm">
+                        {(course.start_date || course.end_date) && (
+                          <div className="flex items-center text-muted-foreground">
+                            <Calendar className="h-4 w-4 mr-2 flex-shrink-0" />
+                            <span>
+                              {course.start_date && course.end_date
+                                ? `${course.start_date} - ${course.end_date}`
+                                : course.start_date || course.end_date}
+                            </span>
+                          </div>
+                        )}
+                        <div className="pt-3 border-t border-border">
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="w-full"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/admin/courses/${course.id}`);
+                            }}
+                          >
+                            Edit Course
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
           </div>
-        </div>
-      </header>
-
-      <main className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-3xl font-bold">Courses</h2>
-          <Button asChild>
-            <Link to="/admin/courses/new">
-              <Plus className="h-4 w-4 mr-2" />
-              Add Course
-            </Link>
-          </Button>
-        </div>
-
-        <div className="bg-background rounded-lg shadow">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Title</TableHead>
-                <TableHead>Subtitle</TableHead>
-                <TableHead>Start Date</TableHead>
-                <TableHead>End Date</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {courses.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                    No courses yet. Create your first course!
-                  </TableCell>
-                </TableRow>
-              ) : (
-                courses.map((course) => (
-                  <TableRow key={course.id}>
-                    <TableCell className="font-medium">{course.title}</TableCell>
-                    <TableCell>{course.subtitle}</TableCell>
-                    <TableCell>{course.start_date || "-"}</TableCell>
-                    <TableCell>{course.end_date || "-"}</TableCell>
-                    <TableCell>
-                      <span
-                        className={`px-2 py-1 rounded text-xs ${
-                          course.published
-                            ? "bg-green-100 text-green-800"
-                            : "bg-yellow-100 text-yellow-800"
-                        }`}
-                      >
-                        {course.published ? "Published" : "Draft"}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <Button variant="outline" size="sm" asChild>
-                        <Link to={`/admin/courses/${course.id}`}>Edit</Link>
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      </main>
-    </div>
+        </main>
+      </div>
+    </SidebarProvider>
   );
 }

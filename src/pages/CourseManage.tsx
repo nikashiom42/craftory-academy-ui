@@ -9,6 +9,9 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Upload, Trash2, Plus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { AdminSidebar } from "@/components/AdminSidebar";
+import { User } from "@supabase/supabase-js";
 
 interface SyllabusModule {
   module: number;
@@ -22,6 +25,7 @@ export default function CourseManage() {
   const navigate = useNavigate();
   const { toast } = useToast();
   
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   
@@ -43,10 +47,18 @@ export default function CourseManage() {
   const [syllabus, setSyllabus] = useState<SyllabusModule[]>([]);
 
   useEffect(() => {
+    checkAuth();
     if (!isNew) {
       loadCourse();
     }
   }, [id]);
+
+  const checkAuth = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      setUser(session.user);
+    }
+  };
 
   const loadCourse = async () => {
     if (isNew) return;
@@ -213,22 +225,23 @@ export default function CourseManage() {
   };
 
   return (
-    <div className="min-h-screen bg-cream">
-      <header className="bg-background border-b">
-        <div className="container mx-auto px-4 py-4">
-          <Button variant="ghost" asChild>
-            <Link to="/admin">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Admin
-            </Link>
-          </Button>
-        </div>
-      </header>
-
-      <main className="container mx-auto px-4 py-8 max-w-4xl">
-        <h1 className="text-3xl font-bold mb-8">
-          {isNew ? "Create New Course" : "Edit Course"}
-        </h1>
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-cream">
+        <AdminSidebar userEmail={user?.email} />
+        
+        <main className="flex-1 overflow-auto">
+          <div className="container mx-auto px-8 py-8 max-w-5xl">
+            <div className="mb-8">
+              <Button variant="ghost" asChild className="mb-4">
+                <Link to="/admin">
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Back to Courses
+                </Link>
+              </Button>
+              <h1 className="text-4xl font-bold text-foreground">
+                {isNew ? "Create New Course" : "Edit Course"}
+              </h1>
+            </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Basic Information */}
@@ -456,7 +469,9 @@ export default function CourseManage() {
             </Button>
           </div>
         </form>
-      </main>
-    </div>
+          </div>
+        </main>
+      </div>
+    </SidebarProvider>
   );
 }
