@@ -41,6 +41,7 @@ export default function CourseManage() {
   const [endDate, setEndDate] = useState("");
   const [googleMeetLink, setGoogleMeetLink] = useState("");
   const [googleDriveLink, setGoogleDriveLink] = useState("");
+  const [price, setPrice] = useState("");
   const [published, setPublished] = useState(false);
 
   // Syllabus
@@ -92,6 +93,7 @@ export default function CourseManage() {
     setEndDate(data.end_date || "");
     setGoogleMeetLink(data.google_meet_link || "");
     setGoogleDriveLink(data.google_drive_link || "");
+    setPrice(data.price?.toString() || "");
     setPublished(data.published || false);
     setSyllabus((data.syllabus as unknown as SyllabusModule[]) || []);
     setLoading(false);
@@ -147,6 +149,7 @@ export default function CourseManage() {
       end_date: endDate || null,
       google_meet_link: googleMeetLink || null,
       google_drive_link: googleDriveLink || null,
+      price: price ? parseFloat(price) : 0,
       published,
       syllabus: syllabus as any,
     };
@@ -330,7 +333,7 @@ export default function CourseManage() {
               <CardTitle>Course Details</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="duration">Duration</Label>
                   <Input
@@ -348,6 +351,17 @@ export default function CourseManage() {
                     value={participantNumber}
                     onChange={(e) => setParticipantNumber(e.target.value)}
                     placeholder="20"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="price">Price (₾)</Label>
+                  <Input
+                    id="price"
+                    type="number"
+                    step="0.01"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    placeholder="0.00"
                   />
                 </div>
               </div>
