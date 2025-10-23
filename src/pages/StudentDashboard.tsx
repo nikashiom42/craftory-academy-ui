@@ -72,6 +72,7 @@ export default function StudentDashboard() {
           )
         `)
         .eq("user_id", session.user.id)
+        .eq("payment_status", "paid")
         .order("enrolled_at", { ascending: false });
 
       if (error) {

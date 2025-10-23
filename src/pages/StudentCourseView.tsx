@@ -135,46 +135,57 @@ export default function StudentCourseView() {
         </section>
 
         {/* Course Access Links */}
-        <section className="py-8 bg-background border-b">
+        <section className="py-8 bg-primary/5 border-b border-primary/10">
           <div className="container mx-auto px-4">
+            <h2 className="text-2xl font-bold mb-6">კურსზე წვდომა</h2>
             <div className="grid md:grid-cols-2 gap-4 max-w-4xl">
-              {course.google_meet_link && (
-                <Card className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Video className="w-5 h-5" />
-                      Google Meet Link
-                    </CardTitle>
-                    <CardDescription>Join live sessions</CardDescription>
-                  </CardHeader>
-                  <CardContent>
+              {/* Google Meet Link */}
+              <Card className="hover:shadow-lg transition-shadow border-2">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Video className="w-5 h-5 text-primary" />
+                    Google Meet ლინკი
+                  </CardTitle>
+                  <CardDescription>შეუერთდი ონლაინ გაკვეთილებს</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {course.google_meet_link ? (
                     <Button asChild className="w-full">
                       <a href={course.google_meet_link} target="_blank" rel="noopener noreferrer">
-                        Join Meeting
+                        შეერთება
                       </a>
                     </Button>
-                  </CardContent>
-                </Card>
-              )}
+                  ) : (
+                    <Button className="w-full" disabled>
+                      ლინკი მალე დაემატება
+                    </Button>
+                  )}
+                </CardContent>
+              </Card>
 
-              {course.google_drive_link && (
-                <Card className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <FolderOpen className="w-5 h-5" />
-                      Course Materials
-                    </CardTitle>
-                    <CardDescription>Access learning resources</CardDescription>
-                  </CardHeader>
-                  <CardContent>
+              {/* Google Drive Link */}
+              <Card className="hover:shadow-lg transition-shadow border-2">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FolderOpen className="w-5 h-5 text-primary" />
+                    საკურსო მასალები
+                  </CardTitle>
+                  <CardDescription>წვდომა სასწავლო რესურსებზე</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {course.google_drive_link ? (
                     <Button asChild className="w-full" variant="outline">
                       <a href={course.google_drive_link} target="_blank" rel="noopener noreferrer">
-                        Open Drive
+                        Drive-ის გახსნა
                       </a>
                     </Button>
-                  </CardContent>
-                </Card>
-              )}
+                  ) : (
+                    <Button className="w-full" variant="outline" disabled>
+                      ლინკი მალე დაემატება
+                    </Button>
+                  )}
+                </CardContent>
+              </Card>
             </div>
           </div>
         </section>
