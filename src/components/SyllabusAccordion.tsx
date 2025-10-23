@@ -49,12 +49,7 @@ export function SyllabusAccordion({ modules, courseSlug }: SyllabusAccordionProp
                   className="border border-border rounded-lg overflow-hidden shadow-soft"
                 >
                   <AccordionTrigger className="px-6 py-4 hover:bg-muted/50">
-                    <div className="flex items-center space-x-4 text-left">
-                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">
-                        {module.module}
-                      </div>
-                      <span className="font-bold">{module.title}</span>
-                    </div>
+                    <span className="font-bold text-left">{module.title}</span>
                   </AccordionTrigger>
                   <AccordionContent className="px-6 pb-4">
                     <ul className="space-y-2 mt-2">

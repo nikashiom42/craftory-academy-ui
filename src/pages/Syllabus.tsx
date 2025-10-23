@@ -63,16 +63,11 @@ export default function Syllabus() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="bg-card border border-border rounded-xl p-8 shadow-soft"
               >
-                <div className="flex items-start space-x-4 mb-6">
-                  <div className="flex-shrink-0 w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xl font-bold">
-                    {module.module}
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-bold mb-2">{module.title}</h3>
-                  </div>
+                <div className="mb-6">
+                  <h3 className="text-2xl font-bold mb-2">{module.title}</h3>
                 </div>
 
-                <div className="ml-18 space-y-4">
+                <div className="space-y-4">
                   <h4 className="font-semibold text-lg mb-3">თემები:</h4>
                   <ul className="space-y-3">
                     {module.topics.map((topic, idx) => (
