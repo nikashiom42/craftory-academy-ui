@@ -14,6 +14,59 @@ export type Database = {
   }
   public: {
     Tables: {
+      course_registrations: {
+        Row: {
+          city: string
+          course_id: string | null
+          created_at: string | null
+          email: string
+          first_name: string
+          id: string
+          last_name: string
+          notes: string | null
+          personal_id: string
+          phone: string
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          city: string
+          course_id?: string | null
+          created_at?: string | null
+          email: string
+          first_name: string
+          id?: string
+          last_name: string
+          notes?: string | null
+          personal_id: string
+          phone: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          city?: string
+          course_id?: string | null
+          created_at?: string | null
+          email?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          notes?: string | null
+          personal_id?: string
+          phone?: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_registrations_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       courses: {
         Row: {
           cohort: Json | null

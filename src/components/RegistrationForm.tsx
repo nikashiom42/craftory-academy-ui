@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const formSchema = z.object({
   firstName: z.string().min(2, "სახელი უნდა შეიცავდეს მინიმუმ 2 სიმბოლოს"),
@@ -44,13 +45,30 @@ export function RegistrationForm() {
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
     
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    console.log("Form submitted:", data);
-    toast.success("გაგვიგზავნეთ! ჩვენ მალე დაგიკავშირდებით.");
-    form.reset();
-    setIsSubmitting(false);
+    try {
+      const { error } = await supabase
+        .from("course_registrations")
+        .insert([
+          {
+            first_name: data.firstName,
+            last_name: data.lastName,
+            phone: data.phone,
+            email: data.email,
+            personal_id: data.personalId,
+            city: data.city,
+          },
+        ]);
+
+      if (error) throw error;
+
+      toast.success("გაგვიგზავნეთ! ჩვენ მალე დაგიკავშირდებით.");
+      form.reset();
+    } catch (error) {
+      console.error("Registration error:", error);
+      toast.error("დაფიქსირდა შეცდომა. გთხოვთ სცადოთ თავიდან.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
