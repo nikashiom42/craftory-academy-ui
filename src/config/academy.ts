@@ -1,6 +1,13 @@
 // Craftory Academy Configuration
 // All editable content for easy client updates
 
+import lazieriLogo from "@/assets/partners/lazieri-logo.png";
+import internaLogo from "@/assets/partners/interna-logo.png";
+import ltbLogo from "@/assets/partners/ltb-logo.png";
+import kastaLogo from "@/assets/partners/kasta-logo.png";
+import woodcraftLogo from "@/assets/partners/woodcraft-logo.png";
+import furnexLogo from "@/assets/partners/furnex-logo.png";
+
 export const academyConfig = {
   // Site Meta
   siteName: "Craftory Academy",
@@ -28,14 +35,14 @@ export const academyConfig = {
     },
   },
 
-  // Partners (placeholder logos)
+  // Partners
   partners: [
-    { name: "Lazieri", logo: "https://via.placeholder.com/150x80/5c4545/ffffff?text=Lazieri" },
-    { name: "Interna", logo: "https://via.placeholder.com/150x80/642215/ffffff?text=Interna" },
-    { name: "LTB", logo: "https://via.placeholder.com/150x80/5c4545/ffffff?text=LTB" },
-    { name: "Kasta", logo: "https://via.placeholder.com/150x80/642215/ffffff?text=Kasta" },
-    { name: "Partner 5", logo: "https://via.placeholder.com/150x80/5c4545/ffffff?text=Partner+5" },
-    { name: "Partner 6", logo: "https://via.placeholder.com/150x80/642215/ffffff?text=Partner+6" },
+    { name: "Lazieri", logo: lazieriLogo },
+    { name: "Interna", logo: internaLogo },
+    { name: "LTB", logo: ltbLogo },
+    { name: "Kasta", logo: kastaLogo },
+    { name: "Woodcraft", logo: woodcraftLogo },
+    { name: "Furnex", logo: furnexLogo },
   ],
 
   // Courses
