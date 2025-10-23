@@ -66,7 +66,10 @@ export function Header() {
           </nav>
 
           {/* CTA Button - Desktop */}
-          <div className="hidden md:block">
+          <div className="hidden md:flex items-center gap-4">
+            <Button variant="ghost" size="sm" asChild>
+              <Link to="/auth">Admin</Link>
+            </Button>
             <Button variant="default" size="default" asChild className="shadow-soft">
               <Link to="#registration">რეგისტრაცია</Link>
             </Button>
@@ -101,7 +104,10 @@ export function Header() {
                   {item.name}
                 </Link>
               ))}
-              <div className="px-4 pt-4">
+              <div className="px-4 pt-4 space-y-2">
+                <Button variant="ghost" className="w-full" asChild>
+                  <Link to="/auth">Admin</Link>
+                </Button>
                 <Button variant="default" className="w-full shadow-soft" asChild>
                   <Link to="#registration">რეგისტრაცია</Link>
                 </Button>
