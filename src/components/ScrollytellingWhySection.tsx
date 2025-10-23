@@ -114,7 +114,7 @@ export function ScrollytellingWhySection() {
             </div>
 
             {/* Right Column - Stacking Cards */}
-            <div className="relative min-h-[600px]">
+            <div className="relative min-h-[700px]">
               {steps.map((step, index) => (
                 <DesktopStepCard
                   key={index}
@@ -188,33 +188,38 @@ function DesktopStepCard({ step, index, activeStep, setActiveStep, shouldReduceM
     }
   }, [isInView, index, setActiveStep, shouldReduceMotion]);
 
-  // Rotation angles for stacking effect (alternating)
-  const rotations = [-2, 1.5, -1, 2];
-  const rotation = rotations[index % rotations.length];
+  // Rotation angles for stacking effect
+  const rotations = [2, -1.5, 1, -2];
+  const rotation = isPassed ? rotations[index % rotations.length] : 0;
+  
+  // Calculate stacking offset - each card moves down and slightly right
+  const offsetY = isPassed ? index * 20 : 0;
+  const offsetX = isPassed ? index * 8 : 0;
 
   return (
     <motion.div
       ref={cardRef}
-      initial={{ opacity: 0, y: 100, scale: 0.9 }}
+      initial={{ opacity: 0, y: 100, scale: 0.95 }}
       animate={{
         opacity: isPassed ? 1 : 0,
-        y: isPassed ? 0 : 100,
-        scale: isPassed ? 1 : 0.9,
-        rotate: isPassed ? rotation : 0,
+        y: isPassed ? offsetY : 100,
+        x: offsetX,
+        scale: isPassed ? 1 : 0.95,
+        rotate: rotation,
       }}
       transition={{ 
-        duration: 0.6, 
-        ease: "easeOut",
-        delay: shouldReduceMotion ? 0 : index * 0.1 
+        duration: 0.5, 
+        ease: [0.25, 0.1, 0.25, 1],
+        delay: shouldReduceMotion ? 0 : index * 0.15 
       }}
       style={{
         position: 'absolute',
-        top: `${index * 12}px`,
+        top: 0,
         left: 0,
         right: 0,
         zIndex: index,
       }}
-      className="bg-background rounded-2xl p-8 shadow-elevated"
+      className="bg-background rounded-3xl p-8 shadow-lg border-4 border-accent/40"
       role="article"
       aria-label={`Step ${index + 1}: ${step.title}`}
     >
