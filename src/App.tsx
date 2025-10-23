@@ -12,6 +12,7 @@ import Syllabus from "./pages/Syllabus";
 import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
 import AdminLeads from "./pages/AdminLeads";
+import AdminCourses from "./pages/AdminCourses";
 import CourseManage from "./pages/CourseManage";
 import NotFound from "./pages/NotFound";
 
@@ -33,6 +34,7 @@ const AppLayout = () => {
           <Route path="/syllabus/:slug" element={<Syllabus />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/admin/courses" element={<AdminCourses />} />
           <Route path="/admin/leads" element={<AdminLeads />} />
           <Route path="/admin/courses/:id" element={<CourseManage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
