@@ -2,7 +2,7 @@ import { useParams, Navigate } from "react-router-dom";
 import { academyConfig } from "@/config/academy";
 import { CourseHero } from "@/components/CourseHero";
 import { PartnersMarquee } from "@/components/PartnersMarquee";
-import { ScrollytellingWhySection } from "@/components/ScrollytellingWhySection";
+import { WhySection } from "@/components/WhySection";
 import { CohortStrip } from "@/components/CohortStrip";
 import { TargetAudienceSection } from "@/components/TargetAudienceSection";
 import { InfoSessionCTA } from "@/components/InfoSessionCTA";
@@ -34,7 +34,7 @@ export default function CourseDetail() {
       
       <PartnersMarquee />
       
-      <ScrollytellingWhySection />
+      <WhySection points={course.whyPoints} />
       
       <CohortStrip cohort={course.cohort} />
       
