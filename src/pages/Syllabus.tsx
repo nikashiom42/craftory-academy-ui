@@ -1,12 +1,55 @@
 import { useParams, Navigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { academyConfig } from "@/config/academy";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Download } from "lucide-react";
 
+interface Course {
+  slug: string;
+  title: string;
+  cohort: {
+    duration: string;
+    sessionsCount: string;
+    format: string;
+  };
+  syllabus: Array<{
+    module: number;
+    title: string;
+    topics: string[];
+  }>;
+}
+
 export default function Syllabus() {
   const { slug } = useParams();
-  const course = academyConfig.courses.find(c => c.slug === slug);
+  const [course, setCourse] = useState<Course | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadCourse();
+  }, [slug]);
+
+  const loadCourse = async () => {
+    const { data, error } = await supabase
+      .from("courses")
+      .select("slug, title, cohort, syllabus")
+      .eq("slug", slug)
+      .eq("published", true)
+      .maybeSingle();
+
+    if (!error && data) {
+      setCourse(data as Course);
+    }
+    setLoading(false);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>იტვირთება...</p>
+      </div>
+    );
+  }
 
   if (!course) {
     return <Navigate to="/courses" replace />;

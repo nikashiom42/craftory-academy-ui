@@ -3,9 +3,52 @@ import { Link } from "react-router-dom";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Clock, Users, ArrowRight } from "lucide-react";
-import { academyConfig } from "@/config/academy";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+
+interface Course {
+  id: string;
+  slug: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  image_url: string;
+  duration: string;
+  cohort: {
+    duration: string;
+    sessionsCount: string;
+  };
+}
 
 export default function Courses() {
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadCourses();
+  }, []);
+
+  const loadCourses = async () => {
+    const { data, error } = await supabase
+      .from("courses")
+      .select("id, slug, title, subtitle, description, image_url, duration, cohort")
+      .eq("published", true)
+      .order("created_at", { ascending: false });
+
+    if (!error && data) {
+      setCourses(data as Course[]);
+    }
+    setLoading(false);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen pt-32 pb-20 flex items-center justify-center">
+        <p>იტვირთება...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen pt-32 pb-20">
       <div className="container mx-auto px-4">
@@ -24,7 +67,7 @@ export default function Courses() {
         </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-          {academyConfig.courses.map((course, index) => (
+          {courses.map((course, index) => (
             <motion.div
               key={course.id}
               initial={{ opacity: 0, y: 20 }}
@@ -34,7 +77,7 @@ export default function Courses() {
               <Card className="h-full flex flex-col shadow-medium hover-lift overflow-hidden">
                 <div className="aspect-video overflow-hidden">
                   <img
-                    src={course.image}
+                    src={course.image_url}
                     alt={course.title}
                     className="w-full h-full object-cover transition-transform hover:scale-105"
                   />
