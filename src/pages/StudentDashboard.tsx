@@ -62,8 +62,12 @@ export default function StudentDashboard() {
         .eq("user_id", session.user.id)
         .order("enrolled_at", { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error loading enrollments:", error);
+        throw error;
+      }
 
+      console.log("Loaded enrollments:", data);
       setEnrollments(data || []);
     } catch (error) {
       console.error("Error loading enrollments:", error);
