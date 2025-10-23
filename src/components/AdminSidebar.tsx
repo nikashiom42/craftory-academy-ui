@@ -1,5 +1,5 @@
 import { LayoutGrid, Users, LogOut } from "lucide-react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   Sidebar,
   SidebarContent,
@@ -14,10 +14,10 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
+import craftoryLogo from "@/assets/craftory-logo-new.png";
 
 const menuItems = [
-  { title: "Courses", url: "/admin", icon: LayoutGrid },
+  { title: "Dashboard", url: "/admin", icon: LayoutGrid },
   { title: "Customers", url: "/admin/customers", icon: Users, disabled: true },
 ];
 
@@ -26,32 +26,37 @@ interface AdminSidebarProps {
 }
 
 export function AdminSidebar({ userEmail }: AdminSidebarProps) {
-  const location = useLocation();
   const navigate = useNavigate();
-  const currentPath = location.pathname;
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     navigate("/auth");
   };
 
-  const getNavClass = (isActive: boolean) =>
-    isActive 
-      ? "bg-primary text-primary-foreground font-semibold" 
-      : "hover:bg-muted";
-
   return (
-    <Sidebar className="border-r border-border">
+    <Sidebar className="border-r border-border bg-card">
       <SidebarHeader className="border-b border-border p-6">
-        <h2 className="text-xl font-bold text-foreground">Admin Dashboard</h2>
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center overflow-hidden">
+            <img src={craftoryLogo} alt="Craftory" className="w-8 h-8 object-contain" />
+          </div>
+          <div>
+            <h2 className="text-lg font-bold text-foreground">Craftory</h2>
+            <p className="text-xs text-muted-foreground">Admin Panel</p>
+          </div>
+        </div>
         {userEmail && (
-          <p className="text-xs text-muted-foreground mt-1">{userEmail}</p>
+          <div className="text-xs text-muted-foreground truncate bg-muted/30 px-3 py-2 rounded-md">
+            {userEmail}
+          </div>
         )}
       </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent className="px-3 py-4">
         <SidebarGroup>
-          <SidebarGroupLabel>Management</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
+            Management
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => (
@@ -59,22 +64,28 @@ export function AdminSidebar({ userEmail }: AdminSidebarProps) {
                   <SidebarMenuButton 
                     asChild 
                     disabled={item.disabled}
-                    className={item.disabled ? "opacity-50 cursor-not-allowed" : ""}
+                    className={`mb-1 ${item.disabled ? "opacity-50 cursor-not-allowed" : ""}`}
                   >
                     {item.disabled ? (
-                      <div className="flex items-center gap-3 px-3 py-2 text-muted-foreground">
+                      <div className="flex items-center gap-3 px-3 py-2.5 text-muted-foreground rounded-md">
                         <item.icon className="h-5 w-5" />
-                        <span>{item.title}</span>
-                        <span className="ml-auto text-xs">(Soon)</span>
+                        <span className="text-sm font-medium">{item.title}</span>
+                        <span className="ml-auto text-xs bg-muted px-2 py-0.5 rounded">Soon</span>
                       </div>
                     ) : (
                       <NavLink
                         to={item.url}
                         end
-                        className={({ isActive }) => getNavClass(isActive)}
+                        className={({ isActive }) =>
+                          `flex items-center gap-3 px-3 py-2.5 rounded-md transition-all ${
+                            isActive
+                              ? "bg-primary text-primary-foreground font-semibold shadow-sm"
+                              : "hover:bg-muted text-foreground"
+                          }`
+                        }
                       >
                         <item.icon className="h-5 w-5" />
-                        <span>{item.title}</span>
+                        <span className="text-sm font-medium">{item.title}</span>
                       </NavLink>
                     )}
                   </SidebarMenuButton>
@@ -88,7 +99,7 @@ export function AdminSidebar({ userEmail }: AdminSidebarProps) {
       <SidebarFooter className="border-t border-border p-4">
         <Button 
           variant="outline" 
-          className="w-full justify-start" 
+          className="w-full justify-start hover:bg-destructive hover:text-destructive-foreground hover:border-destructive transition-all" 
           onClick={handleSignOut}
         >
           <LogOut className="h-4 w-4 mr-2" />
