@@ -52,7 +52,7 @@ export function ScrollytellingWhySection() {
   };
 
   return (
-    <section className="relative py-20 bg-cream">
+    <section className="relative py-20 bg-cream overflow-hidden">
       {/* Desktop Layout */}
       <div className="hidden lg:block">
         <div className="container mx-auto px-4">
@@ -113,8 +113,8 @@ export function ScrollytellingWhySection() {
               </motion.div>
             </div>
 
-            {/* Right Column - Scrolling Cards */}
-            <div className="space-y-6">
+            {/* Right Column - Stacking Cards */}
+            <div className="relative min-h-[600px]">
               {steps.map((step, index) => (
                 <DesktopStepCard
                   key={index}
@@ -180,7 +180,7 @@ interface DesktopStepCardProps {
 function DesktopStepCard({ step, index, activeStep, setActiveStep, shouldReduceMotion }: DesktopStepCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(cardRef, { amount: 0.5 });
-  const isActive = index === activeStep;
+  const isPassed = index <= activeStep;
 
   useEffect(() => {
     if (isInView && !shouldReduceMotion) {
@@ -188,16 +188,33 @@ function DesktopStepCard({ step, index, activeStep, setActiveStep, shouldReduceM
     }
   }, [isInView, index, setActiveStep, shouldReduceMotion]);
 
+  // Rotation angles for stacking effect (alternating)
+  const rotations = [-2, 1.5, -1, 2];
+  const rotation = rotations[index % rotations.length];
+
   return (
     <motion.div
       ref={cardRef}
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: false, amount: 0.3 }}
-      transition={{ duration: 0.5, delay: 0.1 }}
-      className={`bg-background rounded-2xl p-8 shadow-elevated transition-all duration-300 ${
-        isActive ? 'ring-2 ring-primary' : ''
-      }`}
+      initial={{ opacity: 0, y: 100, scale: 0.9 }}
+      animate={{
+        opacity: isPassed ? 1 : 0,
+        y: isPassed ? 0 : 100,
+        scale: isPassed ? 1 : 0.9,
+        rotate: isPassed ? rotation : 0,
+      }}
+      transition={{ 
+        duration: 0.6, 
+        ease: "easeOut",
+        delay: shouldReduceMotion ? 0 : index * 0.1 
+      }}
+      style={{
+        position: 'absolute',
+        top: `${index * 12}px`,
+        left: 0,
+        right: 0,
+        zIndex: index,
+      }}
+      className="bg-background rounded-2xl p-8 shadow-elevated"
       role="article"
       aria-label={`Step ${index + 1}: ${step.title}`}
     >
@@ -216,7 +233,7 @@ function DesktopStepCard({ step, index, activeStep, setActiveStep, shouldReduceM
             <motion.span
               className="font-bold text-primary"
               initial={{ opacity: 0 }}
-              animate={{ opacity: isActive ? 1 : 0.5 }}
+              animate={{ opacity: isPassed ? 1 : 0 }}
             >
               {step.targetProgress}%
             </motion.span>
@@ -225,8 +242,8 @@ function DesktopStepCard({ step, index, activeStep, setActiveStep, shouldReduceM
             <motion.div
               className="h-full bg-gradient-to-r from-primary to-accent rounded-full"
               initial={{ width: 0 }}
-              animate={{ width: isActive ? `${step.targetProgress}%` : '0%' }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
+              animate={{ width: isPassed ? `${step.targetProgress}%` : '0%' }}
+              transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
             />
           </div>
         </div>
