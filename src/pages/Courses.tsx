@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Clock, Users, ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,6 +15,7 @@ interface Course {
   description: string;
   image_url: string;
   duration: string;
+  price: number;
   cohort: {
     duration: string;
     sessionsCount: string;
@@ -31,7 +33,7 @@ export default function Courses() {
   const loadCourses = async () => {
     const { data, error } = await supabase
       .from("courses")
-      .select("id, slug, title, subtitle, description, image_url, duration, cohort")
+      .select("id, slug, title, subtitle, description, image_url, duration, price, cohort")
       .eq("published", true)
       .order("created_at", { ascending: false });
 
@@ -75,12 +77,15 @@ export default function Courses() {
               transition={{ duration: 0.6, delay: index * 0.1 }}
             >
               <Card className="h-full flex flex-col shadow-medium hover-lift overflow-hidden">
-                <div className="aspect-video overflow-hidden">
+                <div className="aspect-video overflow-hidden relative">
                   <img
                     src={course.image_url}
                     alt={course.title}
                     className="w-full h-full object-cover transition-transform hover:scale-105"
                   />
+                  <Badge className="absolute top-4 right-4 bg-primary text-primary-foreground shadow-lg">
+                    {course.price} ₾
+                  </Badge>
                 </div>
                 
                 <CardHeader>
