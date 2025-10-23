@@ -86,7 +86,6 @@ export default function AdminLeads() {
       setIsAdmin(true);
       loadRegistrations();
     } catch (error) {
-      console.error("Auth check failed:", error);
       navigate("/auth");
     } finally {
       setLoading(false);

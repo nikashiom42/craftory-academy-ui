@@ -19,9 +19,9 @@ import { supabase } from "@/integrations/supabase/client";
 const formSchema = z.object({
   firstName: z.string().min(2, "სახელი უნდა შეიცავდეს მინიმუმ 2 სიმბოლოს"),
   lastName: z.string().min(2, "გვარი უნდა შეიცავდეს მინიმუმ 2 სიმბოლოს"),
-  phone: z.string().min(9, "საკონტაქტო ნომერი არასწორია"),
+  phone: z.string().regex(/^[\d\s\+\-\(\)]{9,}$/, "საკონტაქტო ნომერი არასწორია"),
   email: z.string().email("ელფოსტის მისამართი არასწორია"),
-  personalId: z.string().min(11, "პირადი ნომერი არასწორია").max(11, "პირადი ნომერი არასწორია"),
+  personalId: z.string().length(11, "პირადი ნომერი უნდა იყოს 11 ციფრი").regex(/^\d{11}$/, "პირადი ნომერი უნდა შეიცავდეს მხოლოდ ციფრებს"),
   city: z.string().min(2, "გთხოვთ შეიყვანოთ ქალაქი"),
 });
 
@@ -64,7 +64,6 @@ export function RegistrationForm() {
       toast.success("გაგვიგზავნეთ! ჩვენ მალე დაგიკავშირდებით.");
       form.reset();
     } catch (error) {
-      console.error("Registration error:", error);
       toast.error("დაფიქსირდა შეცდომა. გთხოვთ სცადოთ თავიდან.");
     } finally {
       setIsSubmitting(false);

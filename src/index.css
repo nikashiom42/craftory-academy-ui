@@ -66,11 +66,11 @@ All colors MUST be HSL.
     
     /* Sidebar colors */
     --sidebar: 0 0% 100%;
-    --sidebar-foreground: 0 0% 0%;
+    --sidebar-foreground: 11 59% 24%;
     --sidebar-border: 0 0% 83%;
     --sidebar-accent: 14 77% 52%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-ring: 0 0% 0%;
+    --sidebar-accent-foreground: 0 0% 0%;
+    --sidebar-ring: 11 59% 24%;
   }
 
   .dark {
@@ -110,7 +110,7 @@ All colors MUST be HSL.
     --sidebar-foreground: 0 0% 95%;
     --sidebar-border: 0 16% 25%;
     --sidebar-accent: 14 77% 52%;
-    --sidebar-accent-foreground: 0 16% 12%;
+    --sidebar-accent-foreground: 0 0% 0%;
     --sidebar-ring: 44 74% 52%;
   }
 }

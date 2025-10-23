@@ -81,7 +81,6 @@ export default function AdminCourses() {
       setIsAdmin(true);
       loadCourses();
     } catch (error) {
-      console.error("Auth check failed:", error);
       navigate("/auth");
     } finally {
       setLoading(false);
