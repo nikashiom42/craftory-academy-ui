@@ -60,7 +60,6 @@ export default function CourseDetail() {
       .select("id")
       .eq("user_id", session.user.id)
       .eq("course_id", courseId)
-      .eq("payment_status", "paid")
       .maybeSingle();
 
     setIsEnrolled(!!data);

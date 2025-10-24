@@ -11,7 +11,6 @@ import Courses from "./pages/Courses";
 import CourseDetail from "./pages/CourseDetail";
 import Syllabus from "./pages/Syllabus";
 import Auth from "./pages/Auth";
-import PaymentReturn from "./pages/PaymentReturn";
 import Admin from "./pages/Admin";
 import AdminLeads from "./pages/AdminLeads";
 import AdminCourses from "./pages/AdminCourses";
@@ -27,19 +26,17 @@ const AppLayout = () => {
   const isAdminRoute = location.pathname.startsWith('/admin');
   const isAuthRoute = location.pathname.startsWith('/auth');
   const isStudentRoute = location.pathname.startsWith('/student');
-  const isPaymentRoute = location.pathname.startsWith('/payment');
 
   return (
     <div className="flex flex-col min-h-screen">
-      {!isAdminRoute && !isAuthRoute && !isStudentRoute && !isPaymentRoute && <Header />}
-      <main className={isAdminRoute || isAuthRoute || isStudentRoute || isPaymentRoute ? "" : "flex-grow"}>
+      {!isAdminRoute && !isAuthRoute && !isStudentRoute && <Header />}
+      <main className={isAdminRoute || isAuthRoute || isStudentRoute ? "" : "flex-grow"}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/courses" element={<Courses />} />
           <Route path="/courses/:slug" element={<CourseDetail />} />
           <Route path="/syllabus/:slug" element={<Syllabus />} />
           <Route path="/auth" element={<Auth />} />
-          <Route path="/payment/return" element={<PaymentReturn />} />
           <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><Admin /></ProtectedRoute>} />
           <Route path="/admin/courses" element={<ProtectedRoute requiredRole="admin"><AdminCourses /></ProtectedRoute>} />
           <Route path="/admin/leads" element={<ProtectedRoute requiredRole="admin"><AdminLeads /></ProtectedRoute>} />
@@ -50,7 +47,7 @@ const AppLayout = () => {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
-      {!isAdminRoute && !isAuthRoute && !isStudentRoute && !isPaymentRoute && <Footer />}
+      {!isAdminRoute && !isAuthRoute && !isStudentRoute && <Footer />}
     </div>
   );
 };

@@ -1,6 +1,4 @@
-# Craftory Academy
-
-Georgian furniture construction academy platform with integrated TBC Bank payments.
+# Welcome to your Lovable project
 
 ## Project info
 
@@ -61,35 +59,6 @@ This project is built with:
 - React
 - shadcn-ui
 - Tailwind CSS
-- Supabase (Auth, Database, Edge Functions)
-- TBC Bank E-Commerce API
-
-## Payment Integration
-
-This project uses TBC Bank hosted checkout for secure payment processing. See [TBC_INTEGRATION_GUIDE.md](./TBC_INTEGRATION_GUIDE.md) for detailed setup instructions.
-
-### Quick Setup
-
-1. **Apply database migration:**
-```bash
-supabase db push
-```
-
-2. **Configure secrets:**
-```bash
-cd supabase/functions
-chmod +x SECRETS_SETUP.sh
-./SECRETS_SETUP.sh
-```
-
-3. **Deploy Edge Function:**
-```bash
-supabase functions deploy tbc-payment
-```
-
-4. **Configure TBC merchant settings** with your callback URL
-
-See [supabase/functions/README.md](./supabase/functions/README.md) for more details.
 
 ## How can I deploy this project?
 
