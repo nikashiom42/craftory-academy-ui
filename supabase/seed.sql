@@ -137,7 +137,9 @@ INSERT INTO courses (
   skills,
   syllabus,
   target_audience,
-  trainer
+  trainer,
+  google_meet_link,
+  google_drive_link
 ) VALUES (
   'interior-design',
   'ინტერიერის დიზაინის კურსი',
@@ -209,7 +211,9 @@ INSERT INTO courses (
     'credentials', '10+ წლის გამოცდილება ინტერიერის დიზაინში',
     'bio', 'მე ვარ ანა, ინტერიერის დიზაინით 10 წელზე მეტია ვმუშაობ. დავამთავრე პროექტები როგორც საქართველოში, ასევე საზღვარგარეთ. ჩემი მიზანია გადავცე ცოდნა და გამოცდილება, რათა დავეხმარო სტუდენტებს გახდნენ წარმატებული დიზაინერები.',
     'image', 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop'
-  )
+  ),
+  NULL,
+  NULL
 );
 
 -- Insert Wood Carving Course
@@ -229,7 +233,9 @@ INSERT INTO courses (
   skills,
   syllabus,
   target_audience,
-  trainer
+  trainer,
+  google_meet_link,
+  google_drive_link
 ) VALUES (
   'wood-carving',
   'ხის კვეთის ხელოსნობის კურსი',
@@ -301,5 +307,7 @@ INSERT INTO courses (
     'credentials', '20+ წლის გამოცდილება ხის დამუშავებაში',
     'bio', 'მე ვარ ლევან, ხის დამუშავებისა და კვეთის ხელოსნობით 20 წელზე მეტია ვმუშაობ. ჩემი ნამუშევრები წარმოდგენილია როგორც საქართველოში, ასევე საზღვარგარეთ. კურსით მინდა გადავცე ტრადიციული ხელოსნობის უნარები ახალ თაობას.',
     'image', 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop'
-  )
+  ),
+  NULL,
+  NULL
 );
