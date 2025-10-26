@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Menu, X, BookOpen } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Menu, X, BookOpen, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { academyConfig } from "@/config/academy";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import craftoryLogo from "@/assets/craftory-logo.png";
 
 export function Header() {
@@ -12,6 +13,7 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -40,6 +42,16 @@ export function Header() {
     if (path.startsWith("#")) {
       const element = document.querySelector(path);
       element?.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      toast.success("წარმატებით გახვედით სისტემიდან");
+      navigate("/");
+    } catch (error) {
+      toast.error("გასვლისას დაფიქსირდა შეცდომა");
     }
   };
 
@@ -81,14 +93,25 @@ export function Header() {
           </nav>
 
           {/* CTA Button - Desktop */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-3">
             {isLoggedIn ? (
-              <Button variant="default" size="default" asChild className="shadow-soft gap-2">
-                <Link to="/student/dashboard">
-                  <BookOpen className="w-4 h-4" />
-                  My Courses
-                </Link>
-              </Button>
+              <>
+                <Button variant="default" size="default" asChild className="shadow-soft gap-2">
+                  <Link to="/student/dashboard">
+                    <BookOpen className="w-4 h-4" />
+                    My Courses
+                  </Link>
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="default" 
+                  onClick={handleLogout}
+                  className="gap-2"
+                >
+                  <LogOut className="w-4 h-4" />
+                  გასვლა
+                </Button>
+              </>
             ) : (
               <>
                 <Button variant="ghost" size="sm" asChild>
@@ -132,12 +155,22 @@ export function Header() {
               ))}
               <div className="px-4 pt-4 space-y-2">
                 {isLoggedIn ? (
-                  <Button variant="default" className="w-full shadow-soft gap-2" asChild>
-                    <Link to="/student/dashboard">
-                      <BookOpen className="w-4 h-4" />
-                      My Courses
-                    </Link>
-                  </Button>
+                  <>
+                    <Button variant="default" className="w-full shadow-soft gap-2" asChild>
+                      <Link to="/student/dashboard">
+                        <BookOpen className="w-4 h-4" />
+                        My Courses
+                      </Link>
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="w-full gap-2"
+                      onClick={handleLogout}
+                    >
+                      <LogOut className="w-4 h-4" />
+                      გასვლა
+                    </Button>
+                  </>
                 ) : (
                   <>
                     <Button variant="ghost" className="w-full" asChild>
