@@ -2,7 +2,6 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { PartnersMarquee } from "@/components/PartnersMarquee";
 import { RegistrationForm } from "@/components/RegistrationForm";
-import { StatsSection } from "@/components/StatsSection";
 import { ScrollytellingWhySection } from "@/components/ScrollytellingWhySection";
 import { ArrowRight, BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -73,16 +72,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      <StatsSection 
-        stats={[
-          { value: 500, suffix: "+", label: "კურსდამთავრებული" },
-          { value: 95, suffix: "%", label: "დასაქმების მაჩვენებელი" },
-          { value: 6, suffix: "+", label: "პარტნიორი კომპანია" },
-          { value: 12, suffix: "+", label: "წლიანი გამოცდილება" },
-        ]}
-      />
-
       <PartnersMarquee />
 
       <ScrollytellingWhySection />

@@ -3,10 +3,10 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import lazieriLogo from "@/assets/partners/lazieri-logo.png";
-import internaLogo from "@/assets/partners/interna-logo.png";
-import ltbLogo from "@/assets/partners/ltb-logo.png";
-import kastaLogo from "@/assets/partners/kasta-logo.png";
+import partner1Logo from "@/assets/partners/1.png";
+import partner2Logo from "@/assets/partners/2.png";
+import partner3Logo from "@/assets/partners/3.png";
+import partner4Logo from "@/assets/partners/4.png";
 
 interface StepCard {
   title: string;
@@ -28,16 +28,16 @@ const steps: StepCard[] = [
     targetProgress: 100,
   },
   {
-    title: "სტაჟირება პარტნიორ კომპანიებში: Lazieri, Interna",
+    title: "სტაჟირება პარტნიორ კომპანიებში",
     description: "გარანტირებული სტაჟირება წამყვან კომპანიებში",
     targetProgress: 85,
-    logos: [lazieriLogo, internaLogo],
+    logos: [partner1Logo, partner2Logo],
   },
   {
-    title: "ონლაინ სწავლება და პრაქტიკული შეხვედრები: LTB, Kasta",
+    title: "ონლაინ სწავლება და პრაქტიკული შეხვედრები",
     description: "თეორიული მასალა ონლაინ და პრაქტიკა პარტნიორ ორგანიზაციებში",
     targetProgress: 90,
-    logos: [ltbLogo, kastaLogo],
+    logos: [partner3Logo, partner4Logo],
   },
 ];
 
@@ -183,7 +183,7 @@ function CarouselCard({ step, index }: CarouselCardProps) {
                   <img
                     src={logo}
                     alt="Partner logo"
-                    className="h-6 object-contain opacity-60"
+                    className="h-6 object-contain"
                   />
                 </motion.div>
               ))}
@@ -246,7 +246,7 @@ function MobileStepCard({ step, index }: MobileStepCardProps) {
                 <img
                   src={logo}
                   alt="Partner logo"
-                  className="h-4 object-contain opacity-60"
+                  className="h-4 object-contain"
                 />
               </div>
             ))}

@@ -6,6 +6,15 @@
 All colors MUST be HSL.
 */
 
+/* Custom font import */
+@font-face {
+  font-family: 'SS-GEO-HAKUNA';
+  src: url('./assets/SS-GEO-HAKUNA.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer base {
   :root {
     /* Craftory Academy Brand Colors - Client Palette */
@@ -122,10 +131,17 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'FiraGO', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'FiraGO', 'Noto Sans Condensed', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1, h2 {
+    @apply font-bold;
+    font-family: 'SS-GEO-HAKUNA', 'FiraGO', 'Noto Sans Condensed', sans-serif;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  h3, h4, h5, h6 {
     @apply font-bold;
     letter-spacing: -0.02em;
     line-height: 1.2;
