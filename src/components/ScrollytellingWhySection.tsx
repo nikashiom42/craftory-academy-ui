@@ -18,24 +18,24 @@ interface StepCard {
 // steps stores the content for each card in the scrollytelling stack.
 const steps: StepCard[] = [
   {
-    title: "ავეჯის კონსტრუქტორი დღითიდღე უფრო და უფრო მოთხოვნადი პროფესია ხდება",
-    description: "საქართველოში და მთელ მსოფლიოში ავეჯის ინდუსტრია განვითარების პიკზეა",
+    title: "კურსი მიმდინარეობს ONLINE ფორმატში და მოიცავს პრაქტიკულ შეხვედრებს ჩვენს პარტნიორ კომპანიებში, სადაც კურსის სტუდენტები მიიღებენ რეალურ პრაქტიკულ ცოდნასა და გამოცდილებას.",
+    description: "გახდი ერთ-ერთი პირველი პროფესიონალი ავეჯის კონსტრუქტორი საქართველოში და დაეუფლე პროფესიას, რომელიც ყოველდღიურად უფრო მოთხოვნადი ხდება.",
     targetProgress: 95,
   },
   {
-    title: "კურსის ბოლოს მიიღებ სერთიფიკატს",
-    description: "აღიარებული სერთიფიკატი, რომელიც დაგეხმარება კარიერის დაწყებაში",
+    title: "ცოდნის დამადასტურებელი სერთიფიკატი",
+    description: "მიიღე ცოდნის დამადასტურებელი სერთიფიკატი, კურსის დასრულებისთანავე და დაიწყე კარიერული განვითარება",
     targetProgress: 100,
   },
   {
-    title: "სტაჟირება პარტნიორ კომპანიებში",
-    description: "გარანტირებული სტაჟირება წამყვან კომპანიებში",
+    title: "მიიღე ცოდნის დამადასტურებელი სერთიფიკატი, კურსის დასრულებისთანავე და დაიწყე კარიერული განვითარება",
+    description: "მიიღე სტაჟირების შესაძლებლობა საქართველოში წამყვან ავეჯის წარმოების კომპანიებში, როგორიც არის: Lazieri, Interna და BinART",
     targetProgress: 85,
     logos: [partner1Logo, partner2Logo],
   },
   {
-    title: "ონლაინ სწავლება და პრაქტიკული შეხვედრები",
-    description: "თეორიული მასალა ონლაინ და პრაქტიკა პარტნიორ ორგანიზაციებში",
+    title: "ონლაინ სწავლება და პრაქტიკული შეხვედრები: LTB, Kasta, New Lam, B.Tech",
+    description: "კურსი მიმდინარეობს ONLINE ფორმატში და მოიცავს პრაქტიკულ შეხვედრებს ჩვენს პარტნიორ კომპანიებში, სადაც კურსის სტუდენტები მიიღებენ რეალურ პრაქტიკულ ცოდნასა და გამოცდილებას.",
     targetProgress: 90,
     logos: [partner3Logo, partner4Logo],
   },
@@ -76,7 +76,7 @@ export function ScrollytellingWhySection() {
                 transition={{ duration: 0.6 }}
               >
                 <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase leading-tight">
-                  რატომ უნდა გახდე ავეჯის კონსტრუქტორი
+                  რატომ უნდა გახდე ავეჯის კონსტრუქტორი ?
                 </h2>
                 <div className="mt-6 w-24 h-1 bg-gradient-to-r from-accent to-primary rounded-full"></div>
               </motion.div>
@@ -107,7 +107,7 @@ export function ScrollytellingWhySection() {
             className="mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold uppercase leading-tight">
-              რატომ უნდა გახდე ავეჯის კონსტრუქტორი
+              რატომ უნდა გახდე ავეჯის კონსტრუქტორი ?
             </h2>
           </motion.div>
 

@@ -10,12 +10,25 @@ export function TargetAudienceSection({ audience }: TargetAudienceSectionProps) 
     <section className="py-20 bg-background">
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
-          {/* Left side - List of target audience */}
-          <div className="space-y-6 order-2 md:order-1">
+          {/* Left side - Heading */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="order-1 md:order-1"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold uppercase leading-tight">
+              კურსი იდეალურია შენთვის თუ:
+            </h2>
+          </motion.div>
+
+          {/* Right side - List of target audience */}
+          <div className="space-y-6 order-2 md:order-2">
             {audience.map((item, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, x: -20 }}
+                initial={{ opacity: 0, x: 20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
@@ -28,19 +41,6 @@ export function TargetAudienceSection({ audience }: TargetAudienceSectionProps) 
               </motion.div>
             ))}
           </div>
-
-          {/* Right side - Heading */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="order-1 md:order-2"
-          >
-            <h2 className="text-4xl md:text-5xl font-bold uppercase leading-tight">
-              კურსი იდეალურია შენთვის თუ:
-            </h2>
-          </motion.div>
         </div>
       </div>
     </section>

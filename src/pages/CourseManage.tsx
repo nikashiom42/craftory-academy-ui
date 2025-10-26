@@ -75,9 +75,13 @@ export default function CourseManage() {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to load course",
+        description: "Course not found. Redirecting to courses list...",
       });
       setLoading(false);
+      // If course not found (likely deleted), redirect to admin courses after a short delay
+      setTimeout(() => {
+        navigate("/admin/courses");
+      }, 2000);
       return;
     }
 

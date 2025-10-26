@@ -164,7 +164,7 @@ export function RegistrationForm() {
                   <FormItem>
                     <FormLabel>საკონტაქტო ნომერი</FormLabel>
                     <FormControl>
-                      <Input placeholder="+995 555 123 456" {...field} />
+                      <Input placeholder="505 05 01 08" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

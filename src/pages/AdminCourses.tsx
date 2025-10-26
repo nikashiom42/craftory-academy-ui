@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { User } from "@supabase/supabase-js";
-import { Plus, Search, BookOpen, CheckCircle2, Clock, Edit } from "lucide-react";
+import { Plus, Search, BookOpen, CheckCircle2, Clock, Edit, Trash2 } from "lucide-react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AdminSidebar } from "@/components/AdminSidebar";
 import { Card, CardContent } from "@/components/ui/card";
@@ -25,6 +25,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface Course {
   id: string;
@@ -83,6 +94,33 @@ export default function AdminCourses() {
     }
 
     setCourses(data || []);
+  };
+
+  /**
+   * Delete a course from the database
+   */
+  const deleteCourse = async (courseId: string, courseTitle: string) => {
+    const { error } = await supabase
+      .from("courses")
+      .delete()
+      .eq("id", courseId);
+
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to delete course",
+      });
+      return;
+    }
+
+    toast({
+      title: "Success",
+      description: `Course "${courseTitle}" has been deleted`,
+    });
+
+    // Reload courses to update the list
+    await loadCourses();
   };
 
   // Filter courses
@@ -281,17 +319,50 @@ export default function AdminCourses() {
                               {new Date(course.created_at).toLocaleDateString('ka-GE')}
                             </TableCell>
                             <TableCell className="text-right">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  navigate(`/admin/courses/${course.id}`);
-                                }}
-                              >
-                                <Edit className="h-4 w-4 mr-1" />
-                                Edit
-                              </Button>
+                              <div className="flex items-center gap-2 justify-end">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    navigate(`/admin/courses/${course.id}`);
+                                  }}
+                                >
+                                  <Edit className="h-4 w-4 mr-1" />
+                                  Edit
+                                </Button>
+                                
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={(e) => e.stopPropagation()}
+                                      className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                                    >
+                                      <Trash2 className="h-4 w-4 mr-1" />
+                                      Delete
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>Delete Course</AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        Are you sure you want to delete "{course.title}"? This action cannot be undone and will also remove all associated registrations and enrollments.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                      <AlertDialogAction
+                                        onClick={() => deleteCourse(course.id, course.title)}
+                                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                      >
+                                        Delete Course
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              </div>
                             </TableCell>
                           </TableRow>
                         ))

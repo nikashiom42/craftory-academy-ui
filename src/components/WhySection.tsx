@@ -32,7 +32,7 @@ export function WhySection({ points }: WhySectionProps) {
             className="order-1"
           >
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase leading-tight">
-              რატომ უნდა გახდე ავეჯის კონსტრუქტორი
+              რატომ უნდა გახდე ავეჯის კონსტრუქტორი ?
             </h2>
           </motion.div>
 
