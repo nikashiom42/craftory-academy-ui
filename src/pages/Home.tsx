@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { PartnersMarquee } from "@/components/PartnersMarquee";
 import { RegistrationForm } from "@/components/RegistrationForm";
+import { ContactSection } from "@/components/ContactSection";
 import { ScrollytellingWhySection } from "@/components/ScrollytellingWhySection";
 import { ArrowRight, BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -107,6 +108,7 @@ export default function Home() {
         </div>
       </section>
 
+      <ContactSection />
       <RegistrationForm />
     </div>
   );

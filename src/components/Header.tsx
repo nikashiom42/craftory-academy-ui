@@ -40,8 +40,18 @@ export function Header() {
   const handleNavClick = (path: string) => {
     setIsMobileMenuOpen(false);
     if (path.startsWith("#")) {
-      const element = document.querySelector(path);
-      element?.scrollIntoView({ behavior: "smooth" });
+      // For registration and contact, first navigate to home page if not already there
+      if ((path === "#registration" || path === "#contact") && location.pathname !== "/") {
+        navigate("/");
+        // Wait for navigation to complete, then scroll
+        setTimeout(() => {
+          const element = document.querySelector(path);
+          element?.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+      } else {
+        const element = document.querySelector(path);
+        element?.scrollIntoView({ behavior: "smooth" });
+      }
     }
   };
 
@@ -112,16 +122,7 @@ export function Header() {
                   გასვლა
                 </Button>
               </>
-            ) : (
-              <>
-                <Button variant="ghost" size="sm" asChild>
-                  <Link to="/auth">Login</Link>
-                </Button>
-                <Button variant="default" size="default" asChild className="shadow-soft">
-                  <Link to="/courses">Browse Courses</Link>
-                </Button>
-              </>
-            )}
+            ) : null}
           </div>
 
           {/* Mobile Menu Button */}
@@ -153,35 +154,24 @@ export function Header() {
                   {item.name}
               </Link>
               ))}
-              <div className="px-4 pt-4 space-y-2">
-                {isLoggedIn ? (
-                  <>
-                    <Button variant="default" className="w-full shadow-soft gap-2" asChild>
-                      <Link to="/student/dashboard">
-                        <BookOpen className="w-4 h-4" />
-                        My Courses
-                      </Link>
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      className="w-full gap-2"
-                      onClick={handleLogout}
-                    >
-                      <LogOut className="w-4 h-4" />
-                      გასვლა
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button variant="ghost" className="w-full" asChild>
-                      <Link to="/auth">Login</Link>
-                    </Button>
-                    <Button variant="default" className="w-full shadow-soft" asChild>
-                      <Link to="/courses">Browse Courses</Link>
-                    </Button>
-                  </>
-                )}
-              </div>
+              {isLoggedIn && (
+                <div className="px-4 pt-4 space-y-2">
+                  <Button variant="default" className="w-full shadow-soft gap-2" asChild>
+                    <Link to="/student/dashboard">
+                      <BookOpen className="w-4 h-4" />
+                      My Courses
+                    </Link>
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    className="w-full gap-2"
+                    onClick={handleLogout}
+                  >
+                    <LogOut className="w-4 h-4" />
+                    გასვლა
+                  </Button>
+                </div>
+              )}
             </div>
           </nav>
         )}
