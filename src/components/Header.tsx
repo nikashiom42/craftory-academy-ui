@@ -40,16 +40,18 @@ export function Header() {
   const handleNavClick = (path: string) => {
     setIsMobileMenuOpen(false);
     if (path.startsWith("#")) {
+      // Map contact to registration section for smooth scroll to free consultation form
+      const targetPath = path === "#contact" ? "#registration" : path;
       // For registration and contact, first navigate to home page if not already there
       if ((path === "#registration" || path === "#contact") && location.pathname !== "/") {
         navigate("/");
         // Wait for navigation to complete, then scroll
         setTimeout(() => {
-          const element = document.querySelector(path);
+          const element = document.querySelector(targetPath);
           element?.scrollIntoView({ behavior: "smooth" });
         }, 100);
       } else {
-        const element = document.querySelector(path);
+        const element = document.querySelector(targetPath);
         element?.scrollIntoView({ behavior: "smooth" });
       }
     }

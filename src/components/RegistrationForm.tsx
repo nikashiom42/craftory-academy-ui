@@ -13,7 +13,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -22,18 +21,6 @@ const formSchema = z.object({
   lastName: z.string().min(2, "გვარი უნდა შეიცავდეს მინიმუმ 2 სიმბოლოს"),
   phone: z.string().regex(/^[\d\s\+\-\(\)]{9,}$/, "საკონტაქტო ნომერი არასწორია"),
   email: z.string().email("ელფოსტის მისამართი არასწორია"),
-  personalId: z.string().length(11, "პირადი ნომერი უნდა იყოს 11 ციფრი").regex(/^\d{11}$/, "პირადი ნომერი უნდა შეიცავდეს მხოლოდ ციფრებს"),
-  city: z.string().min(2, "გთხოვთ შეიყვანოთ ქალაქი"),
-  createAccount: z.boolean().default(false),
-  password: z.string().optional(),
-}).refine((data) => {
-  if (data.createAccount && (!data.password || data.password.length < 6)) {
-    return false;
-  }
-  return true;
-}, {
-  message: "პაროლი უნდა შეიცავდეს მინიმუმ 6 სიმბოლოს",
-  path: ["password"],
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -48,10 +35,6 @@ export function RegistrationForm() {
       lastName: "",
       phone: "",
       email: "",
-      personalId: "",
-      city: "",
-      createAccount: false,
-      password: "",
     },
   });
 
@@ -59,7 +42,7 @@ export function RegistrationForm() {
     setIsSubmitting(true);
     
     try {
-      // First, register for consultation
+      // Register for free consultation
       const { error: registrationError } = await supabase
         .from("course_registrations")
         .insert([
@@ -68,33 +51,14 @@ export function RegistrationForm() {
             last_name: data.lastName,
             phone: data.phone,
             email: data.email,
-            personal_id: data.personalId,
-            city: data.city,
+            personal_id: "", // Not required for consultation
+            city: "", // Not required for consultation
           },
         ]);
 
       if (registrationError) throw registrationError;
 
-      // If user wants to create account, sign them up
-      if (data.createAccount && data.password) {
-        const { error: signUpError } = await supabase.auth.signUp({
-          email: data.email,
-          password: data.password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/`,
-            data: {
-              full_name: `${data.firstName} ${data.lastName}`,
-            },
-          },
-        });
-
-        if (signUpError) throw signUpError;
-
-        toast.success("წარმატებით დარეგისტრირდით კონსულტაციაზე და ანგარიში შეიქმნა!");
-      } else {
-        toast.success("გაგვიგზავნეთ! ჩვენ მალე დაგიკავშირდებით.");
-      }
-      
+      toast.success("გაგვიგზავნეთ! ჩვენ მალე დაგიკავშირდებით უფასო კონსულტაციისთვის.");
       form.reset();
     } catch (error) {
       toast.error("დაფიქსირდა შეცდომა. გთხოვთ სცადოთ თავიდან.");
@@ -104,7 +68,7 @@ export function RegistrationForm() {
   };
 
   return (
-    <section id="registration" className="py-20 bg-cream">
+    <section id="registration" className="py-24 bg-cream">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -113,15 +77,15 @@ export function RegistrationForm() {
           transition={{ duration: 0.6 }}
           className="max-w-2xl mx-auto"
         >
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold uppercase mb-4">
-              უფასო საინფორმაციო შეხვედრა
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold uppercase mb-6">
+              უფასო კონსულტაცია
             </h2>
-            <p className="text-lg text-muted-foreground mb-2">
+            <p className="text-lg text-muted-foreground mb-4">
               დარეგისტრირდი უფასო კონსულტაციაზე და გაიგე ყველაფერი კურსის შესახებ
             </p>
             <p className="text-sm text-muted-foreground">
-              არ ქმნის ანგარიშს საიტზე - მხოლოდ საინფორმაციო შეხვედრისთვის
+              მხოლოდ 4 ველის შევსება - სწრაფი და მარტივი
             </p>
           </div>
 
@@ -185,82 +149,11 @@ export function RegistrationForm() {
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="personalId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>პირადი ნომერი</FormLabel>
-                    <FormControl>
-                      <Input placeholder="12345678901" maxLength={11} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="city"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>საცხოვრებელი ქალაქი</FormLabel>
-                    <FormControl>
-                      <Input placeholder="თბილისი" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="pt-4 border-t">
-                <FormField
-                  control={form.control}
-                  name="createAccount"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-lg border p-4 bg-accent/10">
-                      <FormControl>
-                        <Checkbox
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                      <div className="space-y-1 leading-none">
-                        <FormLabel className="font-semibold">
-                          ასევე შექმენი ანგარიში საიტზე
-                        </FormLabel>
-                        <p className="text-sm text-muted-foreground">
-                          მიიღე წვდომა კურსებთან, მასალებთან და შენს პროფილთან
-                        </p>
-                      </div>
-                    </FormItem>
-                  )}
-                />
-
-                {form.watch("createAccount") && (
-                  <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem className="mt-4">
-                        <FormLabel>პაროლი ანგარიშისთვის</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="password"
-                            placeholder="მინიმუმ 6 სიმბოლო"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                )}
+              <div className="pt-8">
+                <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
+                  {isSubmitting ? "იგზავნება..." : "უფასო კონსულტაციისთვის დარეგისტრირება"}
+                </Button>
               </div>
-
-              <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? "იგზავნება..." : "დარეგისტრირდი"}
-              </Button>
             </form>
           </Form>
         </motion.div>
