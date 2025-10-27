@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import partner5Logo from "@/assets/partners/5.webp";
 import partner1Logo from "@/assets/partners/1.webp";
 import partner2Logo from "@/assets/partners/2.webp";
 import partner3Logo from "@/assets/partners/3.webp";
@@ -80,11 +79,6 @@ export function ScrollytellingWhySection() {
                   რატომ უნდა გახდე ავეჯის კონსტრუქტორი ?
                 </h2>
                 <div className="mt-6 w-24 h-1 bg-gradient-to-r from-accent to-primary rounded-full"></div>
-                {/* Georgian Bank instalment note under the heading */}
-                <div className="mt-4 inline-flex items-center gap-3 px-4 py-2 bg-background rounded-xl shadow-soft border border-accent/20">
-                  <img src={partner5Logo} alt="საქართველოს ბანკი" className="h-6 w-auto object-contain" loading="lazy" />
-                  <span className="text-sm font-medium">ხელმისაწვდომია საქართველოს ბანკის განვადება</span>
-                </div>
               </motion.div>
             </div>
 
@@ -115,11 +109,6 @@ export function ScrollytellingWhySection() {
             <h2 className="text-3xl md:text-4xl font-bold uppercase leading-tight">
               რატომ უნდა გახდე ავეჯის კონსტრუქტორი ?
             </h2>
-            {/* Georgian Bank instalment note under the heading (mobile) */}
-            <div className="mt-3 inline-flex items-center gap-3 px-4 py-2 bg-background rounded-xl shadow-soft border border-accent/20">
-              <img src={partner5Logo} alt="საქართველოს ბანკი" className="h-6 w-auto object-contain" loading="lazy" />
-              <span className="text-sm font-medium">ხელმისაწვდომია საქართველოს ბანკის განვადება</span>
-            </div>
           </motion.div>
 
           <div className="space-y-6">

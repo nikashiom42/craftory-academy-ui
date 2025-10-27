@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { PartnersMarquee } from "@/components/PartnersMarquee";
 import { RegistrationForm } from "@/components/RegistrationForm";
 import { ScrollytellingWhySection } from "@/components/ScrollytellingWhySection";
+import { FeaturedCourseSection } from "@/components/FeaturedCourseSection";
 import { ArrowRight, BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
 import heroWorkshop from "@/assets/hero-workshop.webp";
@@ -74,10 +75,12 @@ export default function Home() {
       </section>
       <PartnersMarquee />
 
+      <FeaturedCourseSection />
+
       <ScrollytellingWhySection />
 
       {/* CTA Section */}
-      <section id="home-cta" className="bg-cream">
+      <section id="home-cta" className="bg-cream py-20">
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -92,17 +95,24 @@ export default function Home() {
               </div>
             </div>
             <h2 className="text-3xl md:text-4xl font-bold uppercase mb-6">
-              დაიწყე შენი კარიერა ავეჯის ინდუსტრიაში
+              მზად ხარ დაიწყო სწავლა?
             </h2>
             <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-              დარეგისტრირდი უფასო საინფორმაციო შეხვედრაზე და გაიგე ყველაფერი კურსის შესახებ
+              დარეგისტრირდი უფასო კონსულტაციაზე და მიიღე ყველა საჭირო ინფორმაცია კურსის შესახებ
             </p>
-            <Button size="lg" asChild className="group">
-              <Link to="/courses">
-                ნახე ყველა კურსი
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Link>
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button size="lg" asChild className="group">
+                <a href="#registration">
+                  უფასო კონსულტაციისთვის რეგისტრაცია
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </a>
+              </Button>
+              <Button size="lg" variant="outline" asChild>
+                <Link to="/courses">
+                  დეტალური ინფორმაცია
+                </Link>
+              </Button>
+            </div>
           </motion.div>
         </div>
       </section>

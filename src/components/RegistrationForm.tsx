@@ -11,20 +11,37 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
+// Form schema with conditional password validation based on createAccount checkbox
 const formSchema = z.object({
   firstName: z.string().min(2, "სახელი უნდა შეიცავდეს მინიმუმ 2 სიმბოლოს"),
   lastName: z.string().min(2, "გვარი უნდა შეიცავდეს მინიმუმ 2 სიმბოლოს"),
   phone: z.string().regex(/^[\d\s\+\-\(\)]{9,}$/, "საკონტაქტო ნომერი არასწორია"),
   email: z.string().email("ელფოსტის მისამართი არასწორია"),
+  createAccount: z.boolean().default(false),
+  password: z.string().optional(),
+}).refine((data) => {
+  if (data.createAccount) {
+    return data.password && data.password.length >= 6;
+  }
+  return true;
+}, {
+  message: "პაროლი უნდა შეიცავდეს მინიმუმ 6 სიმბოლოს",
+  path: ["password"],
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
+/**
+ * RegistrationForm - Free consultation form with optional account creation
+ * Users can optionally check a box to create an account during consultation signup
+ */
 export function RegistrationForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -35,6 +52,8 @@ export function RegistrationForm() {
       lastName: "",
       phone: "",
       email: "",
+      createAccount: false,
+      password: "",
     },
   });
 
@@ -42,6 +61,25 @@ export function RegistrationForm() {
     setIsSubmitting(true);
     
     try {
+      // If user wants to create an account, sign them up first
+      if (data.createAccount && data.password) {
+        const { data: authData, error: signUpError } = await supabase.auth.signUp({
+          email: data.email,
+          password: data.password,
+          options: {
+            data: {
+              first_name: data.firstName,
+              last_name: data.lastName,
+              phone: data.phone,
+            },
+          },
+        });
+
+        if (signUpError) throw signUpError;
+
+        toast.success("ანგარიში შექმნილია! გთხოვთ შეამოწმოთ თქვენი ელფოსტა დასადასტურებლად.");
+      }
+
       // Register for free consultation
       const { error: registrationError } = await supabase
         .from("course_registrations")
@@ -58,7 +96,9 @@ export function RegistrationForm() {
 
       if (registrationError) throw registrationError;
 
-      toast.success("გაგვიგზავნეთ! ჩვენ მალე დაგიკავშირდებით უფასო კონსულტაციისთვის.");
+      if (!data.createAccount) {
+        toast.success("გაგვიგზავნეთ! ჩვენ მალე დაგიკავშირდებით უფასო კონსულტაციისთვის.");
+      }
       form.reset();
     } catch (error) {
       toast.error("დაფიქსირდა შეცდომა. გთხოვთ სცადოთ თავიდან.");
@@ -85,7 +125,7 @@ export function RegistrationForm() {
               დარეგისტრირდი უფასო კონსულტაციაზე და გაიგე ყველაფერი კურსის შესახებ
             </p>
             <p className="text-sm text-muted-foreground">
-              მხოლოდ 4 ველის შევსება - სწრაფი და მარტივი
+              სწრაფი და მარტივი რეგისტრაცია - სურვილისამებრ შეგიძლიათ ანგარიშის შექმნაც
             </p>
           </div>
 
@@ -148,6 +188,45 @@ export function RegistrationForm() {
                   </FormItem>
                 )}
               />
+
+              <FormField
+                control={form.control}
+                name="createAccount"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 bg-background/50">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel>
+                        მინდა ანგარიშის შექმნა
+                      </FormLabel>
+                      <FormDescription>
+                        შექმენით ანგარიში რომ მიიღოთ წვდომა კურსებზე და თქვენს პირად კაბინეტზე
+                      </FormDescription>
+                    </div>
+                  </FormItem>
+                )}
+              />
+
+              {form.watch("createAccount") && (
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>პაროლი</FormLabel>
+                      <FormControl>
+                        <Input type="password" placeholder="მინიმუმ 6 სიმბოლო" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
 
               <div className="pt-8">
                 <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>

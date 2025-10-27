@@ -31,6 +31,22 @@ export function EnrollmentButton({ courseId, courseTitle, price, isEnrolled }: E
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const checkAuthAndOpenDialog = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (!session) {
+      toast({
+        variant: "destructive",
+        title: "გაიარეთ ავტორიზაცია",
+        description: "კურსზე ჩასაწერად საჭiroა ავტორიზაცია. შექმენით ანგარიში ან შედით სისტემაში.",
+      });
+      navigate("/auth");
+      return;
+    }
+    
+    setOpen(true);
+  };
+
   const handleEnroll = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -41,8 +57,8 @@ export function EnrollmentButton({ courseId, courseTitle, price, isEnrolled }: E
       if (!session) {
         toast({
           variant: "destructive",
-          title: "Authentication Required",
-          description: "Please login to enroll in courses.",
+          title: "გაიარეთ ავტორიზაცია",
+          description: "კურსზე ჩასაწერად საჭiroა ავტორიზაცია.",
         });
         navigate("/auth");
         return;
@@ -62,8 +78,8 @@ export function EnrollmentButton({ courseId, courseTitle, price, isEnrolled }: E
       if (error) {
         if (error.code === "23505") {
           toast({
-            title: "Already Enrolled",
-            description: "You are already enrolled in this course.",
+            title: "უკვე ჩაწერილი ხართ",
+            description: "თქვენ უკვე ჩაწერილი ხართ ამ კურსზე.",
           });
         } else {
           throw error;
@@ -72,8 +88,8 @@ export function EnrollmentButton({ courseId, courseTitle, price, isEnrolled }: E
       }
 
       toast({
-        title: "Enrollment Successful! 🎉",
-        description: `You're now enrolled in ${courseTitle}. Check your student dashboard.`,
+        title: "წარმატებით ჩაიწერეთ! 🎉",
+        description: `თქვენ წარმატებით ჩაიწერეთ კურსზე ${courseTitle}. იხილეთ თქვენი სტუდენტის პანელი.`,
       });
       
       setOpen(false);
@@ -81,8 +97,8 @@ export function EnrollmentButton({ courseId, courseTitle, price, isEnrolled }: E
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Enrollment Failed",
-        description: "Something went wrong. Please try again.",
+        title: "ჩაწერა ვერ მოხერხდა",
+        description: "დაფიქსირდა შეცდომა. გთხოვთ სცადოთ თავიდან.",
       });
     } finally {
       setLoading(false);
@@ -92,75 +108,76 @@ export function EnrollmentButton({ courseId, courseTitle, price, isEnrolled }: E
   if (isEnrolled) {
     return (
       <Button size="lg" onClick={() => navigate("/student/dashboard")}>
-        Go to My Courses
+        ჩემი კურსები
       </Button>
     );
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button size="lg" className="gap-2">
-          <CreditCard className="w-5 h-5" />
-          Enroll Now - {price} ₾
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Complete Enrollment</DialogTitle>
-          <DialogDescription>
-            Course: {courseTitle} • Price: {price} ₾
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleEnroll} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="cardNumber">Card Number</Label>
-            <Input
-              id="cardNumber"
-              placeholder="1234 5678 9012 3456"
-              value={cardNumber}
-              onChange={(e) => setCardNumber(e.target.value)}
-              maxLength={19}
-              required
-            />
-          </div>
-          
-          <div className="grid grid-cols-2 gap-4">
+    <>
+      <Button size="lg" className="gap-2" onClick={checkAuthAndOpenDialog}>
+        <CreditCard className="w-5 h-5" />
+        ჩაწერა კურსზე - {price} ₾
+      </Button>
+      
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>კურსზე ჩაწერა</DialogTitle>
+            <DialogDescription>
+              კურსი: {courseTitle} • ფასი: {price} ₾
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleEnroll} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="expiry">Expiry Date</Label>
+              <Label htmlFor="cardNumber">ბარათის ნომერი</Label>
               <Input
-                id="expiry"
-                placeholder="MM/YY"
-                value={expiry}
-                onChange={(e) => setExpiry(e.target.value)}
-                maxLength={5}
+                id="cardNumber"
+                placeholder="1234 5678 9012 3456"
+                value={cardNumber}
+                onChange={(e) => setCardNumber(e.target.value)}
+                maxLength={19}
                 required
               />
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="cvv">CVV</Label>
-              <Input
-                id="cvv"
-                placeholder="123"
-                value={cvv}
-                onChange={(e) => setCvv(e.target.value)}
-                maxLength={3}
-                required
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="expiry">ვადა</Label>
+                <Input
+                  id="expiry"
+                  placeholder="MM/YY"
+                  value={expiry}
+                  onChange={(e) => setExpiry(e.target.value)}
+                  maxLength={5}
+                  required
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="cvv">CVV</Label>
+                <Input
+                  id="cvv"
+                  placeholder="123"
+                  value={cvv}
+                  onChange={(e) => setCvv(e.target.value)}
+                  maxLength={3}
+                  required
+                />
+              </div>
             </div>
-          </div>
 
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Lock className="w-4 h-4" />
-            <span>Test mode - No actual payment will be processed</span>
-          </div>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Lock className="w-4 h-4" />
+              <span>სატესტო რეჟიმი - რეალური გადახდა არ განხორციელდება</span>
+            </div>
 
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Processing..." : `Pay ${price} ₾ & Enroll`}
-          </Button>
-        </form>
-      </DialogContent>
-    </Dialog>
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "მუშავდება..." : `გადახდა ${price} ₾ და ჩაწერა`}
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

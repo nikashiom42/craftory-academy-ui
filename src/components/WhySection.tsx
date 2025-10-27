@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
 import { TrendingUp, Award, Briefcase, Laptop, LucideIcon } from "lucide-react";
-import bankLogo from "@/assets/partners/5.webp";
 
 interface WhyPoint {
   title: string;
@@ -35,11 +34,6 @@ export function WhySection({ points }: WhySectionProps) {
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase leading-tight">
               რატომ უნდა გახდე ავეჯის კონსტრუქტორი ?
             </h2>
-            {/* Georgian Bank instalment note under the heading */}
-            <div className="mt-4 inline-flex items-center gap-3 px-4 py-2 bg-background rounded-xl shadow-soft border border-accent/20">
-              <img src={bankLogo} alt="საქართველოს ბანკი" className="h-6 w-auto object-contain" loading="lazy" />
-              <span className="text-sm font-medium">ხელმისაწვდომია საქართველოს ბანკის განვადება</span>
-            </div>
           </motion.div>
 
           {/* Right side - Key points */}
