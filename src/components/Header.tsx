@@ -6,7 +6,7 @@ import { academyConfig } from "@/config/academy";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import craftoryLogo from "@/assets/craftory-logo.png";
+import craftoryLogo from "@/assets/craftory-logo.webp";
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);

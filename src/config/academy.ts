@@ -1,10 +1,10 @@
 // Craftory Academy Configuration
 // All editable content for easy client updates
-import partner1Logo from "@/assets/partners/1.png";
-import partner2Logo from "@/assets/partners/2.png";
-import partner3Logo from "@/assets/partners/3.png";
+import partner1Logo from "@/assets/partners/1.webp";
+import partner2Logo from "@/assets/partners/2.webp";
+import partner3Logo from "@/assets/partners/3.webp";
 import partner4Logo from "@/assets/partners/4.png";
-import partner5Logo from "@/assets/partners/5.png";
+import partner5Logo from "@/assets/partners/5.webp";
 import partner6Logo from "@/assets/partners/6.png";
 import partner7Logo from "@/assets/partners/7.png";
 

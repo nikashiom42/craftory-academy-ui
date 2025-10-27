@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { TrendingUp, Award, Briefcase, Laptop, LucideIcon } from "lucide-react";
-import bankLogo from "@/assets/partners/5.png";
+import bankLogo from "@/assets/partners/5.webp";
 
 interface WhyPoint {
   title: string;

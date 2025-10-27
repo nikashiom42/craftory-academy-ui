@@ -5,7 +5,7 @@ import { RegistrationForm } from "@/components/RegistrationForm";
 import { ScrollytellingWhySection } from "@/components/ScrollytellingWhySection";
 import { ArrowRight, BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
-import heroWorkshop from "@/assets/hero-workshop.jpg";
+import heroWorkshop from "@/assets/hero-workshop.webp";
 
 export default function Home() {
   const scrollToRegistration = () => {
