@@ -7,6 +7,9 @@ import partner1Logo from "@/assets/partners/1.webp";
 import partner2Logo from "@/assets/partners/2.webp";
 import partner3Logo from "@/assets/partners/3.webp";
 import partner4Logo from "@/assets/partners/4.png";
+import partner5Logo from "@/assets/partners/5.webp"; // Lazieri
+import partner6Logo from "@/assets/partners/6.png"; // Interna
+import partner7Logo from "@/assets/partners/7.png"; // BinART
 
 interface StepCard {
   title: string;
@@ -31,13 +34,13 @@ const steps: StepCard[] = [
     title: "მიიღე ცოდნის დამადასტურებელი სერთიფიკატი, კურსის დასრულებისთანავე და დაიწყე კარიერული განვითარება",
     description: "მიიღე სტაჟირების შესაძლებლობა საქართველოში წამყვან ავეჯის წარმოების კომპანიებში, როგორიც არის: Lazieri, Interna და BinART",
     targetProgress: 85,
-    logos: [partner1Logo, partner2Logo],
+    logos: [partner5Logo, partner6Logo, partner7Logo],
   },
   {
     title: "ონლაინ სწავლება და პრაქტიკული შეხვედრები: LTB, Kasta, New Lam, B.Tech",
     description: "კურსი მიმდინარეობს ONLINE ფორმატში და მოიცავს პრაქტიკულ შეხვედრებს ჩვენს პარტნიორ კომპანიებში, სადაც კურსის სტუდენტები მიიღებენ რეალურ პრაქტიკულ ცოდნასა და გამოცდილებას.",
     targetProgress: 90,
-    logos: [partner3Logo, partner4Logo],
+    logos: [partner1Logo, partner3Logo, partner4Logo, partner2Logo],
   },
 ];
 
@@ -168,28 +171,7 @@ function CarouselCard({ step, index, onDragStart, onDragEnd }: CarouselCardProps
             </p>
           </div>
 
-          {/* Progress Bar */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground font-medium">მზადყოფნა</span>
-              <motion.span
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
-                className="font-bold text-primary text-lg"
-              >
-                {step.targetProgress}%
-              </motion.span>
-            </div>
-            <div className="h-3 bg-muted rounded-full overflow-hidden">
-              <motion.div
-                initial={{ width: "0%" }}
-                animate={{ width: `${step.targetProgress}%` }}
-                transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
-                className="h-full bg-gradient-to-r from-primary to-accent rounded-full"
-              />
-            </div>
-          </div>
+          {/* Progress bar removed per request */}
 
           {/* Partner Logos */}
           {step.logos && (
@@ -240,22 +222,7 @@ function MobileStepCard({ step, index }: MobileStepCardProps) {
           </p>
         </div>
 
-        {/* Animated Progress Bar */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-muted-foreground">მზადყოფნა</span>
-            <span className="font-bold text-primary">{step.targetProgress}%</span>
-          </div>
-          <div className="h-2 bg-muted rounded-full overflow-hidden">
-            <motion.div
-              className="h-full bg-gradient-to-r from-primary to-accent rounded-full"
-              initial={{ width: "0%" }}
-              whileInView={{ width: `${step.targetProgress}%` }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-            />
-          </div>
-        </div>
+        {/* Progress bar removed per request */}
 
         {/* Partner Logos */}
         {step.logos && (
