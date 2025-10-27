@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { User } from "@supabase/supabase-js";
-import { Mail, Phone, MapPin, Calendar, UserCheck, Clock, XCircle, CheckCircle, Search } from "lucide-react";
+import { Mail, Phone, MapPin, Calendar, UserCheck, Clock, XCircle, CheckCircle, Search, UserPlus } from "lucide-react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AdminSidebar } from "@/components/AdminSidebar";
 import {
@@ -39,6 +39,7 @@ interface Registration {
   city: string;
   status: string;
   created_at: string;
+  has_account?: boolean;
 }
 
 export default function AdminLeads() {
@@ -87,7 +88,17 @@ export default function AdminLeads() {
       return;
     }
 
-    setRegistrations(data || []);
+    // Fetch all auth users once
+    const { data: userData } = await supabase.auth.admin.listUsers();
+    const userEmails = new Set(userData?.users.map(u => u.email) || []);
+
+    // Check if each registration email has a corresponding auth account
+    const registrationsWithAccountStatus = (data || []).map((reg) => ({
+      ...reg,
+      has_account: userEmails.has(reg.email),
+    }));
+
+    setRegistrations(registrationsWithAccountStatus);
   };
 
   const updateStatus = async (id: string, newStatus: string) => {
@@ -294,9 +305,8 @@ export default function AdminLeads() {
                     <TableHeader>
                       <TableRow>
                         <TableHead>Name</TableHead>
-                        <TableHead>Personal ID</TableHead>
                         <TableHead>Contact</TableHead>
-                        <TableHead>City</TableHead>
+                        <TableHead>Account</TableHead>
                         <TableHead>Date</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead className="text-right">Actions</TableHead>
@@ -305,7 +315,7 @@ export default function AdminLeads() {
                     <TableBody>
                       {filteredRegistrations.length === 0 ? (
                         <TableRow>
-                          <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                          <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                             No registrations found matching your filters
                           </TableCell>
                         </TableRow>
@@ -313,9 +323,19 @@ export default function AdminLeads() {
                         filteredRegistrations.map((registration) => (
                           <TableRow key={registration.id}>
                             <TableCell className="font-medium">
-                              {registration.first_name} {registration.last_name}
+                              <div className="flex flex-col">
+                                <span>{registration.first_name} {registration.last_name}</span>
+                                {registration.personal_id && (
+                                  <span className="text-xs text-muted-foreground">ID: {registration.personal_id}</span>
+                                )}
+                                {registration.city && (
+                                  <span className="text-xs text-muted-foreground flex items-center gap-1">
+                                    <MapPin className="h-3 w-3" />
+                                    {registration.city}
+                                  </span>
+                                )}
+                              </div>
                             </TableCell>
-                            <TableCell>{registration.personal_id}</TableCell>
                             <TableCell>
                               <div className="flex flex-col gap-1 text-sm">
                                 <a href={`mailto:${registration.email}`} className="hover:text-primary transition-colors flex items-center gap-1">
@@ -329,13 +349,22 @@ export default function AdminLeads() {
                               </div>
                             </TableCell>
                             <TableCell>
-                              <div className="flex items-center gap-1">
-                                <MapPin className="h-3 w-3 text-muted-foreground" />
-                                {registration.city}
-                              </div>
+                              {registration.has_account ? (
+                                <Badge variant="default" className="gap-1">
+                                  <UserPlus className="h-3 w-3" />
+                                  Yes
+                                </Badge>
+                              ) : (
+                                <Badge variant="secondary" className="gap-1">
+                                  No
+                                </Badge>
+                              )}
                             </TableCell>
                             <TableCell className="text-sm text-muted-foreground">
-                              {new Date(registration.created_at).toLocaleDateString('ka-GE')}
+                              <div className="flex items-center gap-1">
+                                <Calendar className="h-3 w-3" />
+                                {new Date(registration.created_at).toLocaleDateString('ka-GE')}
+                              </div>
                             </TableCell>
                             <TableCell>
                               {getStatusBadge(registration.status)}

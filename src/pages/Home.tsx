@@ -2,7 +2,6 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { PartnersMarquee } from "@/components/PartnersMarquee";
 import { RegistrationForm } from "@/components/RegistrationForm";
-import { ScrollytellingWhySection } from "@/components/ScrollytellingWhySection";
 import { FeaturedCourseSection } from "@/components/FeaturedCourseSection";
 import { ArrowRight, BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -39,24 +38,24 @@ export default function Home() {
               {/* Badge */}
               <div>
                 <span className="inline-flex items-center px-4 py-2 rounded-full bg-accent/90 text-accent-foreground text-sm font-semibold shadow-lg">
-                  საქართველოს პირველი ავეჯის აკადემია
+                  Craftory Academy
                 </span>
               </div>
 
               {/* Main heading */}
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-                ავეჯის კონსტრუირების პირველი კურსი საქართველოში
+                პროფესიული განვითარება რეალური შედეგებით
               </h1>
               
               {/* Key points */}
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 rounded-full bg-accent flex-shrink-0" />
-                  <p className="text-lg md:text-xl font-medium">2 თვეში - 0-დან პროფესიონალამდე</p>
+                  <p className="text-lg md:text-xl font-medium">პრაქტიკული კურსები ექსპერტებისგან</p>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 rounded-full bg-accent flex-shrink-0" />
-                  <p className="text-lg md:text-xl font-medium">სტაჟირება პარტნიორ კომპანიებში</p>
+                  <p className="text-lg md:text-xl font-medium">სერთიფიკატი და კარიერული მხარდაჭერა</p>
                 </div>
               </div>
 
@@ -76,8 +75,6 @@ export default function Home() {
       <PartnersMarquee />
 
       <FeaturedCourseSection />
-
-      <ScrollytellingWhySection />
 
       {/* CTA Section */}
       <section id="home-cta" className="bg-cream py-20">

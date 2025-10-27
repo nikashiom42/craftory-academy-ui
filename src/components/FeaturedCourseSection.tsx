@@ -72,14 +72,16 @@ export function FeaturedCourseSection() {
           transition={{ duration: 0.6 }}
           className="max-w-6xl mx-auto"
         >
-          {/* Section Header */}
+          {/* Section Header - Dynamic from DB */}
           <div className="text-center mb-8">
             <h2 className="text-2xl md:text-3xl font-bold uppercase mb-2">
-              ავეჯის კონსტრუქტორის კურსი
+              {course.title}
             </h2>
-            <p className="text-base text-muted-foreground">
-              2 თვეში - 0-დან პროფესიონალამდე სტაჟირებით პარტნიორ კომპანიებში
-            </p>
+            {course.subtitle && (
+              <p className="text-base text-muted-foreground">
+                {course.subtitle}
+              </p>
+            )}
           </div>
 
           {/* Course Showcase Card */}
@@ -148,21 +150,13 @@ export function FeaturedCourseSection() {
                 )}
               </div>
 
-              {/* Key Highlights */}
-              <div className="space-y-1.5">
-                <div className="flex items-center gap-2 text-xs">
+              {/* Format Info - from DB */}
+              {course.cohort.format && (
+                <div className="flex items-center gap-2 text-xs bg-accent/5 p-2 rounded-md border border-accent/20">
                   <CheckCircle2 className="w-3 h-3 text-accent flex-shrink-0" />
-                  <span>სერთიფიკატი კურსის დასრულების შემდეგ</span>
+                  <span>{course.cohort.format}</span>
                 </div>
-                <div className="flex items-center gap-2 text-xs">
-                  <CheckCircle2 className="w-3 h-3 text-accent flex-shrink-0" />
-                  <span>სტაჟირება პარტნიორ კომპანიებში: Lazieri, Interna, BinART</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs">
-                  <CheckCircle2 className="w-3 h-3 text-accent flex-shrink-0" />
-                  <span>ონლაინ სწავლება და პრაქტიკული შეხვედრები: LTB, Kasta, New Lam, B.Tech</span>
-                </div>
-              </div>
+              )}
 
               {/* Primary CTA - Enrollment */}
               <div className="space-y-3 pt-2">
@@ -202,7 +196,7 @@ export function FeaturedCourseSection() {
                   className="h-8 w-auto object-contain"
                 />
                 <p className="text-sm font-medium text-muted-foreground">
-                  ხელმისაწვდომია განვადება
+                  ხელმისაწვდომია საქართველოს ბანკის განვადება
                 </p>
               </div>
             </motion.div>
