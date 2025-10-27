@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { forwardRef, useImperativeHandle, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,14 +15,21 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { CreditCard, Lock } from "lucide-react";
 
-interface EnrollmentButtonProps {
+export interface EnrollmentButtonProps {
   courseId: string;
   courseTitle: string;
   price: number;
   isEnrolled: boolean;
 }
 
-export function EnrollmentButton({ courseId, courseTitle, price, isEnrolled }: EnrollmentButtonProps) {
+export interface EnrollmentButtonHandle {
+  openPayment: () => Promise<void>;
+}
+
+export const EnrollmentButton = forwardRef<EnrollmentButtonHandle, EnrollmentButtonProps>(function EnrollmentButton(
+  { courseId, courseTitle, price, isEnrolled },
+  ref
+) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [cardNumber, setCardNumber] = useState("");
@@ -46,6 +53,10 @@ export function EnrollmentButton({ courseId, courseTitle, price, isEnrolled }: E
     
     setOpen(true);
   };
+
+  useImperativeHandle(ref, () => ({
+    openPayment: () => checkAuthAndOpenDialog(),
+  }));
 
   const handleEnroll = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -117,7 +128,7 @@ export function EnrollmentButton({ courseId, courseTitle, price, isEnrolled }: E
     <>
       <Button size="lg" className="gap-2" onClick={checkAuthAndOpenDialog}>
         <CreditCard className="w-5 h-5" />
-        ჩაწერა კურსზე - {price} ₾
+        კურსზე ჩაწერა - {price} ₾
       </Button>
       
       <Dialog open={open} onOpenChange={setOpen}>
@@ -180,4 +191,4 @@ export function EnrollmentButton({ courseId, courseTitle, price, isEnrolled }: E
       </Dialog>
     </>
   );
-}
+});

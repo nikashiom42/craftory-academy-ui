@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Calendar, Video, FolderOpen, Clock, Check, ArrowLeft } from "lucide-react";
 import { format } from "date-fns";
+import { ka } from "date-fns/locale";
 
 interface CourseData {
   id: string;
@@ -90,7 +91,7 @@ export default function StudentCourseView() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Loading course...</p>
+          <p className="mt-4 text-muted-foreground">კურსი იტვირთება...</p>
         </div>
       </div>
     );
@@ -123,9 +124,9 @@ export default function StudentCourseView() {
                 onClick={() => navigate("/student/dashboard")}
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Dashboard
+                დაბრუნდი პანელზე
               </Button>
-              <Badge className="mb-4">Enrolled</Badge>
+              <Badge className="mb-4">ჩაწერილი</Badge>
               <h1 className="text-4xl md:text-5xl font-bold text-white uppercase mb-2">
                 {course.title}
               </h1>
@@ -198,12 +199,12 @@ export default function StudentCourseView() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Calendar className="w-5 h-5" />
-                    Start Date
+                    საწყისი თარიღი
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-2xl font-bold">
-                    {format(new Date(course.start_date), "MMM d, yyyy")}
+                    {format(new Date(course.start_date), "d MMM, yyyy", { locale: ka })}
                   </p>
                 </CardContent>
               </Card>
@@ -212,12 +213,12 @@ export default function StudentCourseView() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Calendar className="w-5 h-5" />
-                    End Date
+                    დასრულების თარიღი
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-2xl font-bold">
-                    {format(new Date(course.end_date), "MMM d, yyyy")}
+                    {format(new Date(course.end_date), "d MMM, yyyy", { locale: ka })}
                   </p>
                 </CardContent>
               </Card>
@@ -226,7 +227,7 @@ export default function StudentCourseView() {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Clock className="w-5 h-5" />
-                    Duration
+                    ხანგრძლივობა
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -239,7 +240,7 @@ export default function StudentCourseView() {
             {course.description && (
               <Card className="mb-12">
                 <CardHeader>
-                  <CardTitle>About This Course</CardTitle>
+                  <CardTitle>კურსის აღწერა</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-lg leading-relaxed">{course.description}</p>
@@ -252,7 +253,7 @@ export default function StudentCourseView() {
               <div className="mb-12">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Course Syllabus</CardTitle>
+                    <CardTitle>სილაბუსი</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <Accordion type="single" collapsible className="space-y-2">
@@ -284,7 +285,7 @@ export default function StudentCourseView() {
               <div className="mb-12">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Skills You'll Learn</CardTitle>
+                    <CardTitle>რას ისწავლით</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="grid md:grid-cols-2 gap-4">
@@ -306,7 +307,7 @@ export default function StudentCourseView() {
             {course.trainer && (
               <Card>
                 <CardHeader>
-                  <CardTitle>Your Instructor</CardTitle>
+                  <CardTitle>ინსტრუქტორი</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-start gap-4">

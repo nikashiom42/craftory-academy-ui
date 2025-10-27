@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Calendar, BookOpen, ExternalLink } from "lucide-react";
 import { format } from "date-fns";
+import { ka } from "date-fns/locale";
 
 interface EnrolledCourse {
   id: string;
@@ -90,9 +91,9 @@ export default function StudentDashboard() {
     const start = new Date(startDate);
     const end = new Date(endDate);
 
-    if (now < start) return { label: "Upcoming", color: "text-blue-600" };
-    if (now > end) return { label: "Completed", color: "text-gray-600" };
-    return { label: "Ongoing", color: "text-green-600" };
+    if (now < start) return { label: "მალე იწყება", color: "text-blue-600" };
+    if (now > end) return { label: "დასრულებული", color: "text-gray-600" };
+    return { label: "მიმდინარე", color: "text-green-600" };
   };
 
   if (loading) {
@@ -100,7 +101,7 @@ export default function StudentDashboard() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Loading your courses...</p>
+          <p className="mt-4 text-muted-foreground">თქვენი კურსები იტვირთება...</p>
         </div>
       </div>
     );
@@ -113,9 +114,9 @@ export default function StudentDashboard() {
       <main className="flex-1 pt-32 pb-12 bg-cream">
         <div className="container mx-auto px-4">
           <div className="mb-8">
-            <h1 className="text-4xl font-bold uppercase mb-2">My Courses</h1>
+            <h1 className="text-4xl font-bold uppercase mb-2">ჩემი კურსები</h1>
             <p className="text-lg text-muted-foreground">
-              Access your enrolled courses and learning materials
+              იხილეთ თქვენი კურსები და სასწავლო მასალები
             </p>
           </div>
 
@@ -123,12 +124,12 @@ export default function StudentDashboard() {
             <Card className="text-center py-12">
               <CardContent>
                 <BookOpen className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-                <h3 className="text-xl font-semibold mb-2">No Courses Yet</h3>
+                <h3 className="text-xl font-semibold mb-2">კურსი არ გაქვს</h3>
                 <p className="text-muted-foreground mb-6">
-                  You haven't enrolled in any courses. Browse our catalog to get started.
+                  ჯერჯერობით კურსზე არ დარეგისტრირებულხარ. გაეცანი კურსებს და შემოგვიერთდი სასურველზე.
                 </p>
                 <Button onClick={() => navigate("/courses")}>
-                  Browse Courses
+                  კურსების ნახვა
                 </Button>
               </CardContent>
             </Card>
@@ -165,19 +166,19 @@ export default function StudentDashboard() {
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Calendar className="w-4 h-4" />
                         <span>
-                          {format(new Date(course.start_date), "MMM d")} - {format(new Date(course.end_date), "MMM d, yyyy")}
+                          {format(new Date(course.start_date), "d MMM", { locale: ka })} - {format(new Date(course.end_date), "d MMM, yyyy", { locale: ka })}
                         </span>
                       </div>
                       
                       <div className="text-sm text-muted-foreground">
-                        Enrolled: {format(new Date(enrollment.enrolled_at), "MMM d, yyyy")}
+                        ჩაწერის თარიღი: {format(new Date(enrollment.enrolled_at), "d MMM, yyyy", { locale: ka })}
                       </div>
 
                       <Button 
                         className="w-full gap-2" 
                         onClick={() => navigate(`/student/courses/${course.slug}`)}
                       >
-                        Access Course
+                        კურსის გახსნა
                         <ExternalLink className="w-4 h-4" />
                       </Button>
                     </CardContent>

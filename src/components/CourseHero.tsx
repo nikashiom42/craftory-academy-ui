@@ -7,9 +7,10 @@ interface CourseHeroProps {
   claims: string[];
   onRegisterClick: () => void;
   onInfoSessionClick: () => void;
+  primaryCtaLabel?: string;
 }
 
-export function CourseHero({ claims, onRegisterClick, onInfoSessionClick }: CourseHeroProps) {
+export function CourseHero({ claims, onRegisterClick, onInfoSessionClick, primaryCtaLabel = "დარეგისტრირდი ახლავე" }: CourseHeroProps) {
   return (
     <section className="relative min-h-[75vh] flex items-center overflow-hidden">
       {/* Background Image with Overlay */}
@@ -65,7 +66,7 @@ export function CourseHero({ claims, onRegisterClick, onInfoSessionClick }: Cour
                 onClick={onRegisterClick}
                 className="group"
               >
-                დარეგისტრირდი ახლავე
+                {primaryCtaLabel}
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Button>
               <Button

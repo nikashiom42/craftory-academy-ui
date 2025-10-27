@@ -1,5 +1,5 @@
 import { useParams, Navigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { CourseHero } from "@/components/CourseHero";
 import { PartnersMarquee } from "@/components/PartnersMarquee";
@@ -10,7 +10,8 @@ import { InfoSessionCTA } from "@/components/InfoSessionCTA";
 import { TrainerCard } from "@/components/TrainerCard";
 import { SkillsGrid } from "@/components/SkillsGrid";
 import { SyllabusAccordion } from "@/components/SyllabusAccordion";
-import { EnrollmentButton } from "@/components/EnrollmentButton";
+import { EnrollmentButton, EnrollmentButtonHandle } from "@/components/EnrollmentButton";
+import { CourseInfoSessionDialog } from "@/components/CourseInfoSessionDialog";
 
 interface Course {
   id: string;
@@ -31,6 +32,10 @@ export default function CourseDetail() {
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
   const [isEnrolled, setIsEnrolled] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isInfoSessionOpen, setIsInfoSessionOpen] = useState(false);
+  const enrollmentButtonRef = useRef<EnrollmentButtonHandle>(null);
+  const handleInfoSessionOpen = () => setIsInfoSessionOpen(true);
 
   useEffect(() => {
     loadCourse();
@@ -53,6 +58,7 @@ export default function CourseDetail() {
 
   const checkEnrollment = async (courseId: string) => {
     const { data: { session } } = await supabase.auth.getSession();
+    setIsLoggedIn(!!session);
     if (!session) return;
 
     const { data } = await supabase
@@ -81,8 +87,9 @@ export default function CourseDetail() {
     <div className="min-h-screen">
       <CourseHero
         claims={course.hero_claims}
-        onRegisterClick={() => {}}
-        onInfoSessionClick={() => {}}
+        onRegisterClick={() => enrollmentButtonRef.current?.openPayment()}
+        onInfoSessionClick={handleInfoSessionOpen}
+        primaryCtaLabel={isLoggedIn ? "კურსზე ჩაწერა" : "დარეგისტრირდი ახლავე"}
       />
       
       <PartnersMarquee />
@@ -97,6 +104,7 @@ export default function CourseDetail() {
           <h2 className="text-3xl font-bold uppercase mb-4">{course.title}</h2>
           <p className="text-xl text-muted-foreground mb-8">{course.subtitle}</p>
           <EnrollmentButton
+            ref={enrollmentButtonRef}
             courseId={course.id}
             courseTitle={course.title}
             price={course.price || 0}
@@ -111,9 +119,14 @@ export default function CourseDetail() {
       
       <SkillsGrid skills={course.skills} />
       
-      <InfoSessionCTA onRegisterClick={() => {}} />
+      <InfoSessionCTA onRegisterClick={handleInfoSessionOpen} />
       
       <TrainerCard trainer={course.trainer} />
+      <CourseInfoSessionDialog
+        open={isInfoSessionOpen}
+        onOpenChange={setIsInfoSessionOpen}
+        courseTitle={course.title}
+      />
     </div>
   );
 }

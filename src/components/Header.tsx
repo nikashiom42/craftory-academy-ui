@@ -93,14 +93,14 @@ export function Header() {
             </div>
           </nav>
 
-          {/* CTA Button - Desktop */}
+          {/* CTA Buttons - Desktop */}
           <div className="hidden md:flex items-center gap-3">
             {isLoggedIn ? (
               <>
                 <Button variant="default" size="default" asChild className="shadow-soft gap-2">
                   <Link to="/student/dashboard">
                     <BookOpen className="w-4 h-4" />
-                    My Courses
+                    ჩემი კურსები
                   </Link>
                 </Button>
                 <Button 
@@ -113,7 +113,30 @@ export function Header() {
                   გასვლა
                 </Button>
               </>
-            ) : null}
+            ) : (
+              <>
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  asChild
+                  className="text-base text-foreground/80 hover:text-primary"
+                >
+                  <Link to="/auth?mode=login">
+                    შესვლა
+                  </Link>
+                </Button>
+                <Button
+                  variant="default"
+                  size="lg"
+                  asChild
+                  className="text-base shadow-soft"
+                >
+                  <Link to="/auth?mode=register">
+                    რეგისტრაცია
+                  </Link>
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -145,12 +168,12 @@ export function Header() {
                   {item.name}
               </Link>
               ))}
-              {isLoggedIn && (
+              {isLoggedIn ? (
                 <div className="px-4 pt-4 space-y-2">
                   <Button variant="default" className="w-full shadow-soft gap-2" asChild>
                     <Link to="/student/dashboard">
                       <BookOpen className="w-4 h-4" />
-                      My Courses
+                      ჩემი კურსები
                     </Link>
                   </Button>
                   <Button 
@@ -160,6 +183,29 @@ export function Header() {
                   >
                     <LogOut className="w-4 h-4" />
                     გასვლა
+                  </Button>
+                </div>
+              ) : (
+                <div className="px-4 pt-4 space-y-2">
+                  <Button
+                    variant="ghost"
+                    size="lg"
+                    className="w-full text-base text-foreground/80 hover:text-primary"
+                    asChild
+                  >
+                    <Link to="/auth?mode=login" onClick={() => setIsMobileMenuOpen(false)}>
+                      შესვლა
+                    </Link>
+                  </Button>
+                  <Button
+                    variant="default"
+                    size="lg"
+                    className="w-full text-base shadow-soft"
+                    asChild
+                  >
+                    <Link to="/auth?mode=register" onClick={() => setIsMobileMenuOpen(false)}>
+                      რეგისტრაცია
+                    </Link>
                   </Button>
                 </div>
               )}

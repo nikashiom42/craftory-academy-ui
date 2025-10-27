@@ -166,7 +166,7 @@ export function FeaturedCourseSection() {
                   className="w-full h-12 font-bold shadow-md hover:shadow-lg transition-all group bg-accent hover:bg-accent/90"
                 >
                   <Link to={`/courses/${course.slug}`}>
-                    ჩაწერა კურსზე - {course.price} ₾
+                    კურსზე ჩაწერა - {course.price} ₾
                     <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Link>
                 </Button>
@@ -206,4 +206,3 @@ export function FeaturedCourseSection() {
     </section>
   );
 }
-

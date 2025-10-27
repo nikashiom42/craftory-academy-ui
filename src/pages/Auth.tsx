@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,13 +17,32 @@ const authSchema = z.object({
 });
 
 export default function Auth() {
-  const [isLogin, setIsLogin] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [isLogin, setIsLogin] = useState(() => searchParams.get("mode") !== "register");
+  const mode = searchParams.get("mode");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (mode === "register" && isLogin) {
+      setIsLogin(false);
+    } else if ((mode === "login" || mode === null) && !isLogin) {
+      setIsLogin(true);
+    }
+  }, [mode, isLogin]);
+
+  const switchAuthMode = (mode: "login" | "register") => {
+    setIsLogin(mode === "login");
+    setSearchParams({ mode }, { replace: true });
+    setPassword("");
+    if (mode === "login") {
+      setFullName("");
+    }
+  };
 
   useEffect(() => {
     // Check if user is already logged in and redirect to appropriate dashboard
@@ -125,8 +144,7 @@ export default function Auth() {
           title: "წარმატება",
           description: "ანგარიში წარმატებით შეიქმნა! ახლა შეგიძლიათ შესვლა.",
         });
-        setIsLogin(true);
-        setPassword("");
+        switchAuthMode("login");
       }
     } catch (error: any) {
       toast({
@@ -203,10 +221,7 @@ export default function Auth() {
                 type="button"
                 variant="ghost"
                 className="w-full"
-                onClick={() => {
-                  setIsLogin(!isLogin);
-                  setPassword("");
-                }}
+                onClick={() => switchAuthMode(isLogin ? "register" : "login")}
               >
                 {isLogin
                   ? "არ გაქვთ ანგარიში? დარეგისტრირდით"
