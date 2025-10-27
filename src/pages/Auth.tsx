@@ -7,6 +7,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 
 const authSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -15,7 +17,7 @@ const authSchema = z.object({
 });
 
 export default function Auth() {
-  const [isLogin, setIsLogin] = useState(true);
+  const [isLogin, setIsLogin] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -57,7 +59,7 @@ export default function Auth() {
       if (!validation.success) {
         toast({
           variant: "destructive",
-          title: "Validation Error",
+          title: "შეცდომა",
           description: validation.error.errors[0].message,
         });
         setLoading(false);
@@ -73,8 +75,8 @@ export default function Auth() {
         if (error) {
           toast({
             variant: "destructive",
-            title: "Login Failed",
-            description: "Invalid email or password. Please try again.",
+            title: "შესვლა ვერ მოხერხდა",
+            description: "არასწორი ელფოსტა ან პაროლი. გთხოვთ სცადოთ თავიდან.",
           });
           return;
         }
@@ -87,8 +89,8 @@ export default function Auth() {
           .single();
 
         toast({
-          title: "Success",
-          description: "Logged in successfully!",
+          title: "წარმატება",
+          description: "წარმატებით შეხვედით სისტემაში!",
         });
 
         if (roleData?.role === 'admin') {
@@ -111,17 +113,17 @@ export default function Auth() {
         if (error) {
           toast({
             variant: "destructive",
-            title: "Signup Failed",
+            title: "რეგისტრაცია ვერ მოხერხდა",
             description: error.message.includes("already registered") 
-              ? "This email is already registered. Please login instead."
-              : "Unable to create account. Please try again.",
+              ? "ეს ელფოსტა უკვე რეგისტრირებულია. გთხოვთ შეხვიდეთ სისტემაში."
+              : "ანგარიშის შექმნა ვერ მოხერხდა. გთხოვთ სცადოთ თავიდან.",
           });
           return;
         }
 
         toast({
-          title: "Success",
-          description: "Account created successfully! You can now login.",
+          title: "წარმატება",
+          description: "ანგარიში წარმატებით შეიქმნა! ახლა შეგიძლიათ შესვლა.",
         });
         setIsLogin(true);
         setPassword("");
@@ -129,8 +131,8 @@ export default function Auth() {
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "An unexpected error occurred. Please try again.",
+        title: "შეცდომა",
+        description: "მოხდა მოულოდნელი შეცდომა. გთხოვთ სცადოთ თავიდან.",
       });
     } finally {
       setLoading(false);
@@ -138,78 +140,84 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-cream p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">
-            {isLogin ? "Login" : "Sign Up"}
-          </CardTitle>
-          <CardDescription>
-            {isLogin
-              ? "Enter your credentials to access the admin panel"
-              : "Create an account to get started"}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleAuth} className="space-y-4">
-            {!isLogin && (
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      
+      <div className="flex-1 flex items-center justify-center bg-cream p-4 pt-28">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold">
+              {isLogin ? "შესვლა" : "რეგისტრაცია"}
+            </CardTitle>
+            <CardDescription>
+              {isLogin
+                ? "შეიყვანეთ თქვენი მონაცემები სისტემაში შესასვლელად"
+                : "შექმენით ანგარიში დასაწყებად"}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleAuth} className="space-y-4">
+              {!isLogin && (
+                <div className="space-y-2">
+                  <Label htmlFor="fullName">სრული სახელი</Label>
+                  <Input
+                    id="fullName"
+                    type="text"
+                    placeholder="სახელი გვარი"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    required={!isLogin}
+                  />
+                </div>
+              )}
+              
               <div className="space-y-2">
-                <Label htmlFor="fullName">Full Name</Label>
+                <Label htmlFor="email">ელფოსტა</Label>
                 <Input
-                  id="fullName"
-                  type="text"
-                  placeholder="John Doe"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  required={!isLogin}
+                  id="email"
+                  type="email"
+                  placeholder="example@gmail.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
                 />
               </div>
-            )}
-            
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="password">პაროლი</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
 
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Loading..." : isLogin ? "Login" : "Sign Up"}
-            </Button>
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "იტვირთება..." : isLogin ? "შესვლა" : "რეგისტრაცია"}
+              </Button>
 
-            <Button
-              type="button"
-              variant="ghost"
-              className="w-full"
-              onClick={() => {
-                setIsLogin(!isLogin);
-                setPassword("");
-              }}
-            >
-              {isLogin
-                ? "Need an account? Sign up"
-                : "Already have an account? Login"}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+              <Button
+                type="button"
+                variant="ghost"
+                className="w-full"
+                onClick={() => {
+                  setIsLogin(!isLogin);
+                  setPassword("");
+                }}
+              >
+                {isLogin
+                  ? "არ გაქვთ ანგარიში? დარეგისტრირდით"
+                  : "უკვე გაქვთ ანგარიში? შედით"}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Footer />
     </div>
   );
 }

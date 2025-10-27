@@ -18,7 +18,7 @@ export const academyConfig = {
     { name: "მთავარი", path: "/" },
     { name: "კურსები", path: "/courses" },
     { name: "კონტაქტი", path: "/contact" },
-    { name: "რეგისტრაცია", path: "#registration" },
+    { name: "რეგისტრაცია", path: "/auth" },
   ],
 
   // Contact Info

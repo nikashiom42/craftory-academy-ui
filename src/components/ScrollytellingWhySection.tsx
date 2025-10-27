@@ -43,15 +43,18 @@ const steps: StepCard[] = [
 
 export function ScrollytellingWhySection() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
 
   // Auto-play carousel
   useEffect(() => {
+    if (isDragging) return;
+    
     const interval = setInterval(() => {
       setActiveIndex((current) => (current + 1) % steps.length);
     }, 5000); // Change card every 5 seconds
 
     return () => clearInterval(interval);
-  }, []);
+  }, [isDragging]);
 
   const goToNext = () => {
     setActiveIndex((current) => (current + 1) % steps.length);
@@ -59,6 +62,16 @@ export function ScrollytellingWhySection() {
 
   const goToPrev = () => {
     setActiveIndex((current) => (current - 1 + steps.length) % steps.length);
+  };
+
+  const handleDragEnd = (_event: any, info: any) => {
+    const threshold = 50;
+    if (info.offset.x > threshold) {
+      goToPrev();
+    } else if (info.offset.x < -threshold) {
+      goToNext();
+    }
+    setIsDragging(false);
   };
 
   return (
@@ -83,12 +96,14 @@ export function ScrollytellingWhySection() {
             </div>
 
             {/* Right Column - Animated Cards */}
-            <div className="relative h-[500px]">
+            <div className="relative h-[500px] cursor-grab active:cursor-grabbing">
               <AnimatePresence mode="wait">
                 <CarouselCard
                   key={activeIndex}
                   step={steps[activeIndex]}
                   index={activeIndex}
+                  onDragStart={() => setIsDragging(true)}
+                  onDragEnd={handleDragEnd}
                 />
               </AnimatePresence>
             </div>
@@ -125,12 +140,19 @@ export function ScrollytellingWhySection() {
 interface CarouselCardProps {
   step: StepCard;
   index: number;
+  onDragStart?: () => void;
+  onDragEnd?: (event: any, info: any) => void;
 }
 
 // CarouselCard renders a simple animated card with fade transition.
-function CarouselCard({ step, index }: CarouselCardProps) {
+function CarouselCard({ step, index, onDragStart, onDragEnd }: CarouselCardProps) {
   return (
     <motion.div
+      drag="x"
+      dragConstraints={{ left: 0, right: 0 }}
+      dragElastic={0.2}
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
       initial={{ opacity: 0, x: 100 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -100 }}
