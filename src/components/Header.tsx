@@ -53,8 +53,16 @@ export function Header() {
       setIsMobileMenuOpen(false);
       toast.success("წარმატებით გახვედით სისტემიდან");
       navigate("/");
-    } catch (error) {
-      toast.error("გასვლისას დაფიქსირდა შეცდომა");
+    } catch (error: any) {
+      // If session doesn't exist (403), treat as successful logout
+      if (error?.message?.includes("Session not found") || error?.status === 403) {
+        setIsLoggedIn(false);
+        setIsMobileMenuOpen(false);
+        toast.success("წარმატებით გახვედით სისტემიდან");
+        navigate("/");
+      } else {
+        toast.error("გასვლისას დაფიქსირდა შეცდომა");
+      }
     }
   };
 
