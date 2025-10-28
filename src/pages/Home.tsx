@@ -60,9 +60,13 @@ export default function Home() {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <Button size="lg" onClick={scrollToRegistration} className="group">
+                <Button
+                  size="lg"
+                  onClick={scrollToRegistration}
+                  className="group h-[3.3rem] px-[2.2rem] text-lg tracking-wide"
+                >
                   დარეგისტრირდი ახლავე
-                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Button>
               </div>
             </motion.div>
