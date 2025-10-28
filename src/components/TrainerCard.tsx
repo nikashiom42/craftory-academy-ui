@@ -34,7 +34,7 @@ export function TrainerCard({ trainer }: TrainerCardProps) {
 
             <div className="order-1 md:order-2 space-y-6">
               <div>
-                <p className="text-sm uppercase tracking-wider text-muted-foreground mb-2">
+                <p className="text-sm uppercase text-muted-foreground mb-2 font-heading">
                   {trainer.title}
                 </p>
                 <h2 className="text-4xl font-bold mb-2">{trainer.name}</h2>

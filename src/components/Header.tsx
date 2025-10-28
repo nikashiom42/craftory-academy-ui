@@ -49,6 +49,8 @@ export function Header() {
   const handleLogout = async () => {
     try {
       await supabase.auth.signOut();
+      setIsLoggedIn(false);
+      setIsMobileMenuOpen(false);
       toast.success("წარმატებით გახვედით სისტემიდან");
       navigate("/");
     } catch (error) {

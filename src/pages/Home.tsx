@@ -63,7 +63,7 @@ export default function Home() {
                 <Button
                   size="lg"
                   onClick={scrollToRegistration}
-                  className="group h-[3.3rem] px-[2.2rem] text-lg tracking-wide"
+                  className="group h-[3.3rem] px-[2.2rem] text-lg"
                 >
                   დარეგისტრირდი ახლავე
                   <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />

@@ -13,6 +13,14 @@ export default {
       },
     },
     extend: {
+      letterSpacing: {
+        tighter: "0rem",
+        tight: "0rem",
+        normal: "0rem",
+        wide: "0.1rem",
+        wider: "0.15rem",
+        widest: "0.2rem",
+      },
       fontFamily: {
         'heading': ['SS-GEO-HAKUNA', 'FiraGO', 'Noto Sans Condensed', 'sans-serif'],
         'body': ['FiraGO', 'Noto Sans Condensed', 'Segoe UI', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],

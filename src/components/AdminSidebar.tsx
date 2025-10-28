@@ -50,7 +50,7 @@ export function AdminSidebar({ userEmail }: AdminSidebarProps) {
 
       <SidebarContent className="px-3 py-4">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
+          <SidebarGroupLabel className="text-xs uppercase text-muted-foreground mb-2 font-heading">
             Management
           </SidebarGroupLabel>
           <SidebarGroupContent>

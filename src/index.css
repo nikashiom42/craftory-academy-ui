@@ -135,7 +135,6 @@ All colors MUST be HSL.
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-bold font-heading;
-    letter-spacing: 0.02em;
     line-height: 1.2;
   }
 
@@ -148,7 +147,7 @@ All colors MUST be HSL.
   }
 
   .uppercase-heading {
-    @apply uppercase tracking-wider font-bold;
+    @apply uppercase font-bold font-heading;
   }
 
   /* Smooth scroll behavior */
@@ -179,5 +178,18 @@ All colors MUST be HSL.
 
   .gradient-hero {
     background: var(--gradient-hero);
+  }
+}
+
+@layer utilities {
+  .font-heading {
+    letter-spacing: 0.2rem;
+  }
+
+  .font-body,
+  .font-sans,
+  .font-serif,
+  .font-mono {
+    letter-spacing: 0;
   }
 }
