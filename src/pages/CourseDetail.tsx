@@ -96,7 +96,7 @@ export default function CourseDetail() {
       
       <ScrollytellingWhySection />
       
-      <CohortStrip cohort={course.cohort} />
+      {course.cohort && <CohortStrip cohort={course.cohort} />}
       
       {/* Enrollment Section */}
       <section className="py-12 bg-background border-y">

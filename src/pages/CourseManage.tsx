@@ -12,6 +12,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AdminSidebar } from "@/components/AdminSidebar";
 import { User } from "@supabase/supabase-js";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface SyllabusModule {
   module: number;
@@ -229,6 +240,37 @@ export default function CourseManage() {
     const updated = [...syllabus];
     updated[moduleIndex].topics.splice(topicIndex, 1);
     setSyllabus(updated);
+  };
+
+  /**
+   * Delete course from database
+   * Only available when editing existing course (not creating new)
+   */
+  const deleteCourse = async () => {
+    if (isNew || !id) return;
+
+    setLoading(true);
+    const { error } = await supabase
+      .from("courses")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to delete course",
+      });
+      setLoading(false);
+      return;
+    }
+
+    toast({
+      title: "Success",
+      description: `Course "${title}" has been deleted`,
+    });
+    
+    navigate("/admin/courses");
   };
 
   return (
@@ -478,13 +520,47 @@ export default function CourseManage() {
             </CardContent>
           </Card>
 
-          <div className="flex gap-4">
-            <Button type="submit" disabled={loading}>
-              {loading ? "Saving..." : isNew ? "Create Course" : "Update Course"}
-            </Button>
-            <Button type="button" variant="outline" onClick={() => navigate("/admin")}>
-              Cancel
-            </Button>
+          <div className="flex gap-4 justify-between">
+            <div className="flex gap-4">
+              <Button type="submit" disabled={loading}>
+                {loading ? "Saving..." : isNew ? "Create Course" : "Update Course"}
+              </Button>
+              <Button type="button" variant="outline" onClick={() => navigate("/admin/courses")}>
+                Cancel
+              </Button>
+            </div>
+            
+            {!isNew && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    disabled={loading}
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete Course
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete Course</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to delete "{title}"? This action cannot be undone and will also remove all associated registrations and enrollments.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={deleteCourse}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    >
+                      Delete Course
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
           </div>
         </form>
           </div>

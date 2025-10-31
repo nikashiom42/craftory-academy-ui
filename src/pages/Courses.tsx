@@ -19,7 +19,7 @@ interface Course {
   cohort: {
     duration: string;
     sessionsCount: string;
-  };
+  } | null;
 }
 
 export default function Courses() {
@@ -95,14 +95,24 @@ export default function Courses() {
 
                 <CardContent className="flex-grow">
                   <div className="space-y-3">
-                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                      <Clock size={16} />
-                      <span>{course.cohort.duration}</span>
-                    </div>
-                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                      <Users size={16} />
-                      <span>{course.cohort.sessionsCount}</span>
-                    </div>
+                    {course.cohort?.duration && (
+                      <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                        <Clock size={16} />
+                        <span>{course.cohort?.duration}</span>
+                      </div>
+                    )}
+                    {course.cohort?.sessionsCount && (
+                      <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                        <Users size={16} />
+                        <span>{course.cohort?.sessionsCount}</span>
+                      </div>
+                    )}
+                    {!course.cohort && course.duration && (
+                      <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                        <Clock size={16} />
+                        <span>{course.duration}</span>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
 

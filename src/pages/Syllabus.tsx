@@ -12,7 +12,7 @@ interface Course {
     duration: string;
     sessionsCount: string;
     format: string;
-  };
+  } | null;
   syllabus: Array<{
     module: number;
     title: string;
@@ -80,20 +80,28 @@ export default function Syllabus() {
               {course.title}
             </h2>
             
-            <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <span className="font-semibold">ხანგრძლივობა:</span>
-                <span>{course.cohort.duration}</span>
+            {course.cohort && (
+              <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                {course.cohort.duration && (
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold">ხანგრძლივობა:</span>
+                    <span>{course.cohort.duration}</span>
+                  </div>
+                )}
+                {course.cohort.sessionsCount && (
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold">შეხვედრები:</span>
+                    <span>{course.cohort.sessionsCount}</span>
+                  </div>
+                )}
+                {course.cohort.format && (
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold">ფორმატი:</span>
+                    <span>{course.cohort.format}</span>
+                  </div>
+                )}
               </div>
-              <div className="flex items-center gap-2">
-                <span className="font-semibold">შეხვედრები:</span>
-                <span>{course.cohort.sessionsCount}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="font-semibold">ფორმატი:</span>
-                <span>{course.cohort.format}</span>
-              </div>
-            </div>
+            )}
           </div>
 
           {/* Full Syllabus */}

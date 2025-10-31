@@ -20,7 +20,7 @@ interface Course {
     duration: string;
     sessionsCount: string;
     format?: string;
-  };
+  } | null;
 }
 
 /**
@@ -131,27 +131,33 @@ export function FeaturedCourseSection() {
               </div>
 
               {/* Course Quick Info */}
-              <div className="grid grid-cols-2 gap-3">
-                <div className="flex items-center gap-2 text-sm">
-                  <Clock className="w-4 h-4 text-accent flex-shrink-0" />
-                  <span>{course.cohort.duration}</span>
-                </div>
+              {course.cohort && (
+                <div className="grid grid-cols-2 gap-3">
+                  {course.cohort.duration && (
+                    <div className="flex items-center gap-2 text-sm">
+                      <Clock className="w-4 h-4 text-accent flex-shrink-0" />
+                      <span>{course.cohort.duration}</span>
+                    </div>
+                  )}
 
-                <div className="flex items-center gap-2 text-sm">
-                  <Users className="w-4 h-4 text-accent flex-shrink-0" />
-                  <span>{course.cohort.sessionsCount}</span>
-                </div>
+                  {course.cohort.sessionsCount && (
+                    <div className="flex items-center gap-2 text-sm">
+                      <Users className="w-4 h-4 text-accent flex-shrink-0" />
+                      <span>{course.cohort.sessionsCount}</span>
+                    </div>
+                  )}
 
-                {course.cohort.startDate && (
-                  <div className="flex items-center gap-2 text-sm col-span-2">
-                    <Calendar className="w-4 h-4 text-accent flex-shrink-0" />
-                    <span>{course.cohort.startDate}</span>
-                  </div>
-                )}
-              </div>
+                  {course.cohort.startDate && (
+                    <div className="flex items-center gap-2 text-sm col-span-2">
+                      <Calendar className="w-4 h-4 text-accent flex-shrink-0" />
+                      <span>{course.cohort.startDate}</span>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Format Info - from DB */}
-              {course.cohort.format && (
+              {course.cohort?.format && (
                 <div className="flex items-center gap-2 text-xs bg-accent/5 p-2 rounded-md border border-accent/20">
                   <CheckCircle2 className="w-3 h-3 text-accent flex-shrink-0" />
                   <span>{course.cohort.format}</span>
