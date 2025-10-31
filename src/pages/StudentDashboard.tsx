@@ -141,15 +141,13 @@ export default function StudentDashboard() {
                 
                 return (
                   <Card key={enrollment.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                    {course.image_url && (
-                      <div className="aspect-video overflow-hidden">
-                        <img
-                          src={course.image_url}
-                          alt={course.title}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    )}
+                    <div className="aspect-video overflow-hidden">
+                      <img
+                        src={course.image_url || "/placeholder.svg"}
+                        alt={course.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                     <CardHeader>
                       <div className="flex items-center justify-between mb-2">
                         <span className={`text-sm font-semibold ${status.color}`}>

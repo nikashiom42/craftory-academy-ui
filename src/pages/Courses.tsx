@@ -79,7 +79,7 @@ export default function Courses() {
               <Card className="h-full flex flex-col shadow-medium hover-lift overflow-hidden">
                 <div className="aspect-video overflow-hidden relative">
                   <img
-                    src={course.image_url}
+                    src={course.image_url || "/placeholder.svg"}
                     alt={course.title}
                     className="w-full h-full object-cover transition-transform hover:scale-105"
                   />

@@ -108,13 +108,11 @@ export default function StudentCourseView() {
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative h-[40vh] min-h-[300px]">
-          {course.image_url && (
-            <img
-              src={course.image_url}
-              alt={course.title}
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-          )}
+          <img
+            src={course.image_url || "/placeholder.svg"}
+            alt={course.title}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent" />
           <div className="absolute inset-0 flex items-end">
             <div className="container mx-auto px-4 pb-8">
