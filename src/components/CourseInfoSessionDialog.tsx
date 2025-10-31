@@ -6,17 +6,12 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
-import { GEORGIAN_PHONE_REGEX, normalizePhone } from "@/lib/validation";
 
 const infoSessionSchema = z.object({
-  firstName: z.string().trim().min(2, "სახელი უნდა შეიცავდეს მინიმუმ 2 სიმბოლოს"),
-  lastName: z.string().trim().min(2, "გვარი უნდა შეიცავდეს მინიმუმ 2 სიმბოლოს"),
-  phone: z
-    .string()
-    .trim()
-    .transform((value) => normalizePhone(value))
-    .refine((value) => GEORGIAN_PHONE_REGEX.test(value), "ფორმატი: 505050108 ან +995505050108"),
-  email: z.string().trim().email("ელფოსტის მისამართი არასწორია"),
+  firstName: z.string().min(2, "სახელი უნდა შეიცავდეს მინიმუმ 2 სიმბოლოს"),
+  lastName: z.string().min(2, "გვარი უნდა შეიცავდეს მინიმუმ 2 სიმბოლოს"),
+  phone: z.string().regex(/^[\d\s\+\-\(\)]{9,}$/, "საკონტაქტო ნომერი არასწორია"),
+  email: z.string().email("ელფოსტის მისამართი არასწორია"),
 });
 
 interface CourseInfoSessionDialogProps {
@@ -58,12 +53,12 @@ export function CourseInfoSessionDialog({ open, onOpenChange, courseTitle }: Cou
     try {
       const { error } = await supabase.from("course_registrations").insert([
         {
-          first_name: validation.data.firstName,
-          last_name: validation.data.lastName,
-          phone: validation.data.phone,
-          email: validation.data.email,
-          personal_id: null,
-          city: null,
+          first_name: formValues.firstName,
+          last_name: formValues.lastName,
+          phone: formValues.phone,
+          email: formValues.email,
+          personal_id: "",
+          city: "",
         },
       ]);
 
@@ -130,7 +125,7 @@ export function CourseInfoSessionDialog({ open, onOpenChange, courseTitle }: Cou
             <Label htmlFor="info-phone">საკონტაქტო ნომერი</Label>
             <Input
               id="info-phone"
-              placeholder="505050108 ან +995505050108"
+              placeholder="505 05 01 08"
               value={formValues.phone}
               onChange={handleChange("phone")}
               required

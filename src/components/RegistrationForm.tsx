@@ -17,18 +17,13 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { GEORGIAN_PHONE_REGEX, normalizePhone } from "@/lib/validation";
 
 // Form schema with conditional password validation based on createAccount checkbox
 const formSchema = z.object({
-  firstName: z.string().trim().min(2, "სახელი უნდა შეიცავდეს მინიმუმ 2 სიმბოლოს"),
-  lastName: z.string().trim().min(2, "გვარი უნდა შეიცავდეს მინიმუმ 2 სიმბოლოს"),
-  phone: z
-    .string()
-    .trim()
-    .transform((value) => normalizePhone(value))
-    .refine((value) => GEORGIAN_PHONE_REGEX.test(value), "ფორმატი: 505050108 ან +995505050108"),
-  email: z.string().trim().email("ელფოსტის მისამართი არასწორია"),
+  firstName: z.string().min(2, "სახელი უნდა შეიცავდეს მინიმუმ 2 სიმბოლოს"),
+  lastName: z.string().min(2, "გვარი უნდა შეიცავდეს მინიმუმ 2 სიმბოლოს"),
+  phone: z.string().regex(/^[\d\s\+\-\(\)]{9,}$/, "საკონტაქტო ნომერი არასწორია"),
+  email: z.string().email("ელფოსტის მისამართი არასწორია"),
   createAccount: z.boolean().default(false),
   password: z.string().optional(),
 }).refine((data) => {
@@ -94,8 +89,8 @@ export function RegistrationForm() {
             last_name: data.lastName,
             phone: data.phone,
             email: data.email,
-            personal_id: null,
-            city: null,
+            personal_id: "", // Not required for consultation
+            city: "", // Not required for consultation
           },
         ]);
 
@@ -173,7 +168,7 @@ export function RegistrationForm() {
                   <FormItem>
                     <FormLabel>საკონტაქტო ნომერი</FormLabel>
                     <FormControl>
-                      <Input placeholder="505050108 ან +995505050108" {...field} />
+                      <Input placeholder="505 05 01 08" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
