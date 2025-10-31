@@ -17,6 +17,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Mail, Phone, MapPin, Clock, Facebook, Instagram } from "lucide-react";
 import { academyConfig } from "@/config/academy";
+import { supabase } from "@/integrations/supabase/client";
+import { GEORGIAN_PHONE_REGEX, normalizePhone } from "@/lib/validation";
 
 // TikTok icon component
 const TikTokIcon = ({ size = 20 }: { size?: number }) => (
@@ -32,10 +34,23 @@ const TikTokIcon = ({ size = 20 }: { size?: number }) => (
 );
 
 const contactFormSchema = z.object({
-  name: z.string().min(2, "სახელი უნდა შეიცავდეს მინიმუმ 2 სიმბოლოს"),
-  email: z.string().email("ელფოსტის მისამართი არასწორია"),
-  phone: z.string().regex(/^[\d\s\+\-\(\)]{9,}$/, "საკონტაქტო ნომერი არასწორია"),
-  message: z.string().min(10, "შეტყობინება უნდა შეიცავდეს მინიმუმ 10 სიმბოლოს"),
+  firstName: z.string().trim().min(2, "სახელი უნდა შეიცავდეს მინიმუმ 2 სიმბოლოს"),
+  lastName: z.string().trim().min(2, "გვარი უნდა შეიცავდეს მინიმუმ 2 სიმბოლოს"),
+  email: z.string().trim().email("ელფოსტის მისამართი არასწორია"),
+  phone: z
+    .string()
+    .trim()
+    .transform((value) => normalizePhone(value))
+    .refine((value) => GEORGIAN_PHONE_REGEX.test(value), "საკონტაქტო ნომერი არასწორია"),
+  city: z
+    .string()
+    .optional()
+    .transform((value) => {
+      const trimmed = value?.trim() ?? "";
+      return trimmed.length === 0 ? undefined : trimmed;
+    })
+    .refine((value) => !value || value.length >= 2, "ქალაქი უნდა შეიცავდეს მინიმუმ 2 სიმბოლოს"),
+  message: z.string().trim().min(10, "შეტყობინება უნდა შეიცავდეს მინიმუმ 10 სიმბოლოს"),
 });
 
 type ContactFormValues = z.infer<typeof contactFormSchema>;
@@ -50,9 +65,11 @@ export default function Contact() {
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactFormSchema),
     defaultValues: {
-      name: "",
+      firstName: "",
+      lastName: "",
       email: "",
       phone: "",
+      city: "",
       message: "",
     },
   });
@@ -61,8 +78,22 @@ export default function Contact() {
     setIsSubmitting(true);
     
     try {
-      // Here you would send the contact form data to your backend
-      console.log("Contact form data:", data);
+      const { error } = await supabase.from("course_registrations").insert([
+        {
+          first_name: data.firstName,
+          last_name: data.lastName,
+          email: data.email,
+          phone: data.phone,
+          personal_id: null,
+          city: data.city ?? null,
+          notes: data.message,
+          status: "new",
+        },
+      ]);
+
+      if (error) {
+        throw error;
+      }
       
       toast.success("თქვენი შეტყობინება გაიგზავნა! ჩვენ მალე დაგიკავშირდებით.");
       form.reset();
@@ -205,19 +236,35 @@ export default function Contact() {
               
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>სახელი</FormLabel>
-                        <FormControl>
-                          <Input placeholder="თქვენი სახელი" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <FormField
+                      control={form.control}
+                      name="firstName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>სახელი</FormLabel>
+                          <FormControl>
+                            <Input placeholder="თქვენი სახელი" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="lastName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>გვარი</FormLabel>
+                          <FormControl>
+                            <Input placeholder="თქვენი გვარი" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
 
                   <FormField
                     control={form.control}
@@ -233,19 +280,35 @@ export default function Contact() {
                     )}
                   />
 
-                  <FormField
-                    control={form.control}
-                    name="phone"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>საკონტაქტო ნომერი</FormLabel>
-                        <FormControl>
-                          <Input placeholder="505 05 01 08" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <FormField
+                      control={form.control}
+                      name="phone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>საკონტაქტო ნომერი</FormLabel>
+                          <FormControl>
+                            <Input placeholder="505050108 ან +995505050108" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="city"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>ქალაქი</FormLabel>
+                          <FormControl>
+                            <Input placeholder="სად იმყოფებით?" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
 
                   <FormField
                     control={form.control}
@@ -277,4 +340,3 @@ export default function Contact() {
     </div>
   );
 }
-

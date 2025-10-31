@@ -64,7 +64,7 @@ export type Database = {
       }
       course_registrations: {
         Row: {
-          city: string
+          city: string | null
           course_id: string | null
           created_at: string | null
           email: string
@@ -72,13 +72,13 @@ export type Database = {
           id: string
           last_name: string
           notes: string | null
-          personal_id: string
+          personal_id: string | null
           phone: string
           status: string | null
           updated_at: string | null
         }
         Insert: {
-          city: string
+          city: string | null
           course_id?: string | null
           created_at?: string | null
           email: string
@@ -86,13 +86,13 @@ export type Database = {
           id?: string
           last_name: string
           notes?: string | null
-          personal_id: string
+          personal_id: string | null
           phone: string
           status?: string | null
           updated_at?: string | null
         }
         Update: {
-          city?: string
+          city?: string | null
           course_id?: string | null
           created_at?: string | null
           email?: string
@@ -100,7 +100,7 @@ export type Database = {
           id?: string
           last_name?: string
           notes?: string | null
-          personal_id?: string
+          personal_id?: string | null
           phone?: string
           status?: string | null
           updated_at?: string | null
