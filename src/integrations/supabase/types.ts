@@ -138,6 +138,7 @@ export type Database = {
           hero_claims: Json | null
           id: string
           image_url: string | null
+          info_session_cta: Json | null
           participant_number: number | null
           price: number | null
           published: boolean | null
@@ -150,6 +151,7 @@ export type Database = {
           title: string
           trainer: Json | null
           updated_at: string | null
+          why_section: Json | null
         }
         Insert: {
           cohort?: Json | null
@@ -164,6 +166,7 @@ export type Database = {
           hero_claims?: Json | null
           id?: string
           image_url?: string | null
+          info_session_cta?: Json | null
           participant_number?: number | null
           price?: number | null
           published?: boolean | null
@@ -176,6 +179,7 @@ export type Database = {
           title: string
           trainer?: Json | null
           updated_at?: string | null
+          why_section?: Json | null
         }
         Update: {
           cohort?: Json | null
@@ -190,6 +194,7 @@ export type Database = {
           hero_claims?: Json | null
           id?: string
           image_url?: string | null
+          info_session_cta?: Json | null
           participant_number?: number | null
           price?: number | null
           published?: boolean | null
@@ -202,6 +207,7 @@ export type Database = {
           title?: string
           trainer?: Json | null
           updated_at?: string | null
+          why_section?: Json | null
         }
         Relationships: []
       }
