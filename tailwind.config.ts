@@ -22,8 +22,9 @@ export default {
         widest: "0.2rem",
       },
       fontFamily: {
-        'heading': ['SS-GEO-HAKUNA', 'FiraGO', 'Noto Sans Condensed', 'sans-serif'],
-        'body': ['FiraGO', 'Noto Sans Condensed', 'Segoe UI', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        'heading': ['Datebashvili', 'SS-GEO-HAKUNA', 'sans-serif'],
+        'body': ['Datebashvili', 'SS-GEO-HAKUNA', 'sans-serif'],
+        'secondary': ['Noto Sans Condensed', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",

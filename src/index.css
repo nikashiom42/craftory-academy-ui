@@ -23,10 +23,18 @@ All colors MUST be HSL.
   top: 0;
 }
 
-/* Custom font import */
+/* Custom font imports */
 @font-face {
   font-family: 'SS-GEO-HAKUNA';
   src: url('./assets/SS-GEO-HAKUNA.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Datebashvili';
+  src: url('./assets/Datebashvili.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -153,6 +161,33 @@ All colors MUST be HSL.
   h1, h2, h3, h4, h5, h6 {
     @apply font-bold font-heading;
     line-height: 1.2;
+  }
+
+  button, .btn, [role="button"] {
+    @apply font-secondary;
+  }
+
+  input, textarea, select {
+    @apply font-secondary;
+  }
+
+  .text-muted, .text-secondary, .text-muted-foreground, .text-secondary-foreground {
+    @apply font-secondary;
+  }
+
+  /* Admin pages use secondary font everywhere */
+  .admin-layout {
+    font-family: 'Noto Sans Condensed', sans-serif;
+  }
+
+  .admin-layout h1,
+  .admin-layout h2,
+  .admin-layout h3,
+  .admin-layout h4,
+  .admin-layout h5,
+  .admin-layout h6,
+  .admin-layout .font-heading {
+    font-family: 'Noto Sans Condensed', sans-serif;
   }
 
   h1 {

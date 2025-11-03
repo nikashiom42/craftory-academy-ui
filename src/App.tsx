@@ -36,7 +36,8 @@ const AppLayout = () => {
       </a>
       {!isAdminRoute && !isAuthRoute && !isStudentRoute && <Header />}
       <main id="main-content" className={isAdminRoute || isAuthRoute || isStudentRoute ? "" : "flex-grow"}>
-        <Routes>
+        <div className={isAdminRoute ? "admin-layout" : ""}>
+          <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/courses" element={<Courses />} />
           <Route path="/courses/:slug" element={<CourseDetail />} />
@@ -53,6 +54,7 @@ const AppLayout = () => {
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+        </div>
       </main>
       {!isAdminRoute && !isAuthRoute && !isStudentRoute && <Footer />}
     </div>
@@ -64,7 +66,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
+      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <AppLayout />
       </BrowserRouter>
     </TooltipProvider>

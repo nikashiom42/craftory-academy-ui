@@ -88,6 +88,17 @@ export function Footer() {
 
         <div className="border-t border-secondary-foreground/20 mt-8 pt-8 text-center text-sm text-secondary-foreground/60">
           <p>© {new Date().getFullYear()} {academyConfig.siteName}. ყველა უფლება დაცულია.</p>
+          <p className="text-xs text-secondary-foreground/40 mt-2">
+            ვებსაიტი დამზადებული{" "}
+            <a 
+              href="http://geoecom.ge/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:text-secondary-foreground/60 transition-colors"
+            >
+              geoecom.ge
+            </a>
+          </p>
         </div>
       </div>
     </footer>

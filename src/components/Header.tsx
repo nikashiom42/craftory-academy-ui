@@ -91,7 +91,7 @@ export function Header() {
                   to={item.path}
                   onClick={() => handleNavClick(item.path)}
                   className={cn(
-                    "text-base font-semibold transition-all hover:text-primary relative py-2",
+                    "text-[1.15rem] font-semibold transition-all hover:text-primary relative py-2",
                     location.pathname === item.path
                       ? "text-primary after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary"
                       : "text-foreground/70"
@@ -169,7 +169,7 @@ export function Header() {
                   to={item.path}
                   onClick={() => handleNavClick(item.path)}
                   className={cn(
-                    "text-base font-semibold transition-colors px-4 py-3 rounded-lg",
+                    "text-[1.15rem] font-semibold transition-colors px-4 py-3 rounded-lg",
                     location.pathname === item.path
                       ? "text-primary bg-muted"
                       : "text-foreground/70 hover:bg-muted/50"
