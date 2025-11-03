@@ -58,6 +58,13 @@ export default function CourseManage() {
   // Syllabus
   const [syllabus, setSyllabus] = useState<SyllabusModule[]>([]);
 
+  // Trainer
+  const [trainerName, setTrainerName] = useState("");
+  const [trainerTitle, setTrainerTitle] = useState("");
+  const [trainerCredentials, setTrainerCredentials] = useState("");
+  const [trainerBio, setTrainerBio] = useState("");
+  const [trainerImage, setTrainerImage] = useState("");
+
   useEffect(() => {
     checkAuth();
     if (!isNew) {
@@ -111,6 +118,17 @@ export default function CourseManage() {
     setPrice(data.price?.toString() || "");
     setPublished(data.published || false);
     setSyllabus((data.syllabus as unknown as SyllabusModule[]) || []);
+    
+    // Load trainer data
+    const trainer = data.trainer as any;
+    if (trainer) {
+      setTrainerName(trainer.name || "");
+      setTrainerTitle(trainer.title || "");
+      setTrainerCredentials(trainer.credentials || "");
+      setTrainerBio(trainer.bio || "");
+      setTrainerImage(trainer.image || "");
+    }
+    
     setLoading(false);
   };
 
@@ -148,6 +166,40 @@ export default function CourseManage() {
     });
   };
 
+  const handleTrainerImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    const fileExt = file.name.split(".").pop();
+    const fileName = `trainer-${Math.random()}.${fileExt}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("course-images")
+      .upload(fileName, file);
+
+    if (uploadError) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to upload trainer image",
+      });
+      setUploading(false);
+      return;
+    }
+
+    const { data } = supabase.storage
+      .from("course-images")
+      .getPublicUrl(fileName);
+
+    setTrainerImage(data.publicUrl);
+    setUploading(false);
+    toast({
+      title: "Success",
+      description: "Trainer image uploaded successfully",
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -167,6 +219,13 @@ export default function CourseManage() {
       price: price ? parseFloat(price) : 0,
       published,
       syllabus: syllabus as any,
+      trainer: trainerName || trainerTitle || trainerCredentials || trainerBio || trainerImage ? {
+        name: trainerName,
+        title: trainerTitle,
+        credentials: trainerCredentials,
+        bio: trainerBio,
+        image: trainerImage,
+      } : null,
     };
 
     if (isNew) {
@@ -517,6 +576,78 @@ export default function CourseManage() {
                   </div>
                 </div>
               ))}
+            </CardContent>
+          </Card>
+
+          {/* Trainer Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Trainer Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="trainerImage">Trainer Photo</Label>
+                <div className="flex items-center gap-4">
+                  {trainerImage && (
+                    <img
+                      src={trainerImage}
+                      alt="Trainer"
+                      className="w-32 h-32 object-cover rounded-lg"
+                    />
+                  )}
+                  <div>
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleTrainerImageUpload}
+                      disabled={uploading}
+                    />
+                    {uploading && <p className="text-sm text-muted-foreground mt-2">Uploading...</p>}
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="trainerName">Trainer Name</Label>
+                  <Input
+                    id="trainerName"
+                    value={trainerName}
+                    onChange={(e) => setTrainerName(e.target.value)}
+                    placeholder="მიშა მუსხი"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="trainerTitle">Section Title</Label>
+                  <Input
+                    id="trainerTitle"
+                    value={trainerTitle}
+                    onChange={(e) => setTrainerTitle(e.target.value)}
+                    placeholder="კურსის ავტორი და ტრენერი"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="trainerCredentials">Credentials/Position</Label>
+                <Input
+                  id="trainerCredentials"
+                  value={trainerCredentials}
+                  onChange={(e) => setTrainerCredentials(e.target.value)}
+                  placeholder="Interna-ს დამფუძნებელი"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="trainerBio">Trainer Bio</Label>
+                <Textarea
+                  id="trainerBio"
+                  value={trainerBio}
+                  onChange={(e) => setTrainerBio(e.target.value)}
+                  rows={4}
+                  placeholder="მე ვარ გიგა, ავეჯის ინდუსტრიაში 15 წელზე მეტია ვმუშაობ..."
+                />
+              </div>
             </CardContent>
           </Card>
 
