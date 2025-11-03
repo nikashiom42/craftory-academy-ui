@@ -35,6 +35,16 @@ interface Trainer {
   image: string;
 }
 
+interface WhyCard {
+  title: string;
+  description: string;
+}
+
+interface InfoSessionCTA {
+  heading: string;
+  description: string;
+}
+
 interface Course {
   id: string;
   slug: string;
@@ -48,6 +58,8 @@ interface Course {
   syllabus: SyllabusModule[];
   skills: string[];
   trainer: Trainer | null;
+  why_section?: WhyCard[];
+  info_session_cta?: InfoSessionCTA;
 }
 
 export default function CourseDetail() {
@@ -190,7 +202,9 @@ export default function CourseDetail() {
       
       <PartnersMarquee />
       
-      <ScrollytellingWhySection />
+      {course.why_section && course.why_section.length > 0 && (
+        <ScrollytellingWhySection cards={course.why_section} />
+      )}
       
       {course.cohort && <CohortStrip cohort={course.cohort} />}
       
@@ -215,7 +229,11 @@ export default function CourseDetail() {
       
       <SkillsGrid skills={course.skills} />
       
-      <InfoSessionCTA onRegisterClick={handleInfoSessionOpen} />
+      <InfoSessionCTA 
+        onRegisterClick={handleInfoSessionOpen}
+        heading={course.info_session_cta?.heading}
+        description={course.info_session_cta?.description}
+      />
       
       <TrainerCard trainer={course.trainer} />
       <CourseInfoSessionDialog

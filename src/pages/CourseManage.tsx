@@ -66,6 +66,28 @@ export default function CourseManage() {
   const [trainerBio, setTrainerBio] = useState("");
   const [trainerImage, setTrainerImage] = useState("");
 
+  // Hero Claims
+  const [heroClaims, setHeroClaims] = useState<string[]>([]);
+
+  // Cohort Info
+  const [cohortStartDate, setCohortStartDate] = useState("");
+  const [cohortDuration, setCohortDuration] = useState("");
+  const [cohortSessionsCount, setCohortSessionsCount] = useState("");
+  const [cohortFormat, setCohortFormat] = useState("");
+
+  // Target Audience
+  const [targetAudience, setTargetAudience] = useState<string[]>([]);
+
+  // Skills
+  const [skills, setSkills] = useState<string[]>([]);
+
+  // Why Section (for ScrollytellingWhySection)
+  const [whyCards, setWhyCards] = useState<Array<{title: string; description: string}>>([]);
+
+  // Info Session CTA
+  const [infoSessionHeading, setInfoSessionHeading] = useState("დარეგისტრირდი უფასო საინფორმაციო შეხვედრაზე ახლავე");
+  const [infoSessionDescription, setInfoSessionDescription] = useState("მიიღე სრული ინფორმაცია კურსის შესახებ, ისაუბრე ტრენერთან და დასვი შენთვის საინტერესო კითხვები");
+
   useEffect(() => {
     checkAuth();
     if (!isNew) {
@@ -129,6 +151,35 @@ export default function CourseManage() {
       setTrainerCredentials(trainer.credentials || "");
       setTrainerBio(trainer.bio || "");
       setTrainerImage(trainer.image || "");
+    }
+
+    // Load hero claims
+    setHeroClaims((data.hero_claims as string[]) || []);
+
+    // Load cohort data
+    const cohort = data.cohort as any;
+    if (cohort) {
+      setCohortStartDate(cohort.startDate || "");
+      setCohortDuration(cohort.duration || "");
+      setCohortSessionsCount(cohort.sessionsCount || "");
+      setCohortFormat(cohort.format || "");
+    }
+
+    // Load target audience
+    setTargetAudience((data.target_audience as string[]) || []);
+
+    // Load skills
+    setSkills((data.skills as string[]) || []);
+
+    // Load why cards
+    const whySection = (data as any).why_section;
+    setWhyCards(whySection || []);
+
+    // Load info session CTA
+    const infoCta = (data as any).info_session_cta;
+    if (infoCta) {
+      setInfoSessionHeading(infoCta.heading || "დარეგისტრირდი უფასო საინფორმაციო შეხვედრაზე ახლავე");
+      setInfoSessionDescription(infoCta.description || "მიიღე სრული ინფორმაცია კურსის შესახებ, ისაუბრე ტრენერთან და დასვი შენთვის საინტერესო კითხვები");
     }
     
     setLoading(false);
@@ -222,6 +273,15 @@ export default function CourseManage() {
       published,
       featured_on_home: featuredOnHome,
       syllabus: syllabus as any,
+      hero_claims: heroClaims,
+      cohort: cohortStartDate || cohortDuration || cohortSessionsCount || cohortFormat ? {
+        startDate: cohortStartDate,
+        duration: cohortDuration,
+        sessionsCount: cohortSessionsCount,
+        format: cohortFormat,
+      } : null,
+      target_audience: targetAudience,
+      skills: skills,
       trainer: trainerName || trainerTitle || trainerCredentials || trainerBio || trainerImage ? {
         name: trainerName,
         title: trainerTitle,
@@ -229,7 +289,12 @@ export default function CourseManage() {
         bio: trainerBio,
         image: trainerImage,
       } : null,
-    };
+      why_section: whyCards,
+      info_session_cta: {
+        heading: infoSessionHeading,
+        description: infoSessionDescription,
+      },
+    } as any;
 
     if (isNew) {
       const { error } = await supabase
@@ -588,6 +653,258 @@ export default function CourseManage() {
                   </div>
                 </div>
               ))}
+            </CardContent>
+          </Card>
+
+          {/* Hero Claims */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex justify-between items-center">
+                Hero Claims
+                <Button type="button" size="sm" onClick={() => setHeroClaims([...heroClaims, ""])}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Claim
+                </Button>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {heroClaims.map((claim, index) => (
+                <div key={index} className="flex gap-2">
+                  <Input
+                    value={claim}
+                    onChange={(e) => {
+                      const updated = [...heroClaims];
+                      updated[index] = e.target.value;
+                      setHeroClaims(updated);
+                    }}
+                    placeholder="Hero claim text"
+                  />
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="destructive"
+                    onClick={() => {
+                      const updated = heroClaims.filter((_, i) => i !== index);
+                      setHeroClaims(updated);
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          {/* Cohort Information */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Cohort Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="cohortStartDate">Start Date</Label>
+                  <Input
+                    id="cohortStartDate"
+                    value={cohortStartDate}
+                    onChange={(e) => setCohortStartDate(e.target.value)}
+                    placeholder="15 იანვარი"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="cohortDuration">Duration</Label>
+                  <Input
+                    id="cohortDuration"
+                    value={cohortDuration}
+                    onChange={(e) => setCohortDuration(e.target.value)}
+                    placeholder="2 თვე"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="cohortSessionsCount">Sessions Count</Label>
+                  <Input
+                    id="cohortSessionsCount"
+                    value={cohortSessionsCount}
+                    onChange={(e) => setCohortSessionsCount(e.target.value)}
+                    placeholder="16 შეხვედრა"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="cohortFormat">Format</Label>
+                  <Input
+                    id="cohortFormat"
+                    value={cohortFormat}
+                    onChange={(e) => setCohortFormat(e.target.value)}
+                    placeholder="ონლაინ"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Target Audience */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex justify-between items-center">
+                Target Audience
+                <Button type="button" size="sm" onClick={() => setTargetAudience([...targetAudience, ""])}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Item
+                </Button>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {targetAudience.map((item, index) => (
+                <div key={index} className="flex gap-2">
+                  <Input
+                    value={item}
+                    onChange={(e) => {
+                      const updated = [...targetAudience];
+                      updated[index] = e.target.value;
+                      setTargetAudience(updated);
+                    }}
+                    placeholder="Target audience item"
+                  />
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="destructive"
+                    onClick={() => {
+                      const updated = targetAudience.filter((_, i) => i !== index);
+                      setTargetAudience(updated);
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          {/* Skills */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex justify-between items-center">
+                Skills
+                <Button type="button" size="sm" onClick={() => setSkills([...skills, ""])}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Skill
+                </Button>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {skills.map((skill, index) => (
+                <div key={index} className="flex gap-2">
+                  <Input
+                    value={skill}
+                    onChange={(e) => {
+                      const updated = [...skills];
+                      updated[index] = e.target.value;
+                      setSkills(updated);
+                    }}
+                    placeholder="Skill"
+                  />
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="destructive"
+                    onClick={() => {
+                      const updated = skills.filter((_, i) => i !== index);
+                      setSkills(updated);
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          {/* Why Section Cards */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex justify-between items-center">
+                "Why" Section Cards
+                <Button type="button" size="sm" onClick={() => setWhyCards([...whyCards, {title: "", description: ""}])}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Card
+                </Button>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {whyCards.map((card, index) => (
+                <div key={index} className="border rounded-lg p-4 space-y-4">
+                  <div className="flex justify-between items-center">
+                    <Label>Card {index + 1}</Label>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => {
+                        const updated = whyCards.filter((_, i) => i !== index);
+                        setWhyCards(updated);
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Title</Label>
+                    <Input
+                      value={card.title}
+                      onChange={(e) => {
+                        const updated = [...whyCards];
+                        updated[index].title = e.target.value;
+                        setWhyCards(updated);
+                      }}
+                      placeholder="Card title"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Description</Label>
+                    <Textarea
+                      value={card.description}
+                      onChange={(e) => {
+                        const updated = [...whyCards];
+                        updated[index].description = e.target.value;
+                        setWhyCards(updated);
+                      }}
+                      rows={3}
+                      placeholder="Card description"
+                    />
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          {/* Info Session CTA */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Info Session CTA</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="infoSessionHeading">Heading</Label>
+                <Input
+                  id="infoSessionHeading"
+                  value={infoSessionHeading}
+                  onChange={(e) => setInfoSessionHeading(e.target.value)}
+                  placeholder="დარეგისტრირდი უფასო საინფორმაციო შეხვედრაზე ახლავე"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="infoSessionDescription">Description</Label>
+                <Textarea
+                  id="infoSessionDescription"
+                  value={infoSessionDescription}
+                  onChange={(e) => setInfoSessionDescription(e.target.value)}
+                  rows={3}
+                  placeholder="მიიღე სრული ინფორმაცია კურსის შესახებ..."
+                />
+              </div>
             </CardContent>
           </Card>
 

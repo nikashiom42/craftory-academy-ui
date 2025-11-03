@@ -1,50 +1,18 @@
 // ScrollytellingWhySection.tsx renders a simple auto-playing carousel for "რატომ Craftory Academy?" section.
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import partner1Logo from "@/assets/partners/1.webp";
-import partner2Logo from "@/assets/partners/2.webp";
-import partner3Logo from "@/assets/partners/3.webp";
-import partner4Logo from "@/assets/partners/4.png";
-import partner5Logo from "@/assets/partners/5.webp"; // Lazieri
-import partner6Logo from "@/assets/partners/6.png"; // Interna
-import partner7Logo from "@/assets/partners/7.png"; // BinART
 
 interface StepCard {
   title: string;
   description: string;
-  targetProgress: number;
-  logos?: string[];
 }
 
-// steps stores the content for each card in the scrollytelling stack.
-const steps: StepCard[] = [
-  {
-    title: "კურსი მიმდინარეობს ONLINE ფორმატში და მოიცავს პრაქტიკულ შეხვედრებს ჩვენს პარტნიორ კომპანიებში, სადაც კურსის სტუდენტები მიიღებენ რეალურ პრაქტიკულ ცოდნასა და გამოცდილებას.",
-    description: "გახდი ერთ-ერთი პირველი პროფესიონალი ავეჯის კონსტრუქტორი საქართველოში და დაეუფლე პროფესიას, რომელიც ყოველდღიურად უფრო მოთხოვნადი ხდება.",
-    targetProgress: 95,
-  },
-  {
-    title: "ცოდნის დამადასტურებელი სერთიფიკატი",
-    description: "მიიღე ცოდნის დამადასტურებელი სერთიფიკატი, კურსის დასრულებისთანავე და დაიწყე კარიერული განვითარება",
-    targetProgress: 100,
-  },
-  {
-    title: "მიიღე ცოდნის დამადასტურებელი სერთიფიკატი, კურსის დასრულებისთანავე და დაიწყე კარიერული განვითარება",
-    description: "მიიღე სტაჟირების შესაძლებლობა საქართველოში წამყვან ავეჯის წარმოების კომპანიებში, როგორიც არის: Lazieri, Interna და BinART",
-    targetProgress: 85,
-    logos: [partner5Logo, partner6Logo, partner7Logo],
-  },
-  {
-    title: "ონლაინ სწავლება და პრაქტიკული შეხვედრები: LTB, Kasta, New Lam, B.Tech",
-    description: "კურსი მიმდინარეობს ONLINE ფორმატში და მოიცავს პრაქტიკულ შეხვედრებს ჩვენს პარტნიორ კომპანიებში, სადაც კურსის სტუდენტები მიიღებენ რეალურ პრაქტიკულ ცოდნასა და გამოცდილებას.",
-    targetProgress: 90,
-    logos: [partner1Logo, partner3Logo, partner4Logo, partner2Logo],
-  },
-];
+interface ScrollytellingWhySectionProps {
+  cards?: StepCard[];
+}
 
-export function ScrollytellingWhySection() {
+export function ScrollytellingWhySection({ cards }: ScrollytellingWhySectionProps) {
+  const steps = cards || [];
   const [activeIndex, setActiveIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -170,29 +138,6 @@ function CarouselCard({ step, index, onDragStart, onDragEnd }: CarouselCardProps
               {step.description}
             </p>
           </div>
-
-          {/* Progress bar removed per request */}
-
-          {/* Partner Logos */}
-          {step.logos && (
-            <div className="flex gap-3 flex-wrap">
-              {step.logos.map((logo, logoIndex) => (
-                <motion.div
-                  key={logoIndex}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.4 + logoIndex * 0.1 }}
-                  className="px-4 py-2 bg-muted/50 rounded-lg flex items-center"
-                >
-                  <img
-                    src={logo}
-                    alt="Partner logo"
-                    className="h-6 object-contain"
-                  />
-                </motion.div>
-              ))}
-            </div>
-          )}
         </div>
       </div>
     </motion.div>
@@ -221,26 +166,6 @@ function MobileStepCard({ step, index }: MobileStepCardProps) {
             {step.description}
           </p>
         </div>
-
-        {/* Progress bar removed per request */}
-
-        {/* Partner Logos */}
-        {step.logos && (
-          <div className="flex gap-2 flex-wrap">
-            {step.logos.map((logo, logoIndex) => (
-              <div
-                key={logoIndex}
-                className="px-3 py-1.5 bg-muted/50 rounded-lg flex items-center"
-              >
-                <img
-                  src={logo}
-                  alt="Partner logo"
-                  className="h-4 object-contain"
-                />
-              </div>
-            ))}
-          </div>
-        )}
       </div>
     </motion.div>
   );

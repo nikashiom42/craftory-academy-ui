@@ -4,9 +4,15 @@ import { Video, ArrowRight } from "lucide-react";
 
 interface InfoSessionCTAProps {
   onRegisterClick: () => void;
+  heading?: string;
+  description?: string;
 }
 
-export function InfoSessionCTA({ onRegisterClick }: InfoSessionCTAProps) {
+export function InfoSessionCTA({ 
+  onRegisterClick, 
+  heading = "დარეგისტრირდი უფასო საინფორმაციო შეხვედრაზე ახლავე",
+  description = "მიიღე სრული ინფორმაცია კურსის შესახებ, ისაუბრე ტრენერთან და დასვი შენთვის საინტერესო კითხვები"
+}: InfoSessionCTAProps) {
   return (
     <section className="py-20 bg-cream">
       <div className="container mx-auto px-4">
@@ -23,10 +29,10 @@ export function InfoSessionCTA({ onRegisterClick }: InfoSessionCTAProps) {
             </div>
           </div>
           <h2 className="text-3xl md:text-4xl font-bold uppercase mb-6">
-            დარეგისტრირდი უფასო საინფორმაციო შეხვედრაზე ახლავე
+            {heading}
           </h2>
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            მიიღე სრული ინფორმაცია კურსის შესახებ, ისაუბრე ტრენერთან და დასვი შენთვის საინტერესო კითხვები
+            {description}
           </p>
           <Button size="lg" onClick={onRegisterClick} className="group">
             დარეგისტრირდი ახლავე
