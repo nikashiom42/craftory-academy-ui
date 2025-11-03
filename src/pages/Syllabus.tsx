@@ -133,23 +133,6 @@ export default function Syllabus() {
             ))}
           </div>
 
-          {/* Download CTA */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="mt-12 text-center bg-cream rounded-xl p-8"
-          >
-            <h3 className="text-2xl font-bold mb-4">გადმოწერე სილაბუსი PDF ფორმატში</h3>
-            <p className="text-muted-foreground mb-6">
-              შეინახე სილაბუსი შენს მოწყობილობაზე და გაეცანი მას ნებისმიერ დროს
-            </p>
-            <Button size="lg" variant="outline">
-              <Download className="mr-2 h-4 w-4" />
-              გადმოწერა (მალე)
-            </Button>
-          </motion.div>
-
           {/* Registration CTA */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}

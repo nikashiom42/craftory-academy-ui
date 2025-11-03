@@ -3,15 +3,12 @@ import { Button } from "@/components/ui/button";
 import { PartnersMarquee } from "@/components/PartnersMarquee";
 import { RegistrationForm } from "@/components/RegistrationForm";
 import { FeaturedCourseSection } from "@/components/FeaturedCourseSection";
-import { ArrowRight, BookOpen } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import heroWorkshop from "@/assets/hero-workshop.webp";
 
 export default function Home() {
-  const scrollToRegistration = () => {
-    const element = document.getElementById("home-cta");
-    element?.scrollIntoView({ behavior: "smooth" });
-  };
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen">
@@ -62,10 +59,10 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 <Button
                   size="lg"
-                  onClick={scrollToRegistration}
+                  onClick={() => navigate("/courses")}
                   className="group h-[3.3rem] px-[2.2rem] text-lg"
                 >
-                  დარეგისტრირდი ახლავე
+                  აირჩიე კურსი
                   <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Button>
               </div>
@@ -79,44 +76,6 @@ export default function Home() {
       <PartnersMarquee />
 
       <FeaturedCourseSection />
-
-      {/* CTA Section */}
-      <section id="home-cta" className="bg-cream py-20">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="max-w-4xl mx-auto text-center"
-          >
-            <div className="flex justify-center mb-6">
-              <div className="w-20 h-20 rounded-full bg-accent flex items-center justify-center">
-                <BookOpen className="text-accent-foreground" size={36} />
-              </div>
-            </div>
-            <h2 className="text-3xl md:text-4xl font-bold uppercase mb-6">
-              მზად ხარ დაიწყო სწავლა?
-            </h2>
-            <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-              დარეგისტრირდი უფასო კონსულტაციაზე და მიიღე ყველა საჭირო ინფორმაცია კურსის შესახებ
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" asChild className="group">
-                <a href="#registration">
-                  უფასო კონსულტაციისთვის რეგისტრაცია
-                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </a>
-              </Button>
-              <Button size="lg" variant="outline" asChild>
-                <Link to="/courses">
-                  დეტალური ინფორმაცია
-                </Link>
-              </Button>
-            </div>
-          </motion.div>
-        </div>
-      </section>
 
       <RegistrationForm />
     </div>
