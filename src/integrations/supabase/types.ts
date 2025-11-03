@@ -20,8 +20,11 @@ export type Database = {
           created_at: string | null
           enrolled_at: string | null
           id: string
+          paid_at: string | null
           payment_status: Database["public"]["Enums"]["enrollment_status"]
           price_paid: number
+          tbc_order_id: string | null
+          tbc_payment_id: string | null
           updated_at: string | null
           user_id: string
         }
@@ -30,8 +33,11 @@ export type Database = {
           created_at?: string | null
           enrolled_at?: string | null
           id?: string
+          paid_at?: string | null
           payment_status?: Database["public"]["Enums"]["enrollment_status"]
           price_paid: number
+          tbc_order_id?: string | null
+          tbc_payment_id?: string | null
           updated_at?: string | null
           user_id: string
         }
@@ -40,8 +46,11 @@ export type Database = {
           created_at?: string | null
           enrolled_at?: string | null
           id?: string
+          paid_at?: string | null
           payment_status?: Database["public"]["Enums"]["enrollment_status"]
           price_paid?: number
+          tbc_order_id?: string | null
+          tbc_payment_id?: string | null
           updated_at?: string | null
           user_id?: string
         }
@@ -123,6 +132,7 @@ export type Database = {
           description: string | null
           duration: string | null
           end_date: string | null
+          featured_on_home: boolean | null
           google_drive_link: string | null
           google_meet_link: string | null
           hero_claims: Json | null
@@ -148,6 +158,7 @@ export type Database = {
           description?: string | null
           duration?: string | null
           end_date?: string | null
+          featured_on_home?: boolean | null
           google_drive_link?: string | null
           google_meet_link?: string | null
           hero_claims?: Json | null
@@ -173,6 +184,7 @@ export type Database = {
           description?: string | null
           duration?: string | null
           end_date?: string | null
+          featured_on_home?: boolean | null
           google_drive_link?: string | null
           google_meet_link?: string | null
           hero_claims?: Json | null
@@ -190,6 +202,36 @@ export type Database = {
           title?: string
           trainer?: Json | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      partners: {
+        Row: {
+          active: boolean
+          created_at: string
+          display_order: number
+          id: string
+          logo_url: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          display_order?: number
+          id?: string
+          logo_url: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          display_order?: number
+          id?: string
+          logo_url?: string
+          name?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -253,7 +295,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
-      enrollment_status: "pending" | "completed" | "test"
+      enrollment_status: "pending" | "completed" | "test" | "paid" | "failed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -382,7 +424,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
-      enrollment_status: ["pending", "completed", "test"],
+      enrollment_status: ["pending", "completed", "test", "paid", "failed"],
     },
   },
 } as const

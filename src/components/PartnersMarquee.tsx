@@ -1,7 +1,15 @@
-import { academyConfig } from "@/config/academy";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+
+interface Partner {
+  id: string;
+  name: string;
+  logo_url: string;
+  display_order: number;
+  active: boolean;
+}
 
 // Partner logo marquee with auto-scroll, manual controls, and drag functionality
 export function PartnersMarquee() {
@@ -9,10 +17,27 @@ export function PartnersMarquee() {
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeftPos, setScrollLeftPos] = useState(0);
+  const [partners, setPartners] = useState<Partner[]>([]);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    loadPartners();
+  }, []);
+
+  const loadPartners = async () => {
+    const { data } = await supabase
+      .from("partners")
+      .select("*")
+      .eq("active", true)
+      .order("display_order", { ascending: true });
+
+    if (data) {
+      setPartners(data);
+    }
+  };
   
   // Duplicate partners array for seamless loop
-  const duplicatedPartners = [...academyConfig.partners, ...academyConfig.partners];
+  const duplicatedPartners = [...partners, ...partners];
 
   // Scroll left by one item width
   const scrollLeft = () => {
@@ -92,7 +117,7 @@ export function PartnersMarquee() {
                     className="flex-shrink-0 mx-6 flex items-center justify-center bg-card border border-border/30 rounded-xl p-6 shadow-soft hover-lift transition-all duration-300"
                   >
                     <img
-                      src={partner.logo}
+                      src={partner.logo_url}
                       alt={partner.name}
                       className="h-12 w-auto object-contain"
                       draggable="false"

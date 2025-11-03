@@ -15,6 +15,7 @@ import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
 import AdminLeads from "./pages/AdminLeads";
 import AdminCourses from "./pages/AdminCourses";
+import AdminPartners from "./pages/AdminPartners";
 import CourseManage from "./pages/CourseManage";
 import StudentDashboard from "./pages/StudentDashboard";
 import StudentCourseView from "./pages/StudentCourseView";
@@ -42,6 +43,7 @@ const AppLayout = () => {
           <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><Admin /></ProtectedRoute>} />
           <Route path="/admin/courses" element={<ProtectedRoute requiredRole="admin"><AdminCourses /></ProtectedRoute>} />
           <Route path="/admin/leads" element={<ProtectedRoute requiredRole="admin"><AdminLeads /></ProtectedRoute>} />
+          <Route path="/admin/partners" element={<ProtectedRoute requiredRole="admin"><AdminPartners /></ProtectedRoute>} />
           <Route path="/admin/courses/:id" element={<ProtectedRoute requiredRole="admin"><CourseManage /></ProtectedRoute>} />
           <Route path="/student/dashboard" element={<ProtectedRoute requiredRole="user"><StudentDashboard /></ProtectedRoute>} />
           <Route path="/student/courses/:slug" element={<ProtectedRoute requiredRole="user"><StudentCourseView /></ProtectedRoute>} />

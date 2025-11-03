@@ -1,4 +1,4 @@
-import { LayoutGrid, Users, UserCheck, LogOut, BookOpen } from "lucide-react";
+import { LayoutGrid, Users, UserCheck, LogOut, BookOpen, Image } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   Sidebar,
@@ -20,6 +20,7 @@ const menuItems = [
   { title: "Dashboard", url: "/admin", icon: LayoutGrid },
   { title: "Courses", url: "/admin/courses", icon: BookOpen },
   { title: "Leads", url: "/admin/leads", icon: UserCheck },
+  { title: "Partners", url: "/admin/partners", icon: Image },
   { title: "Customers", url: "/admin/customers", icon: Users, disabled: true },
 ];
 
