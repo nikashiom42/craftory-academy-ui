@@ -18,9 +18,10 @@ interface CourseInfoSessionDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   courseTitle: string;
+  courseId: string;
 }
 
-export function CourseInfoSessionDialog({ open, onOpenChange, courseTitle }: CourseInfoSessionDialogProps) {
+export function CourseInfoSessionDialog({ open, onOpenChange, courseTitle, courseId }: CourseInfoSessionDialogProps) {
   const { toast } = useToast();
   const [formValues, setFormValues] = useState({
     firstName: "",
@@ -59,6 +60,7 @@ export function CourseInfoSessionDialog({ open, onOpenChange, courseTitle }: Cou
           email: formValues.email,
           personal_id: "",
           city: "",
+          course_id: courseId,
         },
       ]);
 

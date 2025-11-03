@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,6 +15,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -24,6 +31,7 @@ const formSchema = z.object({
   lastName: z.string().min(2, "გვარი უნდა შეიცავდეს მინიმუმ 2 სიმბოლოს"),
   phone: z.string().regex(/^[\d\s\+\-\(\)]{9,}$/, "საკონტაქტო ნომერი არასწორია"),
   email: z.string().email("ელფოსტის მისამართი არასწორია"),
+  courseId: z.string().optional(),
   createAccount: z.boolean().default(false),
   password: z.string().optional(),
 }).refine((data) => {
@@ -38,12 +46,24 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
+interface Course {
+  id: string;
+  title: string;
+  published: boolean;
+}
+
+interface RegistrationFormProps {
+  courseId?: string;
+}
+
 /**
  * RegistrationForm - Free consultation form with optional account creation
  * Users can optionally check a box to create an account during consultation signup
+ * @param courseId - Optional course ID to auto-assign this lead to a specific course
  */
-export function RegistrationForm() {
+export function RegistrationForm({ courseId }: RegistrationFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [courses, setCourses] = useState<Course[]>([]);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -52,10 +72,29 @@ export function RegistrationForm() {
       lastName: "",
       phone: "",
       email: "",
+      courseId: courseId || "",
       createAccount: false,
       password: "",
     },
   });
+
+  useEffect(() => {
+    if (!courseId) {
+      loadCourses();
+    }
+  }, [courseId]);
+
+  const loadCourses = async () => {
+    const { data } = await supabase
+      .from("courses")
+      .select("id, title, published")
+      .eq("published", true)
+      .order("title");
+    
+    if (data) {
+      setCourses(data);
+    }
+  };
 
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
@@ -91,6 +130,7 @@ export function RegistrationForm() {
             email: data.email,
             personal_id: "", // Not required for consultation
             city: "", // Not required for consultation
+            course_id: data.courseId || null,
           },
         ]);
 
@@ -188,6 +228,36 @@ export function RegistrationForm() {
                   </FormItem>
                 )}
               />
+
+              {!courseId && courses.length > 0 && (
+                <FormField
+                  control={form.control}
+                  name="courseId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>რომელი კურსი გაინტერესებთ?</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="აირჩიეთ კურსი" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {courses.map((course) => (
+                            <SelectItem key={course.id} value={course.id}>
+                              {course.title}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        არჩევითი - თუ არ იცით, შეგიძლიათ შემდეგ გადაწყვიტოთ
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
 
               <FormField
                 control={form.control}

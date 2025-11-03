@@ -126,6 +126,7 @@ export default function CourseDetail() {
         open={isInfoSessionOpen}
         onOpenChange={setIsInfoSessionOpen}
         courseTitle={course.title}
+        courseId={course.id}
       />
     </div>
   );

@@ -39,7 +39,11 @@ interface Registration {
   city: string;
   status: string;
   created_at: string;
+  course_id: string | null;
   has_account?: boolean;
+  course?: {
+    title: string;
+  };
 }
 
 export default function AdminLeads() {
@@ -76,7 +80,10 @@ export default function AdminLeads() {
   const loadRegistrations = async () => {
     const { data, error } = await supabase
       .from("course_registrations")
-      .select("*")
+      .select(`
+        *,
+        course:courses(title)
+      `)
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -306,6 +313,7 @@ export default function AdminLeads() {
                       <TableRow>
                         <TableHead>Name</TableHead>
                         <TableHead>Contact</TableHead>
+                        <TableHead>Course</TableHead>
                         <TableHead>Account</TableHead>
                         <TableHead>Date</TableHead>
                         <TableHead>Status</TableHead>
@@ -315,7 +323,7 @@ export default function AdminLeads() {
                     <TableBody>
                       {filteredRegistrations.length === 0 ? (
                         <TableRow>
-                          <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                          <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                             No registrations found matching your filters
                           </TableCell>
                         </TableRow>
@@ -345,11 +353,18 @@ export default function AdminLeads() {
                                 <a href={`tel:${registration.phone}`} className="hover:text-primary transition-colors flex items-center gap-1">
                                   <Phone className="h-3 w-3" />
                                   {registration.phone}
-                                </a>
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              {registration.has_account ? (
+                                 </a>
+                               </div>
+                             </TableCell>
+                             <TableCell>
+                               {registration.course ? (
+                                 <span className="text-sm">{registration.course.title}</span>
+                               ) : (
+                                 <span className="text-xs text-muted-foreground">No course selected</span>
+                               )}
+                             </TableCell>
+                             <TableCell>
+                               {registration.has_account ? (
                                 <Badge variant="default" className="gap-1">
                                   <UserPlus className="h-3 w-3" />
                                   Yes
