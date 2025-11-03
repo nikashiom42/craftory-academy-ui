@@ -31,8 +31,11 @@ const AppLayout = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
+      <a href="#main-content" className="skip-link">
+        გადადით მთავარ შიგთავსზე
+      </a>
       {!isAdminRoute && !isAuthRoute && !isStudentRoute && <Header />}
-      <main className={isAdminRoute || isAuthRoute || isStudentRoute ? "" : "flex-grow"}>
+      <main id="main-content" className={isAdminRoute || isAuthRoute || isStudentRoute ? "" : "flex-grow"}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/courses" element={<Courses />} />

@@ -12,6 +12,28 @@ import { SkillsGrid } from "@/components/SkillsGrid";
 import { SyllabusAccordion } from "@/components/SyllabusAccordion";
 import { EnrollmentButton, EnrollmentButtonHandle } from "@/components/EnrollmentButton";
 import { CourseInfoSessionDialog } from "@/components/CourseInfoSessionDialog";
+import { SEO } from "@/components/SEO";
+
+interface CohortInfo {
+  startDate: string;
+  duration: string;
+  sessionsCount: string;
+  format: string;
+}
+
+interface SyllabusModule {
+  module: number;
+  title: string;
+  topics: string[];
+}
+
+interface Trainer {
+  name: string;
+  title: string;
+  credentials: string;
+  bio: string;
+  image: string;
+}
 
 interface Course {
   id: string;
@@ -19,12 +41,13 @@ interface Course {
   title: string;
   subtitle: string;
   price: number;
+  image_url?: string;
   hero_claims: string[];
-  cohort: any;
+  cohort: CohortInfo | null;
   target_audience: string[];
-  syllabus: any[];
+  syllabus: SyllabusModule[];
   skills: string[];
-  trainer: any;
+  trainer: Trainer | null;
 }
 
 export default function CourseDetail() {
@@ -39,6 +62,7 @@ export default function CourseDetail() {
 
   useEffect(() => {
     loadCourse();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
   const loadCourse = async () => {
@@ -50,7 +74,7 @@ export default function CourseDetail() {
       .maybeSingle();
 
     if (!error && data) {
-      setCourse(data as Course);
+      setCourse(data as unknown as Course);
       checkEnrollment(data.id);
     }
     setLoading(false);
@@ -83,13 +107,85 @@ export default function CourseDetail() {
     return <Navigate to="/courses" replace />;
   }
 
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    "name": course.title,
+    "description": course.subtitle || course.title,
+    "provider": {
+      "@type": "EducationalOrganization",
+      "name": "Craftory Academy",
+      "url": "https://craftoryacademy.ge"
+    },
+    "url": `https://craftoryacademy.ge/courses/${course.slug}`,
+    "courseCode": course.slug,
+    "offers": {
+      "@type": "Offer",
+      "price": course.price || 0,
+      "priceCurrency": "GEL"
+    },
+    ...(course.trainer && {
+      "instructor": {
+        "@type": "Person",
+        "name": course.trainer.name,
+        "jobTitle": course.trainer.title
+      }
+    }),
+    ...(course.cohort && {
+      "coursePrerequisites": course.target_audience?.join(", "),
+      "educationalLevel": "Professional"
+    })
+  };
+
+  const breadcrumbStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "მთავარი",
+        "item": "https://craftoryacademy.ge/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "კურსები",
+        "item": "https://craftoryacademy.ge/courses"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": course.title,
+        "item": `https://craftoryacademy.ge/courses/${course.slug}`
+      }
+    ]
+  };
+
   return (
-    <div className="min-h-screen">
+    <>
+      <SEO
+        title={`${course.title} - Craftory Academy`}
+        description={course.subtitle || `გაეცანი ${course.title} - პროფესიული ტრენინგი Craftory Academy-ში`}
+        keywords={[
+          course.title,
+          "ავეჯის კონსტრუირება",
+          "AutoCAD",
+          "კურსი საქართველოში",
+          ...(course.skills || [])
+        ]}
+        canonical={`/courses/${course.slug}`}
+        ogImage={course.image_url || "/logo.png"}
+        type="product"
+        structuredData={structuredData}
+        additionalStructuredData={[breadcrumbStructuredData]}
+      />
+      <div className="min-h-screen">
       <CourseHero
         claims={course.hero_claims}
         onRegisterClick={() => enrollmentButtonRef.current?.openPayment()}
         onInfoSessionClick={handleInfoSessionOpen}
-        primaryCtaLabel={isLoggedIn ? "კურსზე ჩაწერა" : "დარეგისტრირდი ახლავე"}
+        primaryCtaLabel={isLoggedIn ? "კურსის შეძენა" : "დარეგისტრირდი ახლავე"}
       />
       
       <PartnersMarquee />
@@ -129,5 +225,6 @@ export default function CourseDetail() {
         courseId={course.id}
       />
     </div>
+    </>
   );
 }

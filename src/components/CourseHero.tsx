@@ -17,8 +17,11 @@ export function CourseHero({ claims, onRegisterClick, onInfoSessionClick, primar
       <div className="absolute inset-0">
         <img 
           src={heroStudents} 
-          alt="Students learning at Craftory Academy" 
+          alt="სტუდენტები სწავლობენ Craftory Academy-ში - პროფესიული განათლება ავეჯის კონსტრუირებაში" 
           className="w-full h-full object-cover"
+          width="1920"
+          height="1080"
+          loading="eager"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/85 to-background/50" />
       </div>

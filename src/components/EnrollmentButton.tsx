@@ -128,13 +128,13 @@ export const EnrollmentButton = forwardRef<EnrollmentButtonHandle, EnrollmentBut
     <>
       <Button size="lg" className="gap-2" onClick={checkAuthAndOpenDialog}>
         <CreditCard className="w-5 h-5" />
-        კურსზე ჩაწერა - {price} ₾
+        კურსის შეძენა - {price} ₾
       </Button>
       
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>კურსზე ჩაწერა</DialogTitle>
+            <DialogTitle>კურსის შეძენა</DialogTitle>
             <DialogDescription>
               კურსი: {courseTitle} • ფასი: {price} ₾
             </DialogDescription>

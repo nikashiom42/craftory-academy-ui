@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Download } from "lucide-react";
+import { SEO } from "@/components/SEO";
 
 interface Course {
   slug: string;
@@ -55,8 +56,49 @@ export default function Syllabus() {
     return <Navigate to="/courses" replace />;
   }
 
+  const breadcrumbStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "მთავარი",
+        "item": "https://craftoryacademy.ge/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "კურსები",
+        "item": "https://craftoryacademy.ge/courses"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": course.title,
+        "item": `https://craftoryacademy.ge/courses/${course.slug}`
+      },
+      {
+        "@type": "ListItem",
+        "position": 4,
+        "name": "სილაბუსი",
+        "item": `https://craftoryacademy.ge/syllabus/${course.slug}`
+      }
+    ]
+  };
+
   return (
-    <div className="min-h-screen pt-32 pb-20 bg-background">
+    <>
+      <SEO
+        title={`სილაბუსი - ${course.title} | Craftory Academy`}
+        description={`${course.title} - სრული სილაბუსი. გაეცანი რას ისწავლი კურსის განმავლობაში და რა უნარებს შეიძენ.`}
+        keywords={[course.title, "სილაბუსი", "კურსის პროგრამა", "სასწავლო გეგმა"]}
+        canonical={`/syllabus/${course.slug}`}
+        ogImage="/logo.png"
+        type="article"
+        additionalStructuredData={[breadcrumbStructuredData]}
+      />
+      <div className="min-h-screen pt-32 pb-20 bg-background">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -149,6 +191,7 @@ export default function Syllabus() {
           </motion.div>
         </motion.div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

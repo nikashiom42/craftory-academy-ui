@@ -126,8 +126,11 @@ export function FeaturedCourseSection() {
                       <div className="relative w-full md:w-1/2 aspect-video md:aspect-auto md:h-auto overflow-hidden flex-shrink-0">
                         <img
                           src={course.image_url || "/placeholder.svg"}
-                          alt={course.title}
+                          alt={`${course.title} - ${course.subtitle || course.description}`}
                           className="w-full h-full object-cover transition-transform hover:scale-105"
+                          width="800"
+                          height="450"
+                          loading="lazy"
                         />
                         <Badge className="absolute top-4 right-4 bg-primary text-primary-foreground shadow-lg">
                           {course.price} ₾

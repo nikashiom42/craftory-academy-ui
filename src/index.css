@@ -6,6 +6,23 @@
 All colors MUST be HSL.
 */
 
+/* Skip to main content link for accessibility */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  padding: 8px 16px;
+  text-decoration: none;
+  z-index: 100;
+  border-radius: 4px;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
 /* Custom font import */
 @font-face {
   font-family: 'SS-GEO-HAKUNA';

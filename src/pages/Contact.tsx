@@ -17,6 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Mail, Phone, MapPin, Clock, Facebook, Instagram } from "lucide-react";
 import { academyConfig } from "@/config/academy";
+import { SEO } from "@/components/SEO";
 
 // TikTok icon component
 const TikTokIcon = ({ size = 20 }: { size?: number }) => (
@@ -73,8 +74,36 @@ export default function Contact() {
     }
   };
 
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    "name": "კონტაქტი - Craftory Academy",
+    "description": "დაგვიკავშირდით Craftory Academy-ში",
+    "mainEntity": {
+      "@type": "Organization",
+      "name": "Craftory Academy",
+      "telephone": academyConfig.contact.phone,
+      "email": academyConfig.contact.email,
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "თბილისი",
+        "addressCountry": "GE",
+        "streetAddress": academyConfig.contact.address
+      }
+    }
+  };
+
   return (
-    <div className="min-h-screen pt-32 pb-20">
+    <>
+      <SEO
+        title="კონტაქტი - Craftory Academy"
+        description="გაქვთ შეკითხვები? მოგვწერეთ ან დაგვირეკეთ და ჩვენ დაგეხმარებით. Craftory Academy - საქართველოს პირველი ავეჯის კონსტრუირების აკადემია."
+        keywords={["კონტაქტი", "Craftory Academy", "დაკავშირება", "ელფოსტა", "ტელეფონი"]}
+        canonical="/contact"
+        ogImage="/logo.png"
+        structuredData={structuredData}
+      />
+      <div className="min-h-screen pt-32 pb-20">
       <div className="container mx-auto px-4">
         {/* Header */}
         <motion.div
@@ -274,7 +303,8 @@ export default function Contact() {
           </motion.div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }
 

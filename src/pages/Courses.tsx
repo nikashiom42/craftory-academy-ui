@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Clock, Users, ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { SEO } from "@/components/SEO";
 
 interface Course {
   id: string;
@@ -51,8 +52,35 @@ export default function Courses() {
     );
   }
 
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Craftory Academy კურსები",
+    "description": "საქართველოს პირველი ავეჯის კონსტრუირების აკადემიის კურსები",
+    "itemListElement": courses.map((course, index) => ({
+      "@type": "Course",
+      "position": index + 1,
+      "name": course.title,
+      "description": course.description,
+      "url": `https://craftoryacademy.ge/courses/${course.slug}`,
+      "provider": {
+        "@type": "EducationalOrganization",
+        "name": "Craftory Academy"
+      }
+    }))
+  };
+
   return (
-    <div className="min-h-screen pt-32 pb-20">
+    <>
+      <SEO
+        title="კურსები - Craftory Academy"
+        description="აირჩიე შენთვის სასურველი კურსი და დაიწყე სწავლა. პროფესიული ტრენინგი ავეჯის კონსტრუირებაში, AutoCAD, 3D მოდელირება და სხვა."
+        keywords={["კურსები", "ავეჯის კონსტრუირება", "AutoCAD კურსი", "3D მოდელირება", "პროფესიული ტრენინგი"]}
+        canonical="/courses"
+        ogImage="/logo.png"
+        structuredData={structuredData}
+      />
+      <div className="min-h-screen pt-32 pb-20">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -80,8 +108,11 @@ export default function Courses() {
                 <div className="aspect-video overflow-hidden relative">
                   <img
                     src={course.image_url || "/placeholder.svg"}
-                    alt={course.title}
+                    alt={`${course.title} - ${course.subtitle || course.description}`}
                     className="w-full h-full object-cover transition-transform hover:scale-105"
+                    width="800"
+                    height="450"
+                    loading="lazy"
                   />
                   <Badge className="absolute top-4 right-4 bg-primary text-primary-foreground shadow-lg">
                     {course.price} ₾
@@ -145,6 +176,7 @@ export default function Courses() {
           </div>
         </motion.div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }
