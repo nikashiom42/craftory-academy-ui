@@ -10,6 +10,8 @@ import { AdminSidebar } from "@/components/AdminSidebar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -42,6 +44,7 @@ interface Course {
   title: string;
   subtitle: string;
   published: boolean;
+  featured_on_home: boolean;
   start_date: string;
   end_date: string;
   created_at: string;
@@ -94,6 +97,33 @@ export default function AdminCourses() {
     }
 
     setCourses(data || []);
+  };
+
+  /**
+   * Toggle featured status of a course
+   */
+  const toggleFeatured = async (courseId: string, currentStatus: boolean) => {
+    const { error } = await supabase
+      .from("courses")
+      .update({ featured_on_home: !currentStatus })
+      .eq("id", courseId);
+
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to update featured status",
+      });
+      return;
+    }
+
+    toast({
+      title: "Success",
+      description: `Course ${!currentStatus ? "added to" : "removed from"} featured slider`,
+    });
+
+    // Reload courses to update the list
+    await loadCourses();
   };
 
   /**
@@ -283,6 +313,7 @@ export default function AdminCourses() {
                         <TableHead>Subtitle</TableHead>
                         <TableHead>Dates</TableHead>
                         <TableHead>Status</TableHead>
+                        <TableHead>Featured</TableHead>
                         <TableHead>Created</TableHead>
                         <TableHead className="text-right">Actions</TableHead>
                       </TableRow>
@@ -290,7 +321,7 @@ export default function AdminCourses() {
                     <TableBody>
                       {filteredCourses.length === 0 ? (
                         <TableRow>
-                          <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                          <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                             No courses found matching your filters
                           </TableCell>
                         </TableRow>
@@ -314,6 +345,19 @@ export default function AdminCourses() {
                               <Badge variant={course.published ? "default" : "secondary"}>
                                 {course.published ? "Published" : "Draft"}
                               </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center space-x-2">
+                                <Switch
+                                  checked={course.featured_on_home || false}
+                                  onCheckedChange={() => toggleFeatured(course.id, course.featured_on_home || false)}
+                                  onClick={(e) => e.stopPropagation()}
+                                  disabled={!course.published}
+                                />
+                                <Label className="text-sm text-muted-foreground cursor-pointer" onClick={(e) => e.stopPropagation()}>
+                                  {course.featured_on_home ? "Yes" : "No"}
+                                </Label>
+                              </div>
                             </TableCell>
                             <TableCell className="text-sm text-muted-foreground">
                               {new Date(course.created_at).toLocaleDateString('ka-GE')}

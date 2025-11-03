@@ -79,7 +79,7 @@ export function Header() {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
-            <img src={craftoryLogo} alt="Craftory Academy" className="h-10 w-auto object-contain" />
+            <img src={craftoryLogo} alt="Craftory Academy" className="h-12 w-auto object-contain" />
           </Link>
 
           {/* Desktop Navigation - Centered */}

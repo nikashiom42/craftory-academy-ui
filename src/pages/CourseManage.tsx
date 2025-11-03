@@ -54,6 +54,7 @@ export default function CourseManage() {
   const [googleDriveLink, setGoogleDriveLink] = useState("");
   const [price, setPrice] = useState("");
   const [published, setPublished] = useState(false);
+  const [featuredOnHome, setFeaturedOnHome] = useState(false);
 
   // Syllabus
   const [syllabus, setSyllabus] = useState<SyllabusModule[]>([]);
@@ -117,6 +118,7 @@ export default function CourseManage() {
     setGoogleDriveLink(data.google_drive_link || "");
     setPrice(data.price?.toString() || "");
     setPublished(data.published || false);
+    setFeaturedOnHome(data.featured_on_home || false);
     setSyllabus((data.syllabus as unknown as SyllabusModule[]) || []);
     
     // Load trainer data
@@ -218,6 +220,7 @@ export default function CourseManage() {
       google_drive_link: googleDriveLink || null,
       price: price ? parseFloat(price) : 0,
       published,
+      featured_on_home: featuredOnHome,
       syllabus: syllabus as any,
       trainer: trainerName || trainerTitle || trainerCredentials || trainerBio || trainerImage ? {
         name: trainerName,
@@ -428,6 +431,15 @@ export default function CourseManage() {
                   onCheckedChange={setPublished}
                 />
                 <Label htmlFor="published">Published</Label>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="featuredOnHome"
+                  checked={featuredOnHome}
+                  onCheckedChange={setFeaturedOnHome}
+                />
+                <Label htmlFor="featuredOnHome">Featured on Home Page</Label>
               </div>
             </CardContent>
           </Card>
