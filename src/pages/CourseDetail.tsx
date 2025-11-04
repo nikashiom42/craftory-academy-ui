@@ -211,7 +211,7 @@ export default function CourseDetail() {
       {/* Enrollment Section */}
       <section className="py-12 bg-background border-y">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold uppercase mb-4">{course.title}</h2>
+          <h2 className="text-3xl font-bold uppercase mb-4 !leading-[1.3]">{course.title}</h2>
           <p className="text-xl text-muted-foreground mb-8">{course.subtitle}</p>
           <EnrollmentButton
             ref={enrollmentButtonRef}

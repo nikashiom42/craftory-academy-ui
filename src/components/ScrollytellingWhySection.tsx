@@ -59,7 +59,7 @@ export function ScrollytellingWhySection({ cards }: ScrollytellingWhySectionProp
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
               >
-                <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase leading-tight">
+                <h2 className="text-4xl md:text-5xl lg:text-[3.1rem] font-bold uppercase leading-tight">
                   რატომ უნდა გახდე ავეჯის კონსტრუქტორი ?
                 </h2>
                 <div className="mt-6 w-24 h-1 bg-gradient-to-r from-accent to-primary rounded-full"></div>

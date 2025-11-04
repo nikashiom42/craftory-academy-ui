@@ -31,7 +31,7 @@ export function WhySection({ points }: WhySectionProps) {
             transition={{ duration: 0.6 }}
             className="order-1"
           >
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold uppercase leading-tight">
+            <h2 className="text-4xl md:text-5xl lg:text-[3.1rem] font-bold uppercase leading-tight">
               რატომ უნდა გახდე ავეჯის კონსტრუქტორი ?
             </h2>
           </motion.div>

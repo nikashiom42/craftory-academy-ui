@@ -42,7 +42,7 @@ export function CourseHero({ claims, onRegisterClick, onInfoSessionClick, primar
             </div>
 
             {/* Main heading */}
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold !leading-[1.3]">
               {claims[0]}
             </h1>
 
