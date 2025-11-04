@@ -36,7 +36,7 @@ const features: Feature[] = [
   {
     icon: CheckCircle,
     title: "ფლექსიბილი გრაფიკი",
-    description: "Online თეორია და Offline პრაქტიკა შენთვის მოსახერხებელ დროს",
+    description: "ონლაინ თეორია და პრაქტიკული შეხვედრები შენთვის მოსახერხებელ დროს",
   },
 ];
 

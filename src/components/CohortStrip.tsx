@@ -13,11 +13,15 @@ interface CohortStripProps {
 }
 
 export function CohortStrip({ cohort }: CohortStripProps) {
+  const normalizedFormat =
+    cohort.format?.replace(/online\s*თეორია\s*\+\s*offline\s*პრაქტიკა/i, "ონლაინ თეორია + პრაქტიკული შეხვედრები") ??
+    cohort.format;
+
   const items = [
     { icon: Calendar, label: "დასაწყისი", value: cohort.startDate },
     { icon: Clock, label: "ხანგრძლივობა", value: cohort.duration },
     { icon: Users, label: "შეხვედრები", value: cohort.sessionsCount },
-    { icon: Laptop, label: "ფორმატი", value: cohort.format },
+    { icon: Laptop, label: "ფორმატი", value: normalizedFormat },
   ];
 
   return (

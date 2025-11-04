@@ -44,7 +44,7 @@ INSERT INTO courses (
     'startDate', '2025 წლის 15 იანვარი',
     'duration', '2 თვე',
     'sessionsCount', '24 შეხვედრა',
-    'format', 'Online თეორია + Offline პრაქტიკა'
+    'format', 'ონლაინ თეორია + პრაქტიკული შეხვედრები'
   ),
   jsonb_build_array(
     'ავეჯის კონსტრუქციის საფუძვლები და ტიპები',
