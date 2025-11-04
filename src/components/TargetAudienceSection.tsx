@@ -37,7 +37,7 @@ export function TargetAudienceSection({ audience }: TargetAudienceSectionProps) 
                 <div className="flex-shrink-0 w-8 h-8 rounded-full bg-accent flex items-center justify-center">
                   <Check className="text-accent-foreground" size={20} />
                 </div>
-                <p className="text-lg font-medium">{item}</p>
+                <p className="text-lg font-medium font-secondary">{item}</p>
               </motion.div>
             ))}
           </div>

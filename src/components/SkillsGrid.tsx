@@ -32,7 +32,7 @@ export function SkillsGrid({ skills }: SkillsGridProps) {
               <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary flex items-center justify-center">
                 <Check className="text-primary-foreground" size={20} />
               </div>
-              <p className="text-lg font-medium">{skill}</p>
+              <p className="text-lg font-medium font-secondary">{skill}</p>
             </motion.div>
           ))}
         </div>

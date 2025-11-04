@@ -133,8 +133,8 @@ function CarouselCard({ step, index, onDragStart, onDragEnd }: CarouselCardProps
       <div className="w-full bg-background rounded-3xl p-8 shadow-xl border-2 border-accent/20">
         <div className="space-y-6">
           <div>
-            <h3 className="text-2xl font-bold mb-3">{step.title}</h3>
-            <p className="text-muted-foreground leading-relaxed">
+            <h3 className="text-2xl font-bold mb-3 font-secondary">{step.title}</h3>
+            <p className="text-muted-foreground leading-relaxed font-secondary">
               {step.description}
             </p>
           </div>
@@ -161,8 +161,8 @@ function MobileStepCard({ step, index }: MobileStepCardProps) {
     >
       <div className="space-y-4">
         <div>
-          <h3 className="text-lg font-bold mb-2">{step.title}</h3>
-          <p className="text-sm text-muted-foreground leading-relaxed">
+          <h3 className="text-lg font-bold mb-2 font-secondary">{step.title}</h3>
+          <p className="text-sm text-muted-foreground leading-relaxed font-secondary">
             {step.description}
           </p>
         </div>

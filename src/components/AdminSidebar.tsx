@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import craftoryLogo from "@/assets/craftory-logo.webp";
+import { cn } from "@/lib/utils";
 
 const menuItems = [
   { title: "Dashboard", url: "/admin", icon: LayoutGrid },
@@ -68,13 +69,21 @@ export function AdminSidebar({ userEmail }: AdminSidebarProps) {
                       <span className="ml-auto text-xs bg-muted px-2 py-0.5 rounded">Soon</span>
                     </SidebarMenuButton>
                   ) : (
-                    <NavLink to={item.url} end>
-                      {({ isActive }) => (
-                        <SidebarMenuButton isActive={isActive} className="mb-1">
-                          <item.icon className="h-5 w-5" />
-                          <span className="text-sm font-medium">{item.title}</span>
-                        </SidebarMenuButton>
+                    <NavLink to={item.url} end={item.url === "/admin"}>
+                  {({ isActive }) => (
+                    <SidebarMenuButton
+                      isActive={isActive}
+                      className={cn(
+                        "mb-1 transition-colors duration-200",
+                        isActive
+                          ? "bg-accent text-accent-foreground shadow-soft ring-2 ring-accent/40 font-semibold"
+                          : "bg-transparent text-muted-foreground hover:bg-accent/10 hover:text-foreground"
                       )}
+                    >
+                      <item.icon className="h-5 w-5" />
+                      <span className="text-sm font-medium">{item.title}</span>
+                    </SidebarMenuButton>
+                  )}
                     </NavLink>
                   )}
                 </SidebarMenuItem>

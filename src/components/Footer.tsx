@@ -57,7 +57,7 @@ export function Footer() {
           {/* Contact */}
           <div>
             <h3 className="text-lg font-bold mb-4">კონტაქტი</h3>
-            <div className="space-y-3 text-sm">
+            <div className="space-y-3 text-[1.05rem] leading-relaxed">
               <div className="flex items-start space-x-2">
                 <Phone size={16} className="mt-0.5 flex-shrink-0" />
                 <span>{academyConfig.contact.phone}</span>
@@ -76,9 +76,9 @@ export function Footer() {
           {/* Working Hours */}
           <div>
             <h3 className="text-lg font-bold mb-4">სამუშაო საათები</h3>
-            <div className="flex items-start space-x-2 text-sm">
+            <div className="flex items-start space-x-2 text-[1.05rem] leading-relaxed">
               <Clock size={16} className="mt-0.5 flex-shrink-0" />
-              <span>{academyConfig.contact.workingHours}</span>
+              <span className="font-medium">{academyConfig.contact.workingHours}</span>
             </div>
           </div>
         </div>

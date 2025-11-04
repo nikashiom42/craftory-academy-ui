@@ -299,7 +299,12 @@ export function RegistrationForm({ courseId }: RegistrationFormProps) {
               )}
 
               <div className="pt-8">
-                <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
+                <Button
+                  type="submit"
+                  size="lg"
+                  className="w-full h-[3.6rem] text-lg md:h-[3.8rem] md:text-xl"
+                  disabled={isSubmitting}
+                >
                   {isSubmitting ? "იგზავნება..." : "უფასო კონსულტაციისთვის დარეგისტრირება"}
                 </Button>
               </div>

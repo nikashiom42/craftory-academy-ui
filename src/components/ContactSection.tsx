@@ -127,7 +127,7 @@ export function ContactSection() {
                     <Clock size={20} className="mt-1 text-primary flex-shrink-0" />
                     <div>
                       <p className="font-medium">სამუშაო საათები</p>
-                      <p className="text-muted-foreground">{academyConfig.contact.workingHours}</p>
+                      <p className="text-muted-foreground text-lg md:text-xl font-medium">{academyConfig.contact.workingHours}</p>
                     </div>
                   </div>
                 </div>

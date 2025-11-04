@@ -202,6 +202,7 @@ html.fonts-loading body {
     font-family: 'Noto Sans Condensed';
   }
 
+
   h1 {
     @apply text-3xl md:text-4xl;
   }
