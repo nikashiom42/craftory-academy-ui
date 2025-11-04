@@ -6,6 +6,10 @@
 All colors MUST be HSL.
 */
 
+html.fonts-loading body {
+  visibility: hidden;
+}
+
 /* Skip to main content link for accessibility */
 .skip-link {
   position: absolute;
