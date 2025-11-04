@@ -38,7 +38,9 @@ html.fonts-loading body {
 
 @font-face {
   font-family: 'Datebashvili';
-  src: url('./assets/Datebashvili.otf') format('opentype');
+  src:
+    url('./assets/Datebashvili-2.0.ttf') format('truetype'),
+    url('./assets/Datebashvili.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;

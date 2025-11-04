@@ -77,12 +77,12 @@ export default function Home() {
               </div>
 
               {/* Main heading */}
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold !leading-[1.3]">
                 პროფესიული განვითარება რეალური შედეგებით
               </h1>
               
               {/* Key points */}
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 rounded-full bg-accent flex-shrink-0" />
                   <p className="text-lg md:text-xl font-medium">პრაქტიკული კურსები ექსპერტებისგან</p>
