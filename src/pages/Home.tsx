@@ -47,7 +47,7 @@ export default function Home() {
       />
       <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative min-h-[85vh] flex items-center overflow-hidden">
+      <section className="relative min-h-[85vh] flex items-center overflow-hidden pt-24 md:pt-28 lg:pt-32">
         {/* Background Image with Overlay */}
         <div className="absolute inset-0">
           <img 
