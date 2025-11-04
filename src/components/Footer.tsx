@@ -22,7 +22,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* About */}
           <div>
-            <h3 className="text-lg font-bold mb-4">{academyConfig.siteName}</h3>
+            <h3 className="text-lg font-bold mb-4 font-secondary">{academyConfig.siteName}</h3>
             <div className="flex space-x-4">
               <a
                 href={academyConfig.contact.social.facebook}
