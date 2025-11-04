@@ -23,9 +23,6 @@ export function Footer() {
           {/* About */}
           <div>
             <h3 className="text-lg font-bold mb-4">{academyConfig.siteName}</h3>
-            <p className="text-sm text-secondary-foreground/80 mb-4">
-              {academyConfig.siteDescription}
-            </p>
             <div className="flex space-x-4">
               <a
                 href={academyConfig.contact.social.facebook}
