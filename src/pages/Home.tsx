@@ -71,7 +71,7 @@ export default function Home() {
             >
               {/* Badge */}
               <div>
-                <span className="inline-flex items-center px-4 py-2 rounded-full bg-accent/90 text-accent-foreground text-sm font-semibold shadow-lg">
+                <span className="inline-flex items-center px-4 py-2 rounded-full bg-accent/90 text-accent-foreground text-sm font-semibold font-secondary shadow-lg">
                   Craftory Academy
                 </span>
               </div>
@@ -85,11 +85,11 @@ export default function Home() {
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 rounded-full bg-accent flex-shrink-0" />
-                  <p className="text-lg md:text-xl font-medium">პრაქტიკული კურსები ექსპერტებისგან</p>
+                  <p className="text-lg md:text-xl font-medium font-secondary">პრაქტიკული კურსები ექსპერტებისგან</p>
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 rounded-full bg-accent flex-shrink-0" />
-                  <p className="text-lg md:text-xl font-medium">სერთიფიკატი და კარიერული მხარდაჭერა</p>
+                  <p className="text-lg md:text-xl font-medium font-secondary">სერთიფიკატი და კარიერული მხარდაჭერა</p>
                 </div>
               </div>
 

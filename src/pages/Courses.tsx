@@ -91,7 +91,7 @@ export default function Courses() {
           <h1 className="text-3xl md:text-4xl font-bold uppercase mb-6">
             ჩვენი კურსები
           </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-2xl text-muted-foreground max-w-3xl mx-auto">
             აირჩიე შენთვის სასურველი კურსი და დაიწყე სწავლა
           </p>
         </motion.div>

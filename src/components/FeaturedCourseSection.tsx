@@ -147,7 +147,7 @@ export function FeaturedCourseSection() {
             <h2 className="text-2xl md:text-3xl font-bold uppercase mb-2">
               ჩვენი კურსები
             </h2>
-            <p className="text-base text-muted-foreground">
+            <p className="text-lg text-muted-foreground">
               აირჩიე შენთვის სასურველი კურსი და დაიწყე სწავლა
             </p>
           </div>

@@ -183,7 +183,7 @@ html.fonts-loading body {
 
   /* Admin pages use secondary font everywhere */
   .admin-layout {
-    font-family: 'Noto Sans Condensed', sans-serif;
+    font-family: 'Noto Sans Condensed';
   }
 
   .admin-layout h1,
@@ -193,7 +193,7 @@ html.fonts-loading body {
   .admin-layout h5,
   .admin-layout h6,
   .admin-layout .font-heading {
-    font-family: 'Noto Sans Condensed', sans-serif;
+    font-family: 'Noto Sans Condensed';
   }
 
   h1 {
@@ -244,10 +244,38 @@ html.fonts-loading body {
     letter-spacing: 0.2rem;
   }
 
-  .font-body,
+  .font-body {
+    letter-spacing: 0;
+  }
+
   .font-sans,
   .font-serif,
   .font-mono {
     letter-spacing: 0;
+  }
+
+  /* Font size reduction for Datebashvili - 23.5% smaller (76.5% of original) */
+  /* Apply to all text except those explicitly using font-secondary */
+  body:not(.admin-layout) .text-xs:not(.font-secondary) { font-size: 0.576rem; }
+  body:not(.admin-layout) .text-sm:not(.font-secondary) { font-size: 0.669rem; }
+  body:not(.admin-layout) .text-base:not(.font-secondary) { font-size: 0.765rem; }
+  body:not(.admin-layout) .text-lg:not(.font-secondary) { font-size: 0.861rem; }
+  body:not(.admin-layout) .text-xl:not(.font-secondary) { font-size: 0.956rem; }
+  body:not(.admin-layout) .text-2xl:not(.font-secondary) { font-size: 1.148rem; }
+  body:not(.admin-layout) .text-3xl:not(.font-secondary) { font-size: 1.434rem; }
+  body:not(.admin-layout) .text-4xl:not(.font-secondary) { font-size: 1.721rem; }
+  body:not(.admin-layout) .text-5xl:not(.font-secondary) { font-size: 2.295rem; }
+  body:not(.admin-layout) .text-6xl:not(.font-secondary) { font-size: 2.869rem; }
+  body:not(.admin-layout) .text-7xl:not(.font-secondary) { font-size: 3.443rem; }
+  body:not(.admin-layout) .text-8xl:not(.font-secondary) { font-size: 4.59rem; }
+  body:not(.admin-layout) .text-9xl:not(.font-secondary) { font-size: 6.12rem; }
+
+  /* Font size reduction for headings and responsive variants */
+  body:not(.admin-layout) h1 { font-size: 1.434rem; }
+  body:not(.admin-layout) h2 { font-size: 0.864rem; }
+
+  @media (min-width: 768px) {
+    body:not(.admin-layout) h1 { font-size: 1.721rem; }
+    body:not(.admin-layout) h2 { font-size: 0.956rem; }
   }
 }

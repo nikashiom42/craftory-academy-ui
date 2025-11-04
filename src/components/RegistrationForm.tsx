@@ -161,10 +161,10 @@ export function RegistrationForm({ courseId }: RegistrationFormProps) {
             <h2 className="text-3xl md:text-4xl font-bold uppercase mb-6">
               უფასო კონსულტაცია
             </h2>
-            <p className="text-lg text-muted-foreground mb-4">
+            <p className="text-xl text-muted-foreground mb-4">
               დარეგისტრირდი უფასო კონსულტაციაზე და გაიგე ყველაფერი კურსის შესახებ
             </p>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               სწრაფი და მარტივი რეგისტრაცია - სურვილისამებრ შეგიძლიათ ანგარიშის შექმნაც
             </p>
           </div>

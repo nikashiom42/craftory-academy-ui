@@ -18,5 +18,20 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // Font loading detection for Noto Sans Condensed
+      if (document.fonts && document.fonts.check) {
+        document.fonts.ready.then(function() {
+          const loaded = document.fonts.check('1em "Noto Sans Condensed"');
+          if (!loaded) {
+            document.body.style.setProperty('outline', '5px solid red');
+            console.error('❌ NOTO SANS CONDENSED FAILED TO LOAD!');
+            alert('⚠️ WARNING: Noto Sans Condensed font failed to load!');
+          } else {
+            console.log('✅ Noto Sans Condensed loaded successfully');
+          }
+        });
+      }
+    </script>
   </body>
 </html>
