@@ -16,8 +16,8 @@ const loadFonts = async () => {
     return;
   }
 
-  const fontFaces = ["Datebashvili", "SS-GEO-HAKUNA"];
-  const loaders = fontFaces.map((font) => document.fonts.load(`1em ${font}`));
+  const fontFaces = ["Datebashvili", "SS-GEO-HAKUNA", "Noto Sans Condensed"];
+  const loaders = fontFaces.map((font) => document.fonts.load(`1em "${font}"`));
 
   try {
     await Promise.all(loaders);

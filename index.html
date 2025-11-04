@@ -10,25 +10,22 @@
     
     <link rel="icon" type="image/png" href="/favicon.png" />
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Condensed:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   </head>
 
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     <script>
-      // Font loading detection for Noto Sans Condensed
+      // Font loading detection for Noto Sans Condensed (Georgian)
       if (document.fonts && document.fonts.check) {
         document.fonts.ready.then(function() {
           const loaded = document.fonts.check('1em "Noto Sans Condensed"');
           if (!loaded) {
             document.body.style.setProperty('outline', '5px solid red');
-            console.error('❌ NOTO SANS CONDENSED FAILED TO LOAD!');
-            alert('⚠️ WARNING: Noto Sans Condensed font failed to load!');
+            console.error('❌ NOTO SANS CONDENSED (GEORGIAN) FAILED TO LOAD!');
+            alert('⚠️ WARNING: Noto Sans Condensed (Georgian) font failed to load!');
           } else {
-            console.log('✅ Noto Sans Condensed loaded successfully');
+            console.log('✅ Noto Sans Condensed (Georgian) loaded successfully');
           }
         });
       }
