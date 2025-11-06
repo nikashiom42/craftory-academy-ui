@@ -1,6 +1,6 @@
 // ScrollytellingWhySection.tsx renders a simple auto-playing carousel for "რატომ Craftory Academy?" section.
-import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useMemo, useState } from "react";
+import { motion, AnimatePresence, type PanInfo } from "framer-motion";
 
 interface StepCard {
   title: string;
@@ -12,30 +12,49 @@ interface ScrollytellingWhySectionProps {
 }
 
 export function ScrollytellingWhySection({ cards }: ScrollytellingWhySectionProps) {
-  const steps = cards || [];
+  const steps = useMemo(() => cards ?? [], [cards]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const stepCount = steps.length;
 
   // Auto-play carousel
   useEffect(() => {
     if (isDragging) return;
+    if (stepCount <= 1) return;
     
     const interval = setInterval(() => {
-      setActiveIndex((current) => (current + 1) % steps.length);
+      setActiveIndex((current) => (current + 1) % stepCount);
     }, 5000); // Change card every 5 seconds
 
     return () => clearInterval(interval);
-  }, [isDragging]);
+  }, [isDragging, stepCount]);
+
+  // Clamp the active index when cards change to avoid pointing at stale data.
+  useEffect(() => {
+    if (stepCount === 0) {
+      setActiveIndex(0);
+      return;
+    }
+
+    setActiveIndex((current) => Math.min(current, stepCount - 1));
+  }, [stepCount]);
 
   const goToNext = () => {
-    setActiveIndex((current) => (current + 1) % steps.length);
+    if (stepCount <= 1) return;
+    setActiveIndex((current) => (current + 1) % stepCount);
   };
 
   const goToPrev = () => {
-    setActiveIndex((current) => (current - 1 + steps.length) % steps.length);
+    if (stepCount <= 1) return;
+    setActiveIndex((current) => (current - 1 + stepCount) % stepCount);
   };
 
-  const handleDragEnd = (_event: any, info: any) => {
+  const handleDragEnd = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    if (stepCount <= 1) {
+      setIsDragging(false);
+      return;
+    }
+
     const threshold = 50;
     if (info.offset.x > threshold) {
       goToPrev();
@@ -69,13 +88,15 @@ export function ScrollytellingWhySection({ cards }: ScrollytellingWhySectionProp
             {/* Right Column - Animated Cards */}
             <div className="relative h-[500px] cursor-grab active:cursor-grabbing">
               <AnimatePresence mode="wait">
-                <CarouselCard
-                  key={activeIndex}
-                  step={steps[activeIndex]}
-                  index={activeIndex}
-                  onDragStart={() => setIsDragging(true)}
-                  onDragEnd={handleDragEnd}
-                />
+                {stepCount > 0 && steps[activeIndex] && (
+                  <CarouselCard
+                    key={`${activeIndex}-${steps[activeIndex]?.title ?? "step"}`}
+                    step={steps[activeIndex]}
+                    index={activeIndex}
+                    onDragStart={() => setIsDragging(true)}
+                    onDragEnd={handleDragEnd}
+                  />
+                )}
               </AnimatePresence>
             </div>
           </div>
@@ -112,7 +133,7 @@ interface CarouselCardProps {
   step: StepCard;
   index: number;
   onDragStart?: () => void;
-  onDragEnd?: (event: any, info: any) => void;
+  onDragEnd?: (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => void;
 }
 
 // CarouselCard renders a simple animated card with fade transition.
