@@ -73,8 +73,14 @@ export default function Admin() {
   };
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    navigate("/auth");
+    try {
+      await supabase.auth.signOut({ scope: 'local' });
+      await new Promise(resolve => setTimeout(resolve, 100));
+      navigate("/auth", { replace: true });
+    } catch (error) {
+      console.error('Logout error:', error);
+      navigate("/auth", { replace: true });
+    }
   };
 
   if (loading) {

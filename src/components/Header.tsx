@@ -48,18 +48,19 @@ export function Header() {
 
   const handleLogout = async () => {
     try {
-      await supabase.auth.signOut();
+      await supabase.auth.signOut({ scope: 'local' });
+      await new Promise(resolve => setTimeout(resolve, 100));
       setIsLoggedIn(false);
       setIsMobileMenuOpen(false);
       toast.success("წარმატებით გახვედით სისტემიდან");
-      navigate("/");
+      navigate("/", { replace: true });
     } catch (error: any) {
       // If session doesn't exist (403), treat as successful logout
       if (error?.message?.includes("Session not found") || error?.status === 403) {
         setIsLoggedIn(false);
         setIsMobileMenuOpen(false);
         toast.success("წარმატებით გახვედით სისტემიდან");
-        navigate("/");
+        navigate("/", { replace: true });
       } else {
         toast.error("გასვლისას დაფიქსირდა შეცდომა");
       }

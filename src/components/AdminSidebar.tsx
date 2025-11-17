@@ -33,8 +33,17 @@ export function AdminSidebar({ userEmail }: AdminSidebarProps) {
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    navigate("/auth");
+    try {
+      // Force clear session from all storage
+      await supabase.auth.signOut({ scope: 'local' });
+      // Small delay to ensure session is cleared
+      await new Promise(resolve => setTimeout(resolve, 100));
+      navigate("/auth", { replace: true });
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Force navigate anyway
+      navigate("/auth", { replace: true });
+    }
   };
 
   return (
