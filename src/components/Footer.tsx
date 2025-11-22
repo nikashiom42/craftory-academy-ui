@@ -83,17 +83,17 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-secondary-foreground/20 mt-8 pt-8 text-center text-sm text-secondary-foreground/60">
+        <div className="border-t border-secondary-foreground/20 mt-8 pt-8 text-sm text-secondary-foreground/60 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
           <p>© {new Date().getFullYear()} {academyConfig.siteName}. ყველა უფლება დაცულია.</p>
-          <p className="text-xs text-secondary-foreground/40 mt-2">
+          <p className="text-xs text-secondary-foreground/40 md:text-right">
             ვებსაიტი დამზადებული{" "}
-            <a 
-              href="http://geoecom.ge/" 
-              target="_blank" 
+            <a
+              href="https://digitalalchemy.ge/"
+              target="_blank"
               rel="noopener noreferrer"
               className="hover:text-secondary-foreground/60 transition-colors"
             >
-              geoecom.ge
+              digitalalchemy.ge
             </a>
           </p>
         </div>
