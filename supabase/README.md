@@ -54,3 +54,35 @@ Then run the seed script.
 - The seed data uses placeholder images from Unsplash
 - All Georgian text is authentic and production-ready
 - Meet links and Drive links are placeholders - update them in the admin panel after seeding
+
+## iPay Edge Functions
+
+Three Edge Functions collaborate to talk to Bank of Georgia:
+
+| Function | Purpose |
+| --- | --- |
+| `ipay-auth` | Internal health check that fetches OAuth tokens (requires `IPAY_AUTH_INTERNAL_KEY`) |
+| `ipay-create-order` | Creates checkout orders, persists `payment_orders`, and returns the redirect URL |
+| `ipay-callback` | Processes PSP callbacks and updates `course_enrollments` |
+
+Before deploying, export the required secrets in the Supabase dashboard or CLI:
+
+```
+supabase secrets set \
+  SUPABASE_URL=... \
+  SUPABASE_SERVICE_ROLE_KEY=... \
+  IPAY_CLIENT_ID=... \
+  IPAY_CLIENT_SECRET=... \
+  IPAY_USERNAME=... \
+  IPAY_PASSWORD=... \
+  IPAY_REDIRECT_URL=https://your-site.com/payment/return \
+  IPAY_CALLBACK_URL=https://<project>.functions.supabase.co/ipay-callback
+```
+
+Then deploy:
+
+```
+supabase functions deploy ipay-auth
+supabase functions deploy ipay-create-order
+supabase functions deploy ipay-callback
+```

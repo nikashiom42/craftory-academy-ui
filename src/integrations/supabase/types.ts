@@ -21,6 +21,9 @@ export type Database = {
           enrolled_at: string | null
           id: string
           paid_at: string | null
+          ipay_order_id: string | null
+          ipay_payment_hash: string | null
+          ipay_payment_id: string | null
           payment_status: Database["public"]["Enums"]["enrollment_status"]
           price_paid: number
           tbc_order_id: string | null
@@ -34,6 +37,9 @@ export type Database = {
           enrolled_at?: string | null
           id?: string
           paid_at?: string | null
+          ipay_order_id?: string | null
+          ipay_payment_hash?: string | null
+          ipay_payment_id?: string | null
           payment_status?: Database["public"]["Enums"]["enrollment_status"]
           price_paid: number
           tbc_order_id?: string | null
@@ -47,6 +53,9 @@ export type Database = {
           enrolled_at?: string | null
           id?: string
           paid_at?: string | null
+          ipay_order_id?: string | null
+          ipay_payment_hash?: string | null
+          ipay_payment_id?: string | null
           payment_status?: Database["public"]["Enums"]["enrollment_status"]
           price_paid?: number
           tbc_order_id?: string | null
@@ -64,6 +73,93 @@ export type Database = {
           },
           {
             foreignKeyName: "course_enrollments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payment_orders: {
+        Row: {
+          amount: number
+          callback_url: string | null
+          course_id: string
+          course_title: string
+          created_at: string | null
+          currency_code: string
+          error_code: string | null
+          error_message: string | null
+          id: string
+          intent: string
+          ipay_order_id: string | null
+          ipay_payment_hash: string | null
+          ipay_payment_id: string | null
+          locale: string
+          metadata: Json | null
+          redirect_url: string | null
+          shop_order_id: string
+          status: Database["public"]["Enums"]["payment_order_status"]
+          status_description: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          callback_url?: string | null
+          course_id: string
+          course_title: string
+          created_at?: string | null
+          currency_code?: string
+          error_code?: string | null
+          error_message?: string | null
+          id?: string
+          intent?: string
+          ipay_order_id?: string | null
+          ipay_payment_hash?: string | null
+          ipay_payment_id?: string | null
+          locale?: string
+          metadata?: Json | null
+          redirect_url?: string | null
+          shop_order_id: string
+          status?: Database["public"]["Enums"]["payment_order_status"]
+          status_description?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          callback_url?: string | null
+          course_id?: string
+          course_title?: string
+          created_at?: string | null
+          currency_code?: string
+          error_code?: string | null
+          error_message?: string | null
+          id?: string
+          intent?: string
+          ipay_order_id?: string | null
+          ipay_payment_hash?: string | null
+          ipay_payment_id?: string | null
+          locale?: string
+          metadata?: Json | null
+          redirect_url?: string | null
+          shop_order_id?: string
+          status?: Database["public"]["Enums"]["payment_order_status"]
+          status_description?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_orders_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_orders_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
@@ -302,6 +398,7 @@ export type Database = {
     Enums: {
       app_role: "admin" | "user"
       enrollment_status: "pending" | "completed" | "test" | "paid" | "failed"
+      payment_order_status: "pending" | "redirected" | "success" | "failed" | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never

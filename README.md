@@ -1,73 +1,88 @@
-# Welcome to your Lovable project
+# Supabase Seed Data
 
-## Project info
+## Running the Seed Script
 
-**URL**: https://lovable.dev/projects/98ee606c-6f4d-4980-a3d2-a1d3df56e6a3
+To populate your database with demo course data, you need to run the `seed.sql` file.
 
-## How can I edit this code?
+### Option 1: Using Lovable Cloud Backend
+1. Click on the "Backend" button in Lovable
+2. Navigate to the SQL Editor
+3. Copy the contents of `supabase/seed.sql`
+4. Paste and execute the SQL
 
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/98ee606c-6f4d-4980-a3d2-a1d3df56e6a3) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+### Option 2: Using Supabase CLI (if connected to external Supabase)
+```bash
+supabase db reset --db-url "your-database-url"
 ```
 
-**Edit a file directly in GitHub**
+### Option 3: Direct Database Connection
+If you have direct database access:
+```bash
+psql "your-database-url" < supabase/seed.sql
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## What the Seed Script Does
 
-**Use GitHub Codespaces**
+The seed script creates **3 demo courses**:
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+1. **ავეჯის კონსტრუირების კურსი** (Furniture Constructor Course)
+   - Published: ✅ Yes
+   - Duration: 2 months
+   - Includes full syllabus with 5 modules
 
-## What technologies are used for this project?
+2. **ინტერიერის დიზაინის კურსი** (Interior Design Course)
+   - Published: ✅ Yes
+   - Duration: 3 months
+   - Includes syllabus with 3 modules
 
-This project is built with:
+3. **ხის კვეთის ხელოსნობის კურსი** (Wood Carving Course)
+   - Published: ❌ No (Draft)
+   - Duration: 2.5 months
+   - Includes syllabus with 3 modules
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Modifying the Seed Data
 
-## How can I deploy this project?
+To clear existing courses before seeding (useful for resetting):
+```sql
+TRUNCATE courses CASCADE;
+```
 
-Simply open [Lovable](https://lovable.dev/projects/98ee606c-6f4d-4980-a3d2-a1d3df56e6a3) and click on Share -> Publish.
+Then run the seed script.
 
-## Can I connect a custom domain to my Lovable project?
+## Note
 
-Yes, you can!
+- The seed data uses placeholder images from Unsplash
+- All Georgian text is authentic and production-ready
+- Meet links and Drive links are placeholders - update them in the admin panel after seeding
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## iPay Edge Functions
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Three Edge Functions collaborate to talk to Bank of Georgia:
+
+| Function | Purpose |
+| --- | --- |
+| `ipay-auth` | Internal health check that fetches OAuth tokens (requires `IPAY_AUTH_INTERNAL_KEY`) |
+| `ipay-create-order` | Creates checkout orders, persists `payment_orders`, and returns the redirect URL |
+| `ipay-callback` | Processes PSP callbacks and updates `course_enrollments` |
+
+Before deploying, export the required secrets in the Supabase dashboard or CLI:
+
+```
+supabase secrets set \
+  SUPABASE_URL=... \
+  SUPABASE_SERVICE_ROLE_KEY=... \
+  IPAY_CLIENT_ID=... \
+  IPAY_CLIENT_SECRET=... \
+  IPAY_USERNAME=... \
+  IPAY_PASSWORD=... \
+  IPAY_REDIRECT_URL=https://your-site.com/payment/return \
+  IPAY_CALLBACK_URL=https://<project>.functions.supabase.co/ipay-callback
+```
+
+Then deploy:
+
+```
+supabase functions deploy ipay-auth
+supabase functions deploy ipay-create-order
+supabase functions deploy ipay-callback
+```
