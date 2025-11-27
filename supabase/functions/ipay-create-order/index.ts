@@ -1,8 +1,18 @@
 /**
  * Edge Function that creates an iPay checkout order and returns the redirect URL.
+ * 
+ * Note: Deno global is available at runtime in Supabase Edge Functions.
  */
+declare const Deno: {
+  env: {
+    get(key: string): string | undefined;
+  };
+  serve(handler: (request: Request) => Response | Promise<Response>): void;
+};
+
 import { createIpayOrder, getApproveLink } from "../_shared/ipay.ts";
 import { getUserFromRequest, serviceClient } from "../_shared/supabaseClient.ts";
+import { corsHeaders, handleCors } from "../_shared/cors.ts";
 
 const IPAY_REDIRECT_URL = Deno.env.get("IPAY_REDIRECT_URL");
 const IPAY_CALLBACK_URL = Deno.env.get("IPAY_CALLBACK_URL");
@@ -15,25 +25,41 @@ type CreateOrderRequest = {
 const currencyCode = Deno.env.get("IPAY_CURRENCY_CODE") ?? "GEL";
 
 Deno.serve(async (request) => {
-  if (request.method !== "POST") {
-    return new Response("Method Not Allowed", { status: 405 });
-  }
-
-  const user = await getUserFromRequest(request);
-  if (!user) {
-    return new Response("Unauthorized", { status: 401 });
-  }
-
   try {
+    const corsResponse = handleCors(request);
+    if (corsResponse) {
+      return corsResponse;
+    }
+
+    if (request.method !== "POST") {
+      return new Response("Method Not Allowed", {
+        status: 405,
+        headers: corsHeaders,
+      });
+    }
+
+    const user = await getUserFromRequest(request);
+    if (!user) {
+      return new Response("Unauthorized", {
+        status: 401,
+        headers: corsHeaders,
+      });
+    }
     const payload = (await request.json()) as CreateOrderRequest;
     const courseId = payload.courseId;
 
     if (!courseId) {
-      return new Response("Missing courseId", { status: 400 });
+      return new Response("Missing courseId", {
+        status: 400,
+        headers: corsHeaders,
+      });
     }
 
     if (!IPAY_REDIRECT_URL || !IPAY_CALLBACK_URL) {
-      return new Response("Missing iPay redirect or callback URLs", { status: 500 });
+      return new Response("Missing iPay redirect or callback URLs", {
+        status: 500,
+        headers: corsHeaders,
+      });
     }
 
     const { data: course, error: courseError } = await serviceClient
@@ -44,13 +70,19 @@ Deno.serve(async (request) => {
 
     if (courseError || !course) {
       console.error("Course lookup failed", courseError);
-      return new Response("Course not found", { status: 404 });
+      return new Response("Course not found", {
+        status: 404,
+        headers: corsHeaders,
+      });
     }
 
     const amount = Number(course.price ?? 0);
 
     if (Number.isNaN(amount) || amount <= 0) {
-      return new Response("Course price is not configured", { status: 400 });
+      return new Response("Course price is not configured", {
+        status: 400,
+        headers: corsHeaders,
+      });
     }
 
     const shopOrderId = `CRA-${courseId.split("-")[0]}-${crypto.randomUUID().slice(0, 12)}`;
@@ -79,7 +111,10 @@ Deno.serve(async (request) => {
 
     if (insertError || !paymentOrder) {
       console.error("Failed to insert payment order", insertError);
-      return new Response("Unable to create payment session", { status: 500 });
+      return new Response("Unable to create payment session", {
+        status: 500,
+        headers: corsHeaders,
+      });
     }
 
     const ipayResponse = await createIpayOrder({
@@ -107,7 +142,10 @@ Deno.serve(async (request) => {
         })
         .eq("id", paymentOrder.id);
 
-      return new Response("Unable to create payment link", { status: 502 });
+      return new Response("Unable to create payment link", {
+        status: 502,
+        headers: corsHeaders,
+      });
     }
 
     await serviceClient
@@ -123,14 +161,36 @@ Deno.serve(async (request) => {
       })
       .eq("id", paymentOrder.id);
 
-    return Response.json({
-      redirectUrl: approveLink,
-      shopOrderId,
-      paymentHash: ipayResponse.payment_hash,
-    });
+    return Response.json(
+      {
+        redirectUrl: approveLink,
+        shopOrderId,
+        paymentHash: ipayResponse.payment_hash,
+      },
+      {
+        headers: corsHeaders,
+      }
+    );
   } catch (error) {
     console.error("iPay create order failed", error);
-    return new Response("Unexpected error", { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorStack = error instanceof Error ? error.stack : undefined;
+    
+    return new Response(
+      JSON.stringify({
+        error: "Function error",
+        message: errorMessage,
+        ...(errorStack && { stack: errorStack }),
+        hint: "Check Edge Function logs in Supabase Dashboard for details",
+      }),
+      {
+        status: 500,
+        headers: {
+          ...corsHeaders,
+          "Content-Type": "application/json",
+        },
+      }
+    );
   }
 });
 

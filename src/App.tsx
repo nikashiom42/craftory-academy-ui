@@ -13,6 +13,7 @@ import CourseDetail from "./pages/CourseDetail";
 import Syllabus from "./pages/Syllabus";
 import Contact from "./pages/Contact";
 import Auth from "./pages/Auth";
+import ResetPassword from "./pages/ResetPassword";
 import Admin from "./pages/Admin";
 import AdminLeads from "./pages/AdminLeads";
 import AdminCourses from "./pages/AdminCourses";
@@ -58,6 +59,7 @@ const AppLayout = () => {
           <Route path="/syllabus/:slug" element={<Syllabus />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/auth/reset-password" element={<ResetPassword />} />
           <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><Admin /></ProtectedRoute>} />
           <Route path="/admin/courses" element={<ProtectedRoute requiredRole="admin"><AdminCourses /></ProtectedRoute>} />
           <Route path="/admin/leads" element={<ProtectedRoute requiredRole="admin"><AdminLeads /></ProtectedRoute>} />

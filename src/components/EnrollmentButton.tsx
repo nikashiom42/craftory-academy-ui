@@ -71,6 +71,11 @@ export const EnrollmentButton = forwardRef<EnrollmentButtonHandle, EnrollmentBut
       .maybeSingle();
 
     if (error) {
+      // 404 might mean table doesn't exist or no rows found - both are acceptable
+      if (error.code === "PGRST116" || error.message?.includes("404")) {
+        setLatestOrder(null);
+        return;
+      }
       console.error("Failed to load payment order summary", error);
       return;
     }
