@@ -235,7 +235,9 @@ export default function CourseDetail() {
         description={course.info_session_cta?.description}
       />
       
-      <TrainerCard trainer={course.trainer} />
+      {course.trainer && (
+        <TrainerCard trainer={course.trainer} />
+      )}
       <CourseInfoSessionDialog
         open={isInfoSessionOpen}
         onOpenChange={setIsInfoSessionOpen}
