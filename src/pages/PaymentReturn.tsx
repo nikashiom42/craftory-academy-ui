@@ -44,8 +44,34 @@ export default function PaymentReturn() {
         return;
       }
 
-      // Try to get order_id from URL params (BOG includes this in redirect)
-      const orderId = searchParams.get("order_id");
+      // Try to get order_id from URL params
+      let orderId = searchParams.get("order_id");
+      const externalOrderId = searchParams.get("external_order_id");
+
+      // If no ID in URL, fetch the most recent pending order for this user
+      if (!orderId && !externalOrderId) {
+        console.log("No order ID in URL, checking latest pending order...");
+        const { data: recentOrder } = await supabase
+          .from("payment_orders")
+          .select("ipay_order_id")
+          .eq("user_id", session.user.id)
+          .eq("status", "redirected")
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        
+        if (recentOrder?.ipay_order_id) {
+          orderId = recentOrder.ipay_order_id;
+          console.log("Found recent pending order:", orderId);
+        } else {
+          console.error("No pending orders found");
+          if (pollCount >= MAX_POLLS) {
+            setStatus("not_found");
+            setError("გადახდის ინფორმაცია ვერ მოიძებნა");
+          }
+          return;
+        }
+      }
 
       // Call verify-payment Edge Function to check with BOG directly
       const { data: verifyData, error: verifyError } = await supabase.functions.invoke("verify-payment", {
