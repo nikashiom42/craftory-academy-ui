@@ -44,50 +44,46 @@ export default function PaymentReturn() {
         return;
       }
 
-      // Try to get order_id from URL params (BOG may include this)
+      // Try to get order_id from URL params (BOG includes this in redirect)
       const orderId = searchParams.get("order_id");
-      const externalOrderId = searchParams.get("external_order_id");
 
-      // Query payment_orders by order_id or user's most recent order
-      let query = supabase
-        .from("payment_orders")
-        .select(`
-          id,
-          status,
-          course_id,
-          courses (
-            slug,
-            title
-          )
-        `)
-        .eq("user_id", session.user.id)
-        .order("created_at", { ascending: false });
+      // Call verify-payment Edge Function to check with BOG directly
+      const { data: verifyData, error: verifyError } = await supabase.functions.invoke("verify-payment", {
+        body: { orderId },
+      });
 
-      if (orderId) {
-        query = query.eq("ipay_order_id", orderId);
-      } else if (externalOrderId) {
-        query = query.eq("shop_order_id", externalOrderId);
-      }
-
-      const { data, error: queryError } = await query.limit(1).single();
-
-      if (queryError || !data) {
+      if (verifyError) {
+        console.error("Verify payment error:", verifyError);
         if (pollCount >= MAX_POLLS) {
-          setStatus("not_found");
-          setError("გადახდის ინფორმაცია ვერ მოიძებნა");
+          setStatus("failed");
+          setError("დაფიქსირდა შეცდომა გადახდის შემოწმებისას");
         }
         return;
       }
 
-      setPaymentOrder(data as PaymentOrder);
+      const result = verifyData as { status: string; message: string; course?: { slug: string; title: string } };
+      
+      if (result.course) {
+        setPaymentOrder({
+          id: "",
+          status: result.status,
+          course_id: "",
+          courses: result.course,
+        });
+      }
 
-      // Map status
-      if (data.status === "success") {
+      if (result.status === "success") {
         setStatus("success");
-      } else if (data.status === "failed" || data.status === "cancelled") {
+      } else if (result.status === "failed") {
         setStatus("failed");
-        setError(data.status === "cancelled" ? "გადახდა გაუქმებულია" : "გადახდა ვერ შესრულდა");
-      } else if (data.status === "pending" || data.status === "redirected") {
+        setError(result.message || "გადახდა ვერ შესრულდა");
+      } else if (result.status === "not_found") {
+        if (pollCount >= MAX_POLLS) {
+          setStatus("not_found");
+          setError("გადახდის ინფორმაცია ვერ მოიძებნა");
+        }
+      } else {
+        // pending or other
         setStatus("pending");
       }
     } catch (err) {

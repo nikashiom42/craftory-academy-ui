@@ -1,3 +1,4 @@
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 /**
  * Edge Function that processes Bank of Georgia iPay callbacks.
  * Updates payment_orders and synchronizes course_enrollments.
@@ -85,12 +86,19 @@ async function verifySignature(signatureBase64: string, payload: string): Promis
 }
 
 Deno.serve(async (request) => {
+  console.log("Callback received", {
+    method: request.method,
+    url: request.url,
+    headers: Object.fromEntries(request.headers.entries()),
+  });
+
   if (request.method !== "POST") {
     return new Response("Method Not Allowed", { status: 405 });
   }
 
   try {
     const rawBody = await request.text();
+    console.log("Callback raw body:", rawBody);
 
     const signatureHeader =
       request.headers.get("signature") ??

@@ -1,3 +1,4 @@
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 /**
  * Shared Bank of Georgia Payments helper utilities for Edge Functions.
  * Uses the new Payments API (https://api.bog.ge/payments/v1) with client_credentials auth.
@@ -128,7 +129,8 @@ export async function createIpayOrder(args: CreateOrderArgs): Promise<IpayCreate
   const orderUrl = `${baseUrl}/ecommerce/orders`;
   
   console.log("BOG API URL:", orderUrl);
-  console.log("BOG API Base (env):", IPAY_API_BASE);
+  console.log("BOG callback_url being sent:", args.callbackUrl);
+  console.log("BOG redirect_urls:", { success: args.redirectUrlSuccess, fail: args.redirectUrlFail });
 
   const response = await fetch(orderUrl, {
     method: "POST",

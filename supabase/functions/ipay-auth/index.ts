@@ -1,3 +1,4 @@
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 /**
  * Edge Function that surfaces iPay OAuth token metadata for internal health checks.
  * Requires a shared secret header so tokens are not exposed publicly.

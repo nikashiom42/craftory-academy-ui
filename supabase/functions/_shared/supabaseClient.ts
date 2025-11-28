@@ -1,3 +1,4 @@
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 /**
  * Shared Supabase service client helpers for Edge Functions.
  * Centralizes auth lookups so every function validates callers consistently.
