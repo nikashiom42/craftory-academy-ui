@@ -1,0 +1,9 @@
+{
+  "rewrites": [
+    {
+      "source": "/((?!api|assets|fonts|course-images|partner-logos|favicon|robots|sitemap|placeholder).*)",
+      "destination": "/index.html"
+    }
+  ]
+}
+

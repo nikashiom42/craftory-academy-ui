@@ -73,10 +73,11 @@ supabase secrets set \
   SUPABASE_SERVICE_ROLE_KEY=... \
   IPAY_CLIENT_ID=... \
   IPAY_CLIENT_SECRET=... \
-  IPAY_USERNAME=... \
-  IPAY_PASSWORD=... \
+  IPAY_TOKEN_URL=https://oauth2.bog.ge/auth/realms/bog/protocol/openid-connect/token \
   IPAY_REDIRECT_URL=https://your-site.com/payment/return \
-  IPAY_CALLBACK_URL=https://<project>.functions.supabase.co/ipay-callback
+  IPAY_REDIRECT_FAIL_URL=https://your-site.com/payment/fail \
+  IPAY_CALLBACK_URL=https://<project>.functions.supabase.co/ipay-callback \
+  IPAY_CALLBACK_PUBLIC_KEY="-----BEGIN PUBLIC KEY-----...-----END PUBLIC KEY-----"
 ```
 
 Then deploy:

@@ -1,16 +1,25 @@
 /**
- * Shared iPay helper utilities for Edge Functions.
- * Handles OAuth token caching and REST calls against Bank of Georgia gateways.
+ * Shared Bank of Georgia Payments helper utilities for Edge Functions.
+ * Uses the new Payments API (https://api.bog.ge/payments/v1) with client_credentials auth.
  */
-const IPAY_API_BASE = Deno.env.get("IPAY_API_BASE") ?? "https://ipay.ge/opay/api/v1";
+const IPAY_API_BASE_ENV = Deno.env.get("IPAY_API_BASE");
+const IPAY_API_BASE = IPAY_API_BASE_ENV ?? "https://api.bog.ge/payments/v1";
+
+// Warn if using old iPay URL
+if (IPAY_API_BASE_ENV && IPAY_API_BASE_ENV.includes("ipay.ge")) {
+  console.error(
+    "WARNING: IPAY_API_BASE is set to old iPay URL. Use 'https://api.bog.ge/payments/v1' for BOG API, or remove the env var to use default."
+  );
+}
+
+const IPAY_TOKEN_URL =
+  Deno.env.get("IPAY_TOKEN_URL") ??
+  "https://oauth2.bog.ge/auth/realms/bog/protocol/openid-connect/token";
 const IPAY_CLIENT_ID = Deno.env.get("IPAY_CLIENT_ID");
 const IPAY_CLIENT_SECRET = Deno.env.get("IPAY_CLIENT_SECRET");
-const IPAY_USERNAME = Deno.env.get("IPAY_USERNAME");
-const IPAY_PASSWORD = Deno.env.get("IPAY_PASSWORD");
-const IPAY_SCOPE = Deno.env.get("IPAY_SCOPE") ?? "payments";
 
-if (!IPAY_CLIENT_ID || !IPAY_CLIENT_SECRET || !IPAY_USERNAME || !IPAY_PASSWORD) {
-  throw new Error("Missing Bank of Georgia iPay credentials");
+if (!IPAY_CLIENT_ID || !IPAY_CLIENT_SECRET) {
+  throw new Error("Missing Bank of Georgia Payments credentials");
 }
 
 type OAuthToken = {
@@ -27,15 +36,11 @@ const tokenCache: { value: CachedToken | null } = { value: null };
  * Requests a new OAuth token from iPay.
  */
 async function requestToken(): Promise<OAuthToken> {
-  const url = `${IPAY_API_BASE}/oauth2/token`;
   const formData = new URLSearchParams({
-    grant_type: "password",
-    username: IPAY_USERNAME,
-    password: IPAY_PASSWORD,
-    scope: IPAY_SCOPE,
+    grant_type: "client_credentials",
   });
 
-  const response = await fetch(url, {
+  const response = await fetch(IPAY_TOKEN_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
@@ -78,16 +83,25 @@ export async function getOAuthToken(forceRefresh = false): Promise<OAuthToken> {
 }
 
 export type IpayCreateOrderResponse = {
-  payment_id: string;
+  id: string;
+  _links?: {
+    details?: { href: string };
+    redirect?: { href: string };
+  };
+};
+
+export type IpayPaymentDetails = {
   order_id: string;
-  payment_hash: string;
-  status: string;
-  status_description?: string;
-  links?: Array<{
-    href: string;
-    rel: string;
-    method: string;
-  }>;
+  external_order_id?: string;
+  order_status?: {
+    key: string;
+    value?: string;
+  };
+  payment_detail?: {
+    code?: string;
+    code_description?: string;
+    transaction_id?: string;
+  };
 };
 
 export type CreateOrderArgs = {
@@ -96,54 +110,64 @@ export type CreateOrderArgs = {
   courseId: string;
   courseTitle: string;
   locale: string;
-  redirectUrl: string;
+  redirectUrlSuccess: string;
+  redirectUrlFail: string;
   callbackUrl: string;
   shopOrderId: string;
-  intent?: "CAPTURE" | "AUTHORIZE";
+  applicationType?: "web" | "mobile";
 };
 
 /**
- * Creates an order on iPay checkout API and returns the raw payload.
+ * Creates an order on BOG Payments API and returns the raw payload.
  */
 export async function createIpayOrder(args: CreateOrderArgs): Promise<IpayCreateOrderResponse> {
   const token = await getOAuthToken();
-  const response = await fetch(`${IPAY_API_BASE}/checkout/orders`, {
+
+  // Ensure no trailing slash in base URL
+  const baseUrl = IPAY_API_BASE.replace(/\/$/, "");
+  const orderUrl = `${baseUrl}/ecommerce/orders`;
+  
+  console.log("BOG API URL:", orderUrl);
+  console.log("BOG API Base (env):", IPAY_API_BASE);
+
+  const response = await fetch(orderUrl, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token.accessToken}`,
       "Content-Type": "application/json",
+      "Accept-Language": args.locale || "ka",
+      "Idempotency-Key": args.shopOrderId,
     },
     body: JSON.stringify({
-      intent: args.intent ?? "CAPTURE",
-      items: [
-        {
-          amount: args.amount.toFixed(2),
-          description: args.courseTitle,
-          quantity: "1",
-          product_id: args.courseId,
-        },
-      ],
-      locale: args.locale,
-      shop_order_id: args.shopOrderId,
-      redirect_url: args.redirectUrl,
       callback_url: args.callbackUrl,
-      show_shop_order_id_on_extract: true,
-      capture_method: "AUTOMATIC",
-      purchase_units: [
-        {
-          amount: {
-            currency_code: args.currencyCode,
-            value: args.amount.toFixed(2),
+      external_order_id: args.shopOrderId,
+      purchase_units: {
+        currency: args.currencyCode,
+        total_amount: args.amount,
+        basket: [
+          {
+            quantity: 1,
+            unit_price: args.amount,
+            product_id: args.courseId,
           },
-        },
-      ],
+        ],
+      },
+      redirect_urls: {
+        success: args.redirectUrlSuccess,
+        fail: args.redirectUrlFail,
+      },
     }),
   });
 
   if (!response.ok) {
     const errorBody = await response.text();
-    console.error("Failed to create iPay order", errorBody);
-    throw new Error("Unable to create iPay order");
+    console.error("Failed to create BOG order", {
+      url: orderUrl,
+      status: response.status,
+      statusText: response.statusText,
+      body: errorBody,
+    });
+    throw new Error(`BOG API error ${response.status}: ${errorBody}`);
   }
 
   return (await response.json()) as IpayCreateOrderResponse;
@@ -153,7 +177,26 @@ export async function createIpayOrder(args: CreateOrderArgs): Promise<IpayCreate
  * Helper to extract approve/redirect link from an iPay order response.
  */
 export function getApproveLink(order: IpayCreateOrderResponse): string | null {
-  const approve = order.links?.find((link) => link.rel.toLowerCase() === "approve");
-  return approve?.href ?? null;
+  return order._links?.redirect?.href ?? null;
 }
 
+/**
+ * Fetches payment details/receipt for an order id.
+ */
+export async function getPaymentDetails(orderId: string): Promise<IpayPaymentDetails> {
+  const token = await getOAuthToken();
+  const response = await fetch(`${IPAY_API_BASE}/receipt/${orderId}`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token.accessToken}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    console.error("Failed to fetch payment details", errorBody);
+    throw new Error("Unable to fetch payment details");
+  }
+
+  return (await response.json()) as IpayPaymentDetails;
+}

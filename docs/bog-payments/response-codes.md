@@ -1,0 +1,7 @@
+# Payment Response Codes
+
+Source: https://api.bog.ge/docs/en/payments/response-codes
+
+- Payment Response Codes
+Payment Response Codes
+CodeDescription (EN)Description (GE)100Successful paymentწარმატებული გადახდა101Payment declined because card usage is limited. For detailed information, contact the card issuer bankგადახდა უარყოფილია, რადგან ბარათის გამოყენება შეზღუდულია. დეტალური ინფორმაციისთვის დაუკავშირდით ბარათის მომსახურე ბანკს102Saved card wasn't foundდამახსოვრებული ბარათი ვერ მოიძებნა103Payment declined due to invalid cardგადახდა უარყოფილია, რადგან ბარათი არ არის ვალიდური104Payment declined due to exceeding transaction limitგადახდა უარყოფილია ტრანზაქციის რაოდენობის ლიმიტის გადაჭარბების გამო105Payment declined because the card has expiredგადახდა უარყოფილია, რადგან ბარათი ვადაგასულია106Payment declined due to exceeding the limit of the amountგადახდა უარყოფილია თანხის ლიმიტის გადაჭარბების გამო107Payment declined due to insufficient funds in the accountგადახდა უარყოფილია ანგარიშზე არასაკმარისი თანხის გამო108Authentication Declinedგადახდის ავტორიზაციის უარყოფა109Technical Issueდაფიქსირდა ტექნიკური ხარვეზი110Transaction Expiredოპერაციის შესრულების დრო ამოიწურა111Authentication timeoutგადახდის ავტორიზაციის დრო ამოიწურა112General Errorსაერთო შეცდომა199Unknown Responseუცნობი პასუხი200Successful preauthorizationწარმატებული პრეავტორიზაცია
