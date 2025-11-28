@@ -21,6 +21,7 @@ import AdminPartners from "./pages/AdminPartners";
 import CourseManage from "./pages/CourseManage";
 import StudentDashboard from "./pages/StudentDashboard";
 import StudentCourseView from "./pages/StudentCourseView";
+import PaymentReturn from "./pages/PaymentReturn";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const AppLayout = () => {
   const isAdminRoute = location.pathname.startsWith('/admin');
   const isAuthRoute = location.pathname.startsWith('/auth');
   const isStudentRoute = location.pathname.startsWith('/student');
+  const isPaymentRoute = location.pathname.startsWith('/payment');
 
   useEffect(() => {
     const body = document.body;
@@ -49,8 +51,8 @@ const AppLayout = () => {
       <a href="#main-content" className="skip-link">
         გადადით მთავარ შიგთავსზე
       </a>
-      {!isAdminRoute && !isAuthRoute && !isStudentRoute && <Header />}
-      <main id="main-content" className={isAdminRoute || isAuthRoute || isStudentRoute ? "" : "flex-grow"}>
+      {!isAdminRoute && !isAuthRoute && !isStudentRoute && !isPaymentRoute && <Header />}
+      <main id="main-content" className={isAdminRoute || isAuthRoute || isStudentRoute || isPaymentRoute ? "" : "flex-grow"}>
         <div className={isAdminRoute ? "admin-layout" : ""}>
           <Routes>
           <Route path="/" element={<Home />} />
@@ -67,12 +69,13 @@ const AppLayout = () => {
           <Route path="/admin/courses/:id" element={<ProtectedRoute requiredRole="admin"><CourseManage /></ProtectedRoute>} />
           <Route path="/student/dashboard" element={<ProtectedRoute requiredRole="user"><StudentDashboard /></ProtectedRoute>} />
           <Route path="/student/courses/:slug" element={<ProtectedRoute requiredRole="user"><StudentCourseView /></ProtectedRoute>} />
+          <Route path="/payment/return" element={<PaymentReturn />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
         </div>
       </main>
-      {!isAdminRoute && !isAuthRoute && !isStudentRoute && <Footer />}
+      {!isAdminRoute && !isAuthRoute && !isStudentRoute && !isPaymentRoute && <Footer />}
     </div>
   );
 };

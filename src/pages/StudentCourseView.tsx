@@ -60,12 +60,13 @@ export default function StudentCourseView() {
         return;
       }
 
-      // Check enrollment
+      // Check enrollment with paid status
       const { data: enrollmentData, error: enrollmentError } = await supabase
         .from("course_enrollments")
-        .select("id")
+        .select("id, payment_status")
         .eq("user_id", session.user.id)
         .eq("course_id", courseData.id)
+        .eq("payment_status", "paid")
         .maybeSingle();
 
       if (enrollmentError) throw enrollmentError;

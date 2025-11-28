@@ -136,7 +136,7 @@ export async function createIpayOrder(args: CreateOrderArgs): Promise<IpayCreate
       Authorization: `Bearer ${token.accessToken}`,
       "Content-Type": "application/json",
       "Accept-Language": args.locale || "ka",
-      "Idempotency-Key": args.shopOrderId,
+      "Idempotency-Key": crypto.randomUUID(),
     },
     body: JSON.stringify({
       callback_url: args.callbackUrl,
