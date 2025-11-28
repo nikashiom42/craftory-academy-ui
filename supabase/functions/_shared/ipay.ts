@@ -98,6 +98,12 @@ export type IpayPaymentDetails = {
     key: string;
     value?: string;
   };
+  purchase_units?: {
+    request_amount?: string | number;
+    transfer_amount?: string | number;
+    refund_amount?: string | number;
+    currency_code?: string;
+  };
   payment_detail?: {
     code?: string;
     code_description?: string;

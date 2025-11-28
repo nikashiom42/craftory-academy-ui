@@ -54,7 +54,9 @@ function mapStatus(statusKey?: string, code?: string): PaymentOrderStatus {
 }
 
 async function verifySignature(signatureBase64: string, payload: string): Promise<boolean> {
-  if (!CALLBACK_PUBLIC_KEY) return true;
+  if (!CALLBACK_PUBLIC_KEY) {
+    throw new Error("Callback public key not configured");
+  }
   try {
     const pem = CALLBACK_PUBLIC_KEY.replace("-----BEGIN PUBLIC KEY-----", "")
       .replace("-----END PUBLIC KEY-----", "")
@@ -86,11 +88,12 @@ async function verifySignature(signatureBase64: string, payload: string): Promis
 }
 
 Deno.serve(async (request) => {
-  console.log("Callback received", {
-    method: request.method,
-    url: request.url,
-    headers: Object.fromEntries(request.headers.entries()),
-  });
+  console.log("Callback received", { method: request.method, url: request.url });
+
+  if (!CALLBACK_PUBLIC_KEY) {
+    console.error("IPAY_CALLBACK_PUBLIC_KEY is not configured; rejecting callback");
+    return new Response("Callback signature key not configured", { status: 500 });
+  }
 
   if (request.method !== "POST") {
     return new Response("Method Not Allowed", { status: 405 });
@@ -98,18 +101,21 @@ Deno.serve(async (request) => {
 
   try {
     const rawBody = await request.text();
-    console.log("Callback raw body:", rawBody);
 
     const signatureHeader =
       request.headers.get("signature") ??
       request.headers.get("Signature") ??
       request.headers.get("x-signature");
-    if (signatureHeader) {
-      const verified = await verifySignature(signatureHeader, rawBody);
-      if (!verified) {
-        console.error("Callback signature verification failed");
-        return new Response("Invalid signature", { status: 401 });
-      }
+
+    if (!signatureHeader) {
+      console.error("Callback missing signature header");
+      return new Response("Missing signature", { status: 401 });
+    }
+
+    const verified = await verifySignature(signatureHeader, rawBody);
+    if (!verified) {
+      console.error("Callback signature verification failed");
+      return new Response("Invalid signature", { status: 401 });
     }
 
     const body = JSON.parse(rawBody) as CallbackPayload;
@@ -120,6 +126,8 @@ Deno.serve(async (request) => {
     const code = body.body?.payment_detail?.code ?? body.payment_detail?.code;
     const transactionId =
       body.body?.payment_detail?.transaction_id ?? body.payment_detail?.transaction_id;
+
+    console.log("Callback parsed", { orderId, externalOrderId, statusKey, code });
 
     if (!orderId && !externalOrderId) {
       return new Response("Missing order identifiers", { status: 400 });
@@ -156,15 +164,63 @@ Deno.serve(async (request) => {
     let detailsStatusKey = statusKey;
     let detailsCode = code;
     let detailsDescription: string | undefined;
+    let details: Awaited<ReturnType<typeof getPaymentDetails>> | undefined;
     try {
       if (orderId) {
-        const details = await getPaymentDetails(orderId);
+        details = await getPaymentDetails(orderId);
         detailsStatusKey = details.order_status?.key ?? detailsStatusKey;
         detailsCode = details.payment_detail?.code ?? detailsCode;
         detailsDescription = details.payment_detail?.code_description ?? detailsDescription;
       }
     } catch (err) {
       console.error("Failed to fetch payment details for callback", err);
+    }
+
+    if (details) {
+      const receiptExternalOrderId = details.external_order_id;
+      const receiptAmountRaw =
+        details.purchase_units?.request_amount ??
+        details.purchase_units?.transfer_amount ??
+        details.purchase_units?.refund_amount;
+      const receiptAmount =
+        typeof receiptAmountRaw === "string"
+          ? parseFloat(receiptAmountRaw)
+          : receiptAmountRaw;
+      const receiptCurrency = details.purchase_units?.currency_code?.toUpperCase();
+      const expectedCurrency = (paymentOrder.currency_code ?? "").toUpperCase();
+      const currencyMatches = !receiptCurrency || receiptCurrency === expectedCurrency;
+      const amountMatches =
+        receiptAmount === undefined ||
+        Number.isNaN(receiptAmount) ||
+        Math.abs(Number(paymentOrder.amount) - receiptAmount) < 0.01;
+
+      if (receiptExternalOrderId && receiptExternalOrderId !== paymentOrder.shop_order_id) {
+        await serviceClient
+          .from("payment_orders")
+          .update({
+            status: "failed",
+            status_description: "external_order_mismatch",
+            ipay_order_id: orderId ?? paymentOrder.ipay_order_id,
+            ipay_payment_id: transactionId ?? paymentOrder.ipay_payment_id,
+          })
+          .eq("id", paymentOrder.id);
+
+        return new Response("Order mismatch", { status: 409 });
+      }
+
+      if (!amountMatches || !currencyMatches) {
+        await serviceClient
+          .from("payment_orders")
+          .update({
+            status: "failed",
+            status_description: "receipt_amount_currency_mismatch",
+            ipay_order_id: orderId ?? paymentOrder.ipay_order_id,
+            ipay_payment_id: transactionId ?? paymentOrder.ipay_payment_id,
+          })
+          .eq("id", paymentOrder.id);
+
+        return new Response("Amount or currency mismatch", { status: 409 });
+      }
     }
 
     const normalizedStatus = mapStatus(detailsStatusKey, detailsCode);
