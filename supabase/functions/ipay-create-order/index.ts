@@ -6,6 +6,7 @@ import { getUserFromRequest, serviceClient } from "../_shared/supabaseClient.ts"
 import { corsHeaders, handleCors } from "../_shared/cors.ts";
 
 const IPAY_REDIRECT_URL = Deno.env.get("IPAY_REDIRECT_URL");
+const IPAY_REDIRECT_FAIL_URL = Deno.env.get("IPAY_REDIRECT_FAIL_URL") ?? IPAY_REDIRECT_URL;
 const IPAY_CALLBACK_URL = Deno.env.get("IPAY_CALLBACK_URL");
 
 type CreateOrderRequest = {
@@ -115,22 +116,21 @@ Deno.serve(async (request) => {
       courseId: course.id,
       courseTitle: course.title,
       locale,
-      redirectUrl: IPAY_REDIRECT_URL,
+      redirectUrlSuccess: IPAY_REDIRECT_URL,
+      redirectUrlFail: IPAY_REDIRECT_FAIL_URL,
       callbackUrl: IPAY_CALLBACK_URL,
       shopOrderId,
     });
 
     const approveLink = getApproveLink(ipayResponse);
     if (!approveLink) {
-      console.error("Approve link missing on iPay response", ipayResponse);
+      console.error("Approve link missing on BOG response", ipayResponse);
       await serviceClient
         .from("payment_orders")
         .update({
           status: "failed",
-          status_description: "Missing approve link in iPay response",
-          ipay_order_id: ipayResponse.order_id,
-          ipay_payment_id: ipayResponse.payment_id,
-          ipay_payment_hash: ipayResponse.payment_hash,
+          status_description: "Missing redirect link in BOG response",
+          ipay_order_id: ipayResponse.id,
         })
         .eq("id", paymentOrder.id);
 
@@ -140,16 +140,16 @@ Deno.serve(async (request) => {
       });
     }
 
+    console.log("BOG order created successfully", { orderId: ipayResponse.id, redirectUrl: approveLink });
+
     await serviceClient
       .from("payment_orders")
       .update({
         status: "redirected",
-        status_description: ipayResponse.status_description ?? ipayResponse.status,
+        status_description: "Redirect to BOG payment page",
         redirect_url: approveLink,
         callback_url: IPAY_CALLBACK_URL,
-        ipay_order_id: ipayResponse.order_id,
-        ipay_payment_id: ipayResponse.payment_id,
-        ipay_payment_hash: ipayResponse.payment_hash,
+        ipay_order_id: ipayResponse.id,
       })
       .eq("id", paymentOrder.id);
 
@@ -157,7 +157,7 @@ Deno.serve(async (request) => {
       {
         redirectUrl: approveLink,
         shopOrderId,
-        paymentHash: ipayResponse.payment_hash,
+        orderId: ipayResponse.id,
       },
       {
         headers: corsHeaders,
