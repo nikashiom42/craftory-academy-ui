@@ -86,6 +86,7 @@ export default function AdminEnrollments() {
   const [loading, setLoading] = useState(true);
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [filteredProfiles, setFilteredProfiles] = useState<Profile[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -164,6 +165,7 @@ export default function AdminEnrollments() {
     }
 
     setProfiles(data || []);
+    setFilteredProfiles(data || []);
   };
 
   /**
@@ -281,12 +283,34 @@ export default function AdminEnrollments() {
   });
 
   // Filter profiles for user search in dialog
-  const filteredProfiles = profiles.filter(profile => {
+  useEffect(() => {
+    if (!userSearchTerm.trim()) {
+      setFilteredProfiles(profiles);
+      return;
+    }
+
     const searchLower = userSearchTerm.toLowerCase();
-    const email = profile.email?.toLowerCase() || "";
-    const name = profile.full_name?.toLowerCase() || "";
-    return email.includes(searchLower) || name.includes(searchLower);
-  });
+    const nextFiltered = profiles.filter((profile) => {
+      const email = profile.email?.toLowerCase() || "";
+      const name = profile.full_name?.toLowerCase() || "";
+      return email.includes(searchLower) || name.includes(searchLower);
+    });
+
+    setFilteredProfiles(nextFiltered);
+
+    if (selectedUserId && !nextFiltered.some((profile) => profile.id === selectedUserId)) {
+      setSelectedUserId("");
+    }
+  }, [userSearchTerm, profiles, selectedUserId]);
+
+  // Refresh student list whenever the dialog opens to ensure new users show up in search
+  useEffect(() => {
+    if (dialogOpen) {
+      loadProfiles();
+      setUserSearchTerm("");
+      setSelectedUserId("");
+    }
+  }, [dialogOpen]);
 
   /**
    * Get badge color based on payment status
@@ -370,15 +394,21 @@ export default function AdminEnrollments() {
                             <SelectValue placeholder="Select a student" />
                           </SelectTrigger>
                           <SelectContent className="max-h-[200px]">
-                            {filteredProfiles.map((profile) => (
-                              <SelectItem key={profile.id} value={profile.id}>
-                                <span className="flex items-center gap-2">
-                                  <Users className="h-4 w-4" />
-                                  {profile.email || "No email"} 
-                                  {profile.full_name && <span className="text-muted-foreground">({profile.full_name})</span>}
-                                </span>
+                            {filteredProfiles.length === 0 ? (
+                              <SelectItem value="no-results" disabled>
+                                No matching students found
                               </SelectItem>
-                            ))}
+                            ) : (
+                              filteredProfiles.map((profile) => (
+                                <SelectItem key={profile.id} value={profile.id}>
+                                  <span className="flex items-center gap-2">
+                                    <Users className="h-4 w-4" />
+                                    {profile.email || "No email"} 
+                                    {profile.full_name && <span className="text-muted-foreground">({profile.full_name})</span>}
+                                  </span>
+                                </SelectItem>
+                              ))
+                            )}
                           </SelectContent>
                         </Select>
                       </div>
@@ -582,4 +612,3 @@ export default function AdminEnrollments() {
     </SidebarProvider>
   );
 }
-

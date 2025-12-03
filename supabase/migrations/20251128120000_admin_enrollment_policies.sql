@@ -15,3 +15,5 @@ ON public.profiles
 FOR SELECT
 USING (has_role(auth.uid(), 'admin'));
 
+
+

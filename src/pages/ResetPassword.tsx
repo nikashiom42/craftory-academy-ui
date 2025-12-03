@@ -143,27 +143,20 @@ export default function ResetPassword() {
         <Header />
         <div className="flex-1 flex items-center justify-center bg-cream p-4 pt-28">
           <Card className="w-full max-w-md">
-            <CardHeader>
-              <CardTitle className="text-2xl font-bold">ბმული არასწორია</CardTitle>
-              <CardDescription>
-                პაროლის აღდგენის ბმული არასწორია ან ვადა გაუვიდა
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button
-                className="w-full"
-                onClick={() => navigate("/auth?mode=forgot")}
-              >
-                მოითხოვეთ ახალი ბმული
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full mt-2"
-                onClick={() => navigate("/auth?mode=login")}
-              >
-                დაბრუნება შესვლაზე
-              </Button>
-            </CardContent>
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold">ბმული არასწორია</CardTitle>
+            <CardDescription>
+              პაროლის აღდგენის ბმული არასწორია ან ვადა გაუვიდა. პაროლის აღდგენა დროებით შეჩერებულია.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button
+              className="w-full"
+              onClick={() => navigate("/auth?mode=login")}
+            >
+              დაბრუნება შესვლაზე
+            </Button>
+          </CardContent>
           </Card>
         </div>
         <Footer />
@@ -236,4 +229,3 @@ export default function ResetPassword() {
     </div>
   );
 }
-

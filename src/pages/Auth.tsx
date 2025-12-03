@@ -19,7 +19,7 @@ const authSchema = z.object({
 
 export default function Auth() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [isLogin, setIsLogin] = useState(() => searchParams.get("mode") !== "register" && searchParams.get("mode") !== "forgot");
+  const [isLogin, setIsLogin] = useState(() => searchParams.get("mode") !== "register");
   const mode = searchParams.get("mode");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,66 +29,22 @@ export default function Auth() {
   const { toast } = useToast();
 
   useEffect(() => {
-    if (mode === "register" && isLogin) {
-      setIsLogin(false);
-    } else if (mode === "forgot") {
-      setIsLogin(false);
-    } else if ((mode === "login" || mode === null) && !isLogin) {
+    if (mode === "forgot") {
+      setSearchParams({}, { replace: true });
       setIsLogin(true);
+      return;
     }
-  }, [mode, isLogin]);
+    
+    setIsLogin(mode !== "register");
+  }, [mode, setSearchParams]);
 
-  const switchAuthMode = (mode: "login" | "register" | "forgot") => {
-    setIsLogin(mode === "login");
-    setSearchParams({ mode }, { replace: true });
+  const switchAuthMode = (mode: "login" | "register") => {
+    const nextIsLogin = mode === "login";
+    setIsLogin(nextIsLogin);
+    setSearchParams(mode === "login" ? {} : { mode }, { replace: true });
     setPassword("");
-    if (mode === "login") {
+    if (nextIsLogin) {
       setFullName("");
-    }
-  };
-
-  const handleForgotPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      const emailValidation = z.string().email("Invalid email address").safeParse(email);
-      if (!emailValidation.success) {
-        toast({
-          variant: "destructive",
-          title: "შეცდომა",
-          description: "გთხოვთ შეიყვანოთ სწორი ელფოსტა.",
-        });
-        setLoading(false);
-        return;
-      }
-
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/reset-password`,
-      });
-
-      if (error) {
-        toast({
-          variant: "destructive",
-          title: "შეცდომა",
-          description: "პაროლის აღდგენის ბმული გაგზავნა ვერ მოხერხდა. გთხოვთ სცადოთ თავიდან.",
-        });
-        return;
-      }
-
-      toast({
-        title: "წარმატება",
-        description: "პაროლის აღდგენის ბმული გაიგზავნა თქვენს ელფოსტაზე. გთხოვთ შეამოწმოთ.",
-      });
-      setEmail("");
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "შეცდომა",
-        description: "მოხდა მოულოდნელი შეცდომა. გთხოვთ სცადოთ თავიდან.",
-      });
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -205,131 +161,80 @@ export default function Auth() {
     }
   };
 
+  const pageTitle = isLogin ? "შესვლა" : "რეგისტრაცია";
+  const pageDescription = isLogin
+    ? "შეიყვანეთ თქვენი მონაცემები სისტემაში შესასვლელად"
+    : "შექმენით ანგარიში დასაწყებად";
+
   return (
     <div className="min-h-screen flex flex-col">
       <SEO
-        title={mode === "forgot" ? "პაროლის აღდგენა" : isLogin ? "შესვლა" : "რეგისტრაცია"}
-        description={
-          mode === "forgot"
-            ? "პაროლის აღდგენის გვერდი Craftory Academy-სთვის"
-            : isLogin
-            ? "შედით თქვენს Craftory Academy ანგარიშში"
-            : "შექმენით ახალი ანგარიში Craftory Academy-ში"
-        }
+        title={pageTitle}
+        description={isLogin ? "შედით თქვენს Craftory Academy ანგარიშში" : "შექმენით ახალი ანგარიში Craftory Academy-ში"}
       />
       <Header />
       
       <div className="flex-1 flex items-center justify-center bg-cream p-4 pt-28">
         <Card className="w-full max-w-md">
           <CardHeader>
-            <CardTitle className="text-2xl font-bold">
-              {mode === "forgot" ? "პაროლის აღდგენა" : isLogin ? "შესვლა" : "რეგისტრაცია"}
-            </CardTitle>
-            <CardDescription>
-              {mode === "forgot"
-                ? "შეიყვანეთ თქვენი ელფოსტა და გამოგიგზავნით პაროლის აღდგენის ბმულს"
-                : isLogin
-                ? "შეიყვანეთ თქვენი მონაცემები სისტემაში შესასვლელად"
-                : "შექმენით ანგარიში დასაწყებად"}
-            </CardDescription>
+            <CardTitle className="text-2xl font-bold">{pageTitle}</CardTitle>
+            <CardDescription>{pageDescription}</CardDescription>
           </CardHeader>
           <CardContent>
-            {mode === "forgot" ? (
-              <form onSubmit={handleForgotPassword} className="space-y-4">
+            <form onSubmit={handleAuth} className="space-y-4">
+              {!isLogin && (
                 <div className="space-y-2">
-                  <Label htmlFor="forgot-email">ელფოსტა</Label>
+                  <Label htmlFor="fullName">სრული სახელი</Label>
                   <Input
-                    id="forgot-email"
-                    type="email"
-                    placeholder="example@gmail.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
+                    id="fullName"
+                    type="text"
+                    placeholder="სახელი გვარი"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    required={!isLogin}
                   />
                 </div>
+              )}
+              
+              <div className="space-y-2">
+                <Label htmlFor="email">ელფოსტა</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="example@gmail.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="password">პაროლი</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
 
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "იტვირთება..." : "გაგზავნა"}
-                </Button>
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "იტვირთება..." : isLogin ? "შესვლა" : "რეგისტრაცია"}
+              </Button>
 
-                <Button
-                  type="button"
-                  variant="ghost"
-                  className="w-full"
-                  onClick={() => switchAuthMode("login")}
-                >
-                  დაბრუნება შესვლაზე
-                </Button>
-              </form>
-            ) : (
-              <form onSubmit={handleAuth} className="space-y-4">
-                {!isLogin && (
-                  <div className="space-y-2">
-                    <Label htmlFor="fullName">სრული სახელი</Label>
-                    <Input
-                      id="fullName"
-                      type="text"
-                      placeholder="სახელი გვარი"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      required={!isLogin}
-                    />
-                  </div>
-                )}
-                
-                <div className="space-y-2">
-                  <Label htmlFor="email">ელფოსტა</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="example@gmail.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="password">პაროლი</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
-
-                {isLogin && (
-                  <div className="flex justify-end">
-                    <Button
-                      type="button"
-                      variant="link"
-                      className="px-0 text-sm"
-                      onClick={() => switchAuthMode("forgot")}
-                    >
-                      დაგავიწყდათ პაროლი?
-                    </Button>
-                  </div>
-                )}
-
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "იტვირთება..." : isLogin ? "შესვლა" : "რეგისტრაცია"}
-                </Button>
-
-                <Button
-                  type="button"
-                  variant="ghost"
-                  className="w-full"
-                  onClick={() => switchAuthMode(isLogin ? "register" : "login")}
-                >
-                  {isLogin
-                    ? "არ გაქვთ ანგარიში? დარეგისტრირდით"
-                    : "უკვე გაქვთ ანგარიში? შედით"}
-                </Button>
-              </form>
-            )}
+              <Button
+                type="button"
+                variant="ghost"
+                className="w-full"
+                onClick={() => switchAuthMode(isLogin ? "register" : "login")}
+              >
+                {isLogin
+                  ? "არ გაქვთ ანგარიში? დარეგისტრირდით"
+                  : "უკვე გაქვთ ანგარიში? შედით"}
+              </Button>
+            </form>
           </CardContent>
         </Card>
       </div>
