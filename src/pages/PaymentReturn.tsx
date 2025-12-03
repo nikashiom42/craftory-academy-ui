@@ -48,23 +48,39 @@ export default function PaymentReturn() {
       let orderId = searchParams.get("order_id");
       const externalOrderId = searchParams.get("external_order_id");
 
-      // If no ID in URL, fetch the most recent pending order for this user
+      // If no ID in URL, fetch the most recent order for this user
+      // Check redirected, pending, or success status (callback may have already processed)
       if (!orderId && !externalOrderId) {
-        console.log("No order ID in URL, checking latest pending order...");
+        console.log("No order ID in URL, checking latest order...");
         const { data: recentOrder } = await supabase
           .from("payment_orders")
-          .select("ipay_order_id")
+          .select("ipay_order_id, status, course_id, courses(slug, title)")
           .eq("user_id", session.user.id)
-          .eq("status", "redirected")
+          .in("status", ["redirected", "pending", "success"])
           .order("created_at", { ascending: false })
           .limit(1)
           .maybeSingle();
-        
+
         if (recentOrder?.ipay_order_id) {
           orderId = recentOrder.ipay_order_id;
-          console.log("Found recent pending order:", orderId);
+          console.log("Found recent order:", orderId, "status:", recentOrder.status);
+
+          // If already successful, show success immediately
+          if (recentOrder.status === "success") {
+            const courseData = recentOrder.courses as { slug: string; title: string } | null;
+            if (courseData) {
+              setPaymentOrder({
+                id: "",
+                status: "success",
+                course_id: recentOrder.course_id,
+                courses: courseData,
+              });
+            }
+            setStatus("success");
+            return;
+          }
         } else {
-          console.error("No pending orders found");
+          console.error("No recent orders found");
           if (pollCount >= MAX_POLLS) {
             setStatus("not_found");
             setError("გადახდის ინფორმაცია ვერ მოიძებნა");
