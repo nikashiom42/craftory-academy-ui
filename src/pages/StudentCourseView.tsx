@@ -60,13 +60,13 @@ export default function StudentCourseView() {
         return;
       }
 
-      // Check enrollment with paid status
+      // Check enrollment with paid or completed status (admin enrollments use "completed")
       const { data: enrollmentData, error: enrollmentError } = await supabase
         .from("course_enrollments")
         .select("id, payment_status")
         .eq("user_id", session.user.id)
         .eq("course_id", courseData.id)
-        .eq("payment_status", "paid")
+        .in("payment_status", ["paid", "completed"])
         .maybeSingle();
 
       if (enrollmentError) throw enrollmentError;

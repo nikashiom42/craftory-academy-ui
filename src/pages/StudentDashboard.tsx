@@ -55,6 +55,7 @@ export default function StudentDashboard() {
         return;
       }
 
+      // Include both "paid" (payment flow) and "completed" (admin enrollment) statuses
       const { data, error } = await supabase
         .from("course_enrollments")
         .select(`
@@ -73,7 +74,7 @@ export default function StudentDashboard() {
           )
         `)
         .eq("user_id", session.user.id)
-        .eq("payment_status", "paid")
+        .in("payment_status", ["paid", "completed"])
         .order("enrolled_at", { ascending: false });
 
       if (error) {
