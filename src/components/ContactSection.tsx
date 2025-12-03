@@ -34,7 +34,7 @@ const TikTokIcon = ({ size = 20 }: { size?: number }) => (
 const contactFormSchema = z.object({
   name: z.string().min(2, "სახელი უნდა შეიცავდეს მინიმუმ 2 სიმბოლოს"),
   email: z.string().email("ელფოსტის მისამართი არასწორია"),
-  phone: z.string().regex(/^[\d\s\+\-\(\)]{9,}$/, "საკონტაქტო ნომერი არასწორია"),
+  phone: z.string().regex(/^[\d\s+()\-]{9,}$/, "საკონტაქტო ნომერი არასწორია"),
   message: z.string().min(10, "შეტყობინება უნდა შეიცავდეს მინიმუმ 10 სიმბოლოს"),
 });
 

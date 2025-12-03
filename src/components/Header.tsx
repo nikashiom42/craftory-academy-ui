@@ -54,9 +54,10 @@ export function Header() {
       setIsMobileMenuOpen(false);
       toast.success("წარმატებით გახვედით სისტემიდან");
       navigate("/", { replace: true });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as { message?: string; status?: number } | undefined;
       // If session doesn't exist (403), treat as successful logout
-      if (error?.message?.includes("Session not found") || error?.status === 403) {
+      if (err?.message?.includes("Session not found") || err?.status === 403) {
         setIsLoggedIn(false);
         setIsMobileMenuOpen(false);
         toast.success("წარმატებით გახვედით სისტემიდან");
