@@ -93,7 +93,7 @@ export function Header() {
                   to={item.path}
                   onClick={() => handleNavClick(item.path)}
                   className={cn(
-                    "text-base font-semibold transition-all hover:text-primary relative py-2",
+                    "text-lg font-semibold transition-all hover:text-primary relative py-2",
                     location.pathname === item.path
                       ? "text-primary after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary"
                       : "text-foreground/70"
@@ -115,9 +115,9 @@ export function Header() {
                     ჩემი კურსები
                   </Link>
                 </Button>
-                <Button 
-                  variant="outline" 
-                  size="default" 
+                <Button
+                  variant="outline"
+                  size="default"
                   onClick={handleLogout}
                   className="gap-2"
                 >
@@ -178,7 +178,7 @@ export function Header() {
                   )}
                 >
                   {item.name}
-              </Link>
+                </Link>
               ))}
               {isLoggedIn ? (
                 <div className="px-4 pt-4 space-y-2">
@@ -188,8 +188,8 @@ export function Header() {
                       ჩემი კურსები
                     </Link>
                   </Button>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     className="w-full gap-2"
                     onClick={handleLogout}
                   >

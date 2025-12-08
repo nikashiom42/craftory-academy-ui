@@ -203,7 +203,7 @@ export default function StudentCourseView() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-2xl font-bold">
+                  <p className="text-2xl font-bold font-secondary">
                     {format(new Date(course.start_date), "d MMM, yyyy", { locale: ka })}
                   </p>
                 </CardContent>
@@ -217,7 +217,7 @@ export default function StudentCourseView() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-2xl font-bold">
+                  <p className="text-2xl font-bold font-secondary">
                     {format(new Date(course.end_date), "d MMM, yyyy", { locale: ka })}
                   </p>
                 </CardContent>
@@ -231,7 +231,7 @@ export default function StudentCourseView() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-2xl font-bold">{course.duration}</p>
+                  <p className="text-2xl font-bold font-secondary">{course.duration}</p>
                 </CardContent>
               </Card>
             </div>
@@ -243,7 +243,7 @@ export default function StudentCourseView() {
                   <CardTitle>კურსის აღწერა</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-lg leading-relaxed">{course.description}</p>
+                  <p className="text-lg leading-relaxed font-secondary font-bold">{course.description}</p>
                 </CardContent>
               </Card>
             )}
@@ -294,7 +294,7 @@ export default function StudentCourseView() {
                           <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary flex items-center justify-center mt-0.5">
                             <Check className="text-primary-foreground w-4 h-4" />
                           </div>
-                          <p className="font-medium">{skill}</p>
+                          <p className="font-medium font-secondary">{skill}</p>
                         </div>
                       ))}
                     </div>
