@@ -169,18 +169,7 @@ export default function AdminLeads() {
       });
       return;
     }
-
-    // Fetch all auth users once
-    const { data: userData } = await supabase.auth.admin.listUsers();
-    const userEmails = new Set(userData?.users.map(u => u.email) || []);
-
-    // Check if each registration email has a corresponding auth account
-    const registrationsWithAccountStatus = (data || []).map((reg) => ({
-      ...reg,
-      has_account: userEmails.has(reg.email),
-    }));
-
-    setRegistrations(registrationsWithAccountStatus);
+    setRegistrations(data || []);
   };
 
   /**
@@ -361,17 +350,6 @@ export default function AdminLeads() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Loading registrations...</p>
-        </div>
-      </div>
-    );
-  }
-
   // Filter registrations
   const registrationRows: CombinedRow[] = registrations.map((reg) => {
     const name = `${reg.first_name} ${reg.last_name}`.trim() || reg.first_name || reg.last_name || "No name";
@@ -390,7 +368,7 @@ export default function AdminLeads() {
       status: reg.status,
       created_at: reg.created_at,
       courseTitle: reg.course?.title || "No course selected",
-      hasAccount: !!reg.has_account,
+      hasAccount: !!matchedProfile || !!reg.has_account,
       source: "registration",
       profile: matchedProfile || null,
     };
@@ -454,10 +432,21 @@ export default function AdminLeads() {
 
   // Clamp current page when data shrinks
   useEffect(() => {
-    if (currentPage > totalPages) {
+    if (totalPages > 0 && currentPage > totalPages) {
       setCurrentPage(totalPages);
     }
   }, [currentPage, totalPages]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-muted-foreground">Loading registrations...</p>
+        </div>
+      </div>
+    );
+  }
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {

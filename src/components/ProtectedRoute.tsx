@@ -25,11 +25,12 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
 
   /**
    * Verifies user authentication and role permissions
+   * Uses the has_role security definer function to bypass RLS
    */
   const checkAuth = async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      
+
       if (!session) {
         setAuthorized(false);
         setLoading(false);
@@ -37,18 +38,20 @@ export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) 
       }
 
       if (requiredRole) {
-        const { data: role } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", session.user.id)
-          .eq("role", requiredRole)
-          .single();
-        
-        setAuthorized(!!role);
+        const { data, error } = await supabase
+          .rpc("has_role", { _user_id: session.user.id, _role: requiredRole });
+
+        if (error) {
+          console.error("Error checking role:", error);
+          setAuthorized(false);
+        } else {
+          setAuthorized(data === true);
+        }
       } else {
         setAuthorized(true);
       }
     } catch (error) {
+      console.error("Auth check failed:", error);
       setAuthorized(false);
     } finally {
       setLoading(false);
