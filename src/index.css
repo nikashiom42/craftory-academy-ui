@@ -34,14 +34,33 @@ html.fonts-loading body {
   font-weight: normal;
   font-style: normal;
   font-display: swap;
+  unicode-range: U+10A0-10FF, U+2D00-2D2F;
+  /* Georgian Unicode range */
 }
 
+/* Datebashvili - Georgian characters only */
 @font-face {
   font-family: 'Datebashvili';
   src: url('/fonts/Datebashvili-2.0.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
+  unicode-range: U+10A0-10FF, U+2D00-2D2F;
+  /* Georgian Unicode range */
+}
+
+/* Datebashvili fallback - Latin characters use Noto Sans Black (heaviest) */
+@font-face {
+  font-family: 'Datebashvili';
+  src: url('/fonts/NotoSans-Black.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-007F, U+0080-00FF, U+0100-017F, U+0180-024F, U+0030-0039;
+  /* Latin, Latin Extended, Numbers */
+  size-adjust: 130%;
+  /* Make Latin chars larger to match Georgian */
+  ascent-override: 85%;
 }
 
 @font-face {
@@ -86,7 +105,7 @@ html.fonts-loading body {
 
     /* Secondary accent: Soft gold */
     --gold-accent: 38 92% 50%;
-    
+
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
@@ -101,15 +120,15 @@ html.fonts-loading body {
     --gradient-subtle: linear-gradient(180deg, hsl(0 0% 98%), hsl(30 20% 92%));
     --gradient-hero: linear-gradient(to right, hsl(0 0% 98% / 0.95), hsl(0 0% 98% / 0.7));
     --gradient-accent: linear-gradient(135deg, hsl(14 77% 52%), hsl(38 92% 50%));
-    
+
     /* Shadows */
     --shadow-soft: 0 2px 8px -2px hsl(11 59% 24% / 0.08);
     --shadow-medium: 0 4px 16px -4px hsl(11 59% 24% / 0.12);
     --shadow-elevated: 0 8px 24px -8px hsl(11 59% 24% / 0.16);
-    
+
     /* Transitions */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    
+
     /* Sidebar colors */
     --sidebar: 0 0% 100%;
     --sidebar-foreground: 11 59% 24%;
@@ -150,7 +169,7 @@ html.fonts-loading body {
     --border: 0 16% 25%;
     --input: 0 16% 25%;
     --ring: 44 74% 52%;
-    
+
     /* Sidebar colors */
     --sidebar: 0 16% 15%;
     --sidebar-foreground: 0 0% 95%;
@@ -170,20 +189,32 @@ html.fonts-loading body {
     @apply bg-background text-foreground antialiased font-body;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-bold font-heading;
     line-height: 1.2;
   }
 
-  button, .btn, [role="button"] {
+  button,
+  .btn,
+  [role="button"] {
     @apply font-secondary;
   }
 
-  input, textarea, select {
+  input,
+  textarea,
+  select {
     @apply font-secondary;
   }
 
-  .text-muted, .text-secondary, .text-muted-foreground, .text-secondary-foreground {
+  .text-muted,
+  .text-secondary,
+  .text-muted-foreground,
+  .text-secondary-foreground {
     @apply font-secondary;
   }
 
@@ -225,6 +256,12 @@ html.fonts-loading body {
     @apply transition-transform duration-300 hover:-translate-y-1;
   }
 
+  /* Class for Latin text (English words, numbers) to match Georgian font style */
+  .text-latin {
+    font-family: 'Noto Sans Condensed', sans-serif;
+    font-weight: bold;
+  }
+
   .shadow-soft {
     box-shadow: var(--shadow-soft);
   }
@@ -263,26 +300,74 @@ html.fonts-loading body {
 
   /* Font size reduction for Datebashvili - 23.5% smaller (76.5% of original) */
   /* Apply to all text except those explicitly using font-secondary */
-  body:not(.admin-layout) .text-xs:not(.font-secondary) { font-size: 0.576rem; }
-  body:not(.admin-layout) .text-sm:not(.font-secondary) { font-size: 0.669rem; }
-  body:not(.admin-layout) .text-base:not(.font-secondary) { font-size: 0.765rem; }
-  body:not(.admin-layout) .text-lg:not(.font-secondary) { font-size: 0.861rem; }
-  body:not(.admin-layout) .text-xl:not(.font-secondary) { font-size: 0.956rem; }
-  body:not(.admin-layout) .text-2xl:not(.font-secondary) { font-size: 1.148rem; }
-  body:not(.admin-layout) .text-3xl:not(.font-secondary) { font-size: 1.434rem; }
-  body:not(.admin-layout) .text-4xl:not(.font-secondary) { font-size: 1.721rem; }
-  body:not(.admin-layout) .text-5xl:not(.font-secondary) { font-size: 2.295rem; }
-  body:not(.admin-layout) .text-6xl:not(.font-secondary) { font-size: 2.869rem; }
-  body:not(.admin-layout) .text-7xl:not(.font-secondary) { font-size: 3.443rem; }
-  body:not(.admin-layout) .text-8xl:not(.font-secondary) { font-size: 4.59rem; }
-  body:not(.admin-layout) .text-9xl:not(.font-secondary) { font-size: 6.12rem; }
+  body:not(.admin-layout) .text-xs:not(.font-secondary) {
+    font-size: 0.576rem;
+  }
+
+  body:not(.admin-layout) .text-sm:not(.font-secondary) {
+    font-size: 0.669rem;
+  }
+
+  body:not(.admin-layout) .text-base:not(.font-secondary) {
+    font-size: 0.765rem;
+  }
+
+  body:not(.admin-layout) .text-lg:not(.font-secondary) {
+    font-size: 0.861rem;
+  }
+
+  body:not(.admin-layout) .text-xl:not(.font-secondary) {
+    font-size: 0.956rem;
+  }
+
+  body:not(.admin-layout) .text-2xl:not(.font-secondary) {
+    font-size: 1.148rem;
+  }
+
+  body:not(.admin-layout) .text-3xl:not(.font-secondary) {
+    font-size: 1.434rem;
+  }
+
+  body:not(.admin-layout) .text-4xl:not(.font-secondary) {
+    font-size: 1.721rem;
+  }
+
+  body:not(.admin-layout) .text-5xl:not(.font-secondary) {
+    font-size: 2.295rem;
+  }
+
+  body:not(.admin-layout) .text-6xl:not(.font-secondary) {
+    font-size: 2.869rem;
+  }
+
+  body:not(.admin-layout) .text-7xl:not(.font-secondary) {
+    font-size: 3.443rem;
+  }
+
+  body:not(.admin-layout) .text-8xl:not(.font-secondary) {
+    font-size: 4.59rem;
+  }
+
+  body:not(.admin-layout) .text-9xl:not(.font-secondary) {
+    font-size: 6.12rem;
+  }
 
   /* Font size reduction for headings and responsive variants */
-  body:not(.admin-layout) h1 { font-size: 1.434rem; }
-  body:not(.admin-layout) h2 { font-size: 0.864rem; }
+  body:not(.admin-layout) h1 {
+    font-size: 1.434rem;
+  }
+
+  body:not(.admin-layout) h2 {
+    font-size: 0.864rem;
+  }
 
   @media (min-width: 768px) {
-    body:not(.admin-layout) h1 { font-size: 1.721rem; }
-    body:not(.admin-layout) h2 { font-size: 0.956rem; }
+    body:not(.admin-layout) h1 {
+      font-size: 1.721rem;
+    }
+
+    body:not(.admin-layout) h2 {
+      font-size: 0.956rem;
+    }
   }
 }

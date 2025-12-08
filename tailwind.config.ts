@@ -22,9 +22,9 @@ export default {
         widest: "0.2rem",
       },
       fontFamily: {
-        'heading': ['Datebashvili', 'SS-GEO-HAKUNA', 'sans-serif'],
-        'body': ['Datebashvili', 'SS-GEO-HAKUNA', 'sans-serif'],
-        'secondary': ['Noto Sans Condensed'],
+        'heading': ['Datebashvili', 'Noto Sans Condensed', 'SS-GEO-HAKUNA', 'sans-serif'],
+        'body': ['Datebashvili', 'Noto Sans Condensed', 'SS-GEO-HAKUNA', 'sans-serif'],
+        'secondary': ['Noto Sans Condensed', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",

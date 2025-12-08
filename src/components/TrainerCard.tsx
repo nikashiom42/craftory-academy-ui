@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { processLatinText } from "@/components/LatinText";
 
 interface Trainer {
   name: string;
@@ -35,14 +36,14 @@ export function TrainerCard({ trainer }: TrainerCardProps) {
             <div className="order-1 md:order-2 space-y-6">
               <div>
                 <p className="text-sm uppercase text-muted-foreground mb-2 font-heading">
-                  {trainer.title}
+                  {processLatinText(trainer.title)}
                 </p>
-                <h2 className="text-4xl font-bold mb-2">{trainer.name}</h2>
-                <p className="text-xl text-accent font-semibold">{trainer.credentials}</p>
+                <h2 className="text-4xl font-bold mb-2">{processLatinText(trainer.name)}</h2>
+                <p className="text-xl text-accent font-semibold">{processLatinText(trainer.credentials)}</p>
               </div>
 
               <div className="prose prose-lg max-w-none">
-                <p className="text-muted-foreground leading-relaxed">{trainer.bio}</p>
+                <p className="text-muted-foreground leading-relaxed">{processLatinText(trainer.bio)}</p>
               </div>
             </div>
           </motion.div>

@@ -110,6 +110,7 @@ export default function AdminLeads() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<Profile | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const [profileStatusMap, setProfileStatusMap] = useState<Record<string, string>>(() => {
     try {
       const raw = localStorage.getItem("profileStatusMap");
@@ -438,6 +439,26 @@ export default function AdminLeads() {
   const enrolledLeads = registrations.filter(r => r.status === 'enrolled').length;
   const totalStudents = profiles.length;
 
+  // Pagination helpers (client-side)
+  const ITEMS_PER_PAGE = 20;
+  const totalPages = Math.max(1, Math.ceil(filteredCombined.length / ITEMS_PER_PAGE));
+  const pageStartIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedRows = filteredCombined.slice(pageStartIndex, pageStartIndex + ITEMS_PER_PAGE);
+  const showingStart = filteredCombined.length === 0 ? 0 : pageStartIndex + 1;
+  const showingEnd = Math.min(filteredCombined.length, pageStartIndex + paginatedRows.length);
+
+  // Reset page when filters/search change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, statusFilter]);
+
+  // Clamp current page when data shrinks
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
   const getStatusBadge = (status: string) => {
     const statusConfig = {
       new: { variant: "secondary" as const, icon: Clock, label: "New" },
@@ -478,7 +499,7 @@ export default function AdminLeads() {
         <AdminSidebar userEmail={user?.email} />
         
         <main className="flex-1 overflow-auto">
-          <div className="container mx-auto px-8 py-8">
+          <div className="container mx-auto px-8 py-8 pb-14">
             {/* Header */}
             <div className="mb-8">
               <div className="flex justify-between items-start mb-2">
@@ -603,7 +624,7 @@ export default function AdminLeads() {
 
             {/* Unified Registrations & Students Table */}
             {combinedRows.length === 0 ? (
-              <Card className="shadow-soft border-2 border-dashed">
+              <Card className="shadow-soft border-2 border-dashed mb-8">
                 <CardContent className="flex flex-col items-center justify-center py-20">
                   <div className="rounded-full bg-primary/10 p-6 mb-6">
                     <UserCheck className="h-12 w-12 text-primary" />
@@ -615,7 +636,7 @@ export default function AdminLeads() {
                 </CardContent>
               </Card>
             ) : (
-              <Card className="shadow-soft">
+              <Card className="shadow-soft overflow-hidden mb-8">
                 <CardContent className="p-0">
                   <Table>
                     <TableHeader>
@@ -637,7 +658,7 @@ export default function AdminLeads() {
                           </TableCell>
                         </TableRow>
                       ) : (
-                        filteredCombined.map((row) => (
+                        paginatedRows.map((row) => (
                           <TableRow key={row.id}>
                             <TableCell className="font-medium">
                               <div className="flex flex-col">
@@ -761,6 +782,34 @@ export default function AdminLeads() {
                     </TableBody>
                   </Table>
                 </CardContent>
+                {filteredCombined.length > 0 && (
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between px-6 py-4 border-t bg-muted/20">
+                    <div className="text-sm text-muted-foreground">
+                      Showing {showingStart}-{showingEnd} of {filteredCombined.length}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                        disabled={currentPage === 1}
+                      >
+                        Previous
+                      </Button>
+                      <span className="text-sm text-muted-foreground">
+                        Page {currentPage} of {totalPages}
+                      </span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                        disabled={currentPage === totalPages || filteredCombined.length === 0}
+                      >
+                        Next
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </Card>
             )}
 

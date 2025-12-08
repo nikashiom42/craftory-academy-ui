@@ -12,9 +12,12 @@ import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 
 const authSchema = z.object({
-  email: z.string().email("Invalid email address"),
+  email: z.string()
+    .trim()
+    .toLowerCase()
+    .email("გთხოვთ შეიყვანეთ სწორი ელფოსტა"),
   password: z.string().min(6, "Password must be at least 6 characters"),
-  fullName: z.string().min(2, "Full name must be at least 2 characters").optional(),
+  fullName: z.string().trim().min(2, "Full name must be at least 2 characters").optional(),
 });
 
 export default function Auth() {
@@ -89,10 +92,12 @@ export default function Auth() {
         return;
       }
 
+      const { email: validatedEmail, password: validatedPassword, fullName: validatedFullName } = validation.data;
+
       if (isLogin) {
         const { data: authData, error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
+          email: validatedEmail,
+          password: validatedPassword,
         });
 
         if (error) {
@@ -123,12 +128,12 @@ export default function Auth() {
         }
       } else {
         const { error } = await supabase.auth.signUp({
-          email,
-          password,
+          email: validatedEmail,
+          password: validatedPassword,
           options: {
             emailRedirectTo: `${window.location.origin}/admin`,
             data: {
-              full_name: fullName,
+              full_name: validatedFullName,
             },
           },
         });

@@ -30,7 +30,10 @@ const formSchema = z.object({
   firstName: z.string().min(2, "სახელი უნდა შეიცავდეს მინიმუმ 2 სიმბოლოს"),
   lastName: z.string().min(2, "გვარი უნდა შეიცავდეს მინიმუმ 2 სიმბოლოს"),
   phone: z.string().regex(/^[\d\s+()\-]{9,}$/, "საკონტაქტო ნომერი არასწორია"),
-  email: z.string().email("ელფოსტის მისამართი არასწორია"),
+  email: z.string()
+    .trim()
+    .toLowerCase()
+    .email("ელფოსტის მისამართი არასწორია"),
   courseId: z.string().optional(),
   createAccount: z.boolean().default(false),
   password: z.string().optional(),

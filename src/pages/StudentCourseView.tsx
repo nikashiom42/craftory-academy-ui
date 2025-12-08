@@ -10,6 +10,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Calendar, Video, FolderOpen, Clock, Check, ArrowLeft } from "lucide-react";
 import { format } from "date-fns";
 import { ka } from "date-fns/locale";
+import { processLatinText } from "@/components/LatinText";
 
 interface CourseData {
   id: string;
@@ -42,7 +43,7 @@ export default function StudentCourseView() {
   const checkEnrollmentAndLoadCourse = async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      
+
       if (!session) {
         navigate("/auth");
         return;
@@ -105,7 +106,7 @@ export default function StudentCourseView() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      
+
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative h-[40vh] min-h-[300px]">
@@ -142,9 +143,9 @@ export default function StudentCourseView() {
               {/* Google Meet Link */}
               <Card className="hover:shadow-lg transition-shadow border-2">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 font-secondary">
                     <Video className="w-5 h-5 text-primary" />
-                    Google Meet ლინკი
+                    <span className="text-latin">Google Meet</span> ლინკი
                   </CardTitle>
                   <CardDescription>შეუერთდი ონლაინ გაკვეთილებს</CardDescription>
                 </CardHeader>
@@ -166,7 +167,7 @@ export default function StudentCourseView() {
               {/* Google Drive Link */}
               <Card className="hover:shadow-lg transition-shadow border-2">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 font-secondary">
                     <FolderOpen className="w-5 h-5 text-primary" />
                     საკურსო მასალები
                   </CardTitle>
@@ -176,7 +177,7 @@ export default function StudentCourseView() {
                   {course.google_drive_link ? (
                     <Button asChild className="w-full" variant="outline">
                       <a href={course.google_drive_link} target="_blank" rel="noopener noreferrer">
-                        Drive-ის გახსნა
+                        <span className="text-latin">Drive</span>-ის გახსნა
                       </a>
                     </Button>
                   ) : (
@@ -196,7 +197,7 @@ export default function StudentCourseView() {
             <div className="grid lg:grid-cols-3 gap-8 mb-12">
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 font-secondary">
                     <Calendar className="w-5 h-5" />
                     საწყისი თარიღი
                   </CardTitle>
@@ -210,7 +211,7 @@ export default function StudentCourseView() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 font-secondary">
                     <Calendar className="w-5 h-5" />
                     დასრულების თარიღი
                   </CardTitle>
@@ -224,7 +225,7 @@ export default function StudentCourseView() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 font-secondary">
                     <Clock className="w-5 h-5" />
                     ხანგრძლივობა
                   </CardTitle>
@@ -317,7 +318,7 @@ export default function StudentCourseView() {
                         className="w-20 h-20 rounded-full object-cover"
                       />
                     )}
-                    <div>
+                    <div className="font-secondary font-bold">
                       <h3 className="text-xl font-bold mb-1">{course.trainer.name}</h3>
                       <p className="text-muted-foreground mb-2">{course.trainer.title}</p>
                       <p className="leading-relaxed">{course.trainer.bio}</p>
