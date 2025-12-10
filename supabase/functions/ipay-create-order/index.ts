@@ -12,6 +12,9 @@ const IPAY_CALLBACK_URL = Deno.env.get("IPAY_CALLBACK_URL");
 type CreateOrderRequest = {
   courseId: string;
   locale?: string;
+  paymentMethod?: "bog_loan" | "bnpl";
+  installmentMonths?: number;
+  discountCode?: string;
 };
 
 const currencyCode = Deno.env.get("IPAY_CURRENCY_CODE") ?? "GEL";
@@ -94,7 +97,13 @@ Deno.serve(async (request) => {
         locale,
         intent: "CAPTURE",
         status: "pending",
-        metadata: {
+        metadata: payload.paymentMethod ? {
+          createdFrom: "ipay-create-order",
+          created_at: now,
+          payment_method: payload.paymentMethod,
+          installment_months: payload.installmentMonths,
+          discount_code: payload.discountCode,
+        } : {
           createdFrom: "ipay-create-order",
           created_at: now,
         },
@@ -120,6 +129,10 @@ Deno.serve(async (request) => {
       redirectUrlFail: IPAY_REDIRECT_FAIL_URL,
       callbackUrl: IPAY_CALLBACK_URL,
       shopOrderId,
+      // Pass installment parameters
+      paymentMethod: payload.paymentMethod,
+      installmentMonths: payload.installmentMonths,
+      discountCode: payload.discountCode,
     });
 
     const approveLink = getApproveLink(ipayResponse);

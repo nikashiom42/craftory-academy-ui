@@ -122,6 +122,10 @@ export type CreateOrderArgs = {
   callbackUrl: string;
   shopOrderId: string;
   applicationType?: "web" | "mobile";
+  // Installment payment fields
+  paymentMethod?: "bog_loan" | "bnpl";
+  installmentMonths?: number;
+  discountCode?: string;
 };
 
 /**
@@ -164,6 +168,16 @@ export async function createIpayOrder(args: CreateOrderArgs): Promise<IpayCreate
         success: args.redirectUrlSuccess,
         fail: args.redirectUrlFail,
       },
+      // Add installment configuration if provided
+      ...(args.paymentMethod ? {
+        payment_method: [args.paymentMethod],
+        config: {
+          loan: {
+            month: args.installmentMonths,
+            ...(args.discountCode ? { discount_code: args.discountCode } : {}),
+          },
+        },
+      } : {}),
     }),
   });
 
