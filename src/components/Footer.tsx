@@ -84,19 +84,35 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-secondary-foreground/20 mt-8 pt-8 text-sm text-secondary-foreground/60 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-          <p>© <span className="text-latin">{new Date().getFullYear()}</span> {processLatinText(academyConfig.siteName)}. ყველა უფლება დაცულია.</p>
-          <p className="text-xs text-secondary-foreground/40 md:text-right">
-            ვებსაიტი დამზადებული{" "}
-            <a
-              href="https://digitalalchemy.ge/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-secondary-foreground/60 transition-colors text-latin"
-            >
-              digitalalchemy.ge
-            </a>
-          </p>
+        {/* Legal Links */}
+        <div className="border-t border-secondary-foreground/20 mt-8 pt-8">
+          <div className="flex flex-wrap justify-center gap-4 mb-4 text-sm">
+            <Link to="/terms" className="hover:text-accent transition-colors">
+              წესები და პირობები
+            </Link>
+            <span className="text-secondary-foreground/30">|</span>
+            <Link to="/privacy" className="hover:text-accent transition-colors">
+              კონფიდენციალურობა
+            </Link>
+            <span className="text-secondary-foreground/30">|</span>
+            <Link to="/refund" className="hover:text-accent transition-colors">
+              თანხის დაბრუნება
+            </Link>
+          </div>
+          <div className="text-sm text-secondary-foreground/60 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            <p>© <span className="text-latin">{new Date().getFullYear()}</span> {processLatinText(academyConfig.siteName)}. ყველა უფლება დაცულია.</p>
+            <p className="text-xs text-secondary-foreground/40 md:text-right">
+              ვებსაიტი დამზადებული{" "}
+              <a
+                href="https://digitalalchemy.ge/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-secondary-foreground/60 transition-colors text-latin"
+              >
+                digitalalchemy.ge
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     </footer>

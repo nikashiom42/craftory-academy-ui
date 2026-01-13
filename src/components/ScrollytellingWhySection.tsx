@@ -79,7 +79,7 @@ export function ScrollytellingWhySection({ cards }: ScrollytellingWhySectionProp
                 transition={{ duration: 0.6 }}
               >
                 <h2 className="text-4xl md:text-5xl lg:text-[3.1rem] font-bold uppercase leading-tight">
-                  რატომ უნდა გახდე ავეჯის კონსტრუქტორი ?
+                  რატომ უნდა გაიარო კურსი ?
                 </h2>
                 <div className="mt-6 w-24 h-1 bg-gradient-to-r from-accent to-primary rounded-full"></div>
               </motion.div>
@@ -114,7 +114,7 @@ export function ScrollytellingWhySection({ cards }: ScrollytellingWhySectionProp
             className="mb-12"
           >
             <h2 className="text-3xl md:text-4xl font-bold uppercase leading-tight">
-              რატომ უნდა გახდე ავეჯის კონსტრუქტორი ?
+              რატომ უნდა გაიარო კურსი ?
             </h2>
           </motion.div>
 

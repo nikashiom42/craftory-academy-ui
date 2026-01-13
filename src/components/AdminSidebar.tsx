@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import craftoryLogo from "@/assets/craftory-logo.webp";
+import craftoryLogo from "@/assets/craftory-logo.png";
 import { cn } from "@/lib/utils";
 
 const menuItems = [

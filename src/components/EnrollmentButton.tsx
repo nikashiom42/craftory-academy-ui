@@ -1,6 +1,7 @@
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -23,6 +24,10 @@ type PaymentOrderSummary = {
 };
 
 type PaymentMethod = "full" | "bog_loan" | "bnpl";
+
+// BOG minimum amounts for installment products
+const BNPL_MIN_AMOUNT = 45;      // ნაწილ-ნაწილ minimum: 45 GEL
+const BOG_LOAN_MIN_AMOUNT = 100; // განვადება minimum: 100 GEL
 
 interface InstallmentPlan {
   amount: number;      // Monthly payment amount
@@ -57,6 +62,7 @@ export const EnrollmentButton = forwardRef<EnrollmentButtonHandle, EnrollmentBut
   const previousStatus = useRef<string | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("full");
   const [installmentPlan, setInstallmentPlan] = useState<InstallmentPlan | null>(null);
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -243,6 +249,8 @@ export const EnrollmentButton = forwardRef<EnrollmentButtonHandle, EnrollmentBut
   }
 
   const showInstallmentConfig = paymentMethod === "bog_loan" || paymentMethod === "bnpl";
+  const canUseBnpl = price >= BNPL_MIN_AMOUNT;
+  const canUseBogLoan = price >= BOG_LOAN_MIN_AMOUNT;
 
   return (
     <>
@@ -329,14 +337,18 @@ export const EnrollmentButton = forwardRef<EnrollmentButtonHandle, EnrollmentBut
                   {/* BOG Loan (Standard Installment) */}
                   <button
                     type="button"
+                    disabled={!canUseBogLoan}
                     onClick={() => {
+                      if (!canUseBogLoan) return;
                       setPaymentMethod("bog_loan");
                       if (!installmentPlan || installmentPlan.type !== "bog_loan") {
                         selectInstallmentPlan(12, "bog_loan");
                       }
                     }}
                     className={`group w-full rounded-xl border p-4 text-left transition-all duration-200 ${
-                      paymentMethod === "bog_loan"
+                      !canUseBogLoan
+                        ? "border-gray-100 bg-gray-50 cursor-not-allowed opacity-60"
+                        : paymentMethod === "bog_loan"
                         ? "border-[#ff5c0a] bg-gradient-to-r from-[#ff5c0a] to-[#e64a00] text-white"
                         : "border-gray-200 bg-white hover:border-[#ff5c0a]/50 hover:bg-orange-50/50"
                     }`}
@@ -344,22 +356,26 @@ export const EnrollmentButton = forwardRef<EnrollmentButtonHandle, EnrollmentBut
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
                         <div className={`w-12 h-12 rounded-lg flex items-center justify-center transition-colors ${
-                          paymentMethod === "bog_loan" ? "bg-white text-[#ff5c0a]" : "bg-orange-100 text-[#ff5c0a]"
+                          !canUseBogLoan ? "bg-gray-100 text-gray-400" : paymentMethod === "bog_loan" ? "bg-white text-[#ff5c0a]" : "bg-orange-100 text-[#ff5c0a]"
                         }`}>
                           <Banknote className="w-6 h-6" />
                         </div>
                         <div>
                           <p className="font-bold text-base">ონლაინ განვადება</p>
-                          <p className={`text-sm mt-1 ${paymentMethod === "bog_loan" ? "text-white/80" : "text-gray-600"}`}>6-24 თვე</p>
+                          <p className={`text-sm mt-1 ${!canUseBogLoan ? "text-gray-400" : paymentMethod === "bog_loan" ? "text-white/80" : "text-gray-600"}`}>
+                            {canUseBogLoan ? "6-24 თვე" : `მინ. ${BOG_LOAN_MIN_AMOUNT} ₾`}
+                          </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
-                        {installmentPlan && installmentPlan.type === "bog_loan" ? (
+                        {!canUseBogLoan ? (
+                          <p className="text-sm font-medium text-gray-400">მიუწვდომელი</p>
+                        ) : installmentPlan && installmentPlan.type === "bog_loan" ? (
                           <p className="font-bold text-xl">≈{installmentPlan.amount} ₾<span className="text-sm font-normal opacity-80">/თვე</span></p>
                         ) : (
                           <p className={`text-sm font-medium ${paymentMethod === "bog_loan" ? "text-white/80" : "text-gray-500"}`}>აირჩიეთ →</p>
                         )}
-                        {paymentMethod === "bog_loan" && <Check className="w-6 h-6" />}
+                        {paymentMethod === "bog_loan" && canUseBogLoan && <Check className="w-6 h-6" />}
                       </div>
                     </div>
                   </button>
@@ -367,12 +383,16 @@ export const EnrollmentButton = forwardRef<EnrollmentButtonHandle, EnrollmentBut
                   {/* BNPL (Natsil-Natsil) */}
                   <button
                     type="button"
+                    disabled={!canUseBnpl}
                     onClick={() => {
+                      if (!canUseBnpl) return;
                       setPaymentMethod("bnpl");
                       selectInstallmentPlan(4, "bnpl");
                     }}
                     className={`group w-full rounded-xl border p-4 text-left transition-all duration-200 ${
-                      paymentMethod === "bnpl"
+                      !canUseBnpl
+                        ? "border-gray-100 bg-gray-50 cursor-not-allowed opacity-60"
+                        : paymentMethod === "bnpl"
                         ? "border-[#ff5c0a] bg-gradient-to-r from-[#ff5c0a] to-[#e64a00] text-white"
                         : "border-gray-200 bg-white hover:border-[#ff5c0a]/50 hover:bg-orange-50/50"
                     }`}
@@ -380,18 +400,24 @@ export const EnrollmentButton = forwardRef<EnrollmentButtonHandle, EnrollmentBut
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
                         <div className={`w-12 h-12 rounded-lg flex items-center justify-center transition-colors ${
-                          paymentMethod === "bnpl" ? "bg-white text-[#ff5c0a]" : "bg-orange-100 text-[#ff5c0a]"
+                          !canUseBnpl ? "bg-gray-100 text-gray-400" : paymentMethod === "bnpl" ? "bg-white text-[#ff5c0a]" : "bg-orange-100 text-[#ff5c0a]"
                         }`}>
                           <CalendarClock className="w-6 h-6" />
                         </div>
                         <div>
                           <p className="font-bold text-base">ნაწილ-ნაწილ</p>
-                          <p className={`text-sm mt-1 ${paymentMethod === "bnpl" ? "text-white/80" : "text-gray-600"}`}>4 თვე • 0%</p>
+                          <p className={`text-sm mt-1 ${!canUseBnpl ? "text-gray-400" : paymentMethod === "bnpl" ? "text-white/80" : "text-gray-600"}`}>
+                            {canUseBnpl ? "4 თვე • 0%" : `მინ. ${BNPL_MIN_AMOUNT} ₾`}
+                          </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <p className="font-bold text-xl">≈{Math.round(price / 4)} ₾<span className="text-sm font-normal opacity-80">/თვე</span></p>
-                        {paymentMethod === "bnpl" && <Check className="w-6 h-6" />}
+                        {!canUseBnpl ? (
+                          <p className="text-sm font-medium text-gray-400">მიუწვდომელი</p>
+                        ) : (
+                          <p className="font-bold text-xl">≈{Math.round(price / 4)} ₾<span className="text-sm font-normal opacity-80">/თვე</span></p>
+                        )}
+                        {paymentMethod === "bnpl" && canUseBnpl && <Check className="w-6 h-6" />}
                       </div>
                     </div>
                   </button>
@@ -411,6 +437,30 @@ export const EnrollmentButton = forwardRef<EnrollmentButtonHandle, EnrollmentBut
                   </div>
                 )}
 
+                {/* Terms and Conditions Checkbox */}
+                <div className="flex items-start gap-3 pt-2">
+                  <Checkbox
+                    id="terms-checkbox"
+                    checked={termsAccepted}
+                    onCheckedChange={(checked) => setTermsAccepted(checked === true)}
+                    className="mt-0.5"
+                  />
+                  <label htmlFor="terms-checkbox" className="text-sm text-gray-600 leading-relaxed cursor-pointer">
+                    ვეთანხმები{" "}
+                    <Link to="/terms" target="_blank" className="text-accent hover:underline font-medium">
+                      წესებსა და პირობებს
+                    </Link>
+                    ,{" "}
+                    <Link to="/privacy" target="_blank" className="text-accent hover:underline font-medium">
+                      კონფიდენციალურობის პოლიტიკას
+                    </Link>{" "}
+                    და{" "}
+                    <Link to="/refund" target="_blank" className="text-accent hover:underline font-medium">
+                      თანხის დაბრუნების პირობებს
+                    </Link>
+                  </label>
+                </div>
+
                 {/* Submit Button - Only show on left when no installment config */}
                 {!showInstallmentConfig && (
                   <div className="pt-3">
@@ -418,7 +468,7 @@ export const EnrollmentButton = forwardRef<EnrollmentButtonHandle, EnrollmentBut
                       type="submit"
                       size="lg"
                       className="w-full h-14 text-lg font-bold rounded-xl bg-gray-900 hover:bg-gray-800 text-white"
-                      disabled={loading || paymentState === "redirecting"}
+                      disabled={loading || paymentState === "redirecting" || !termsAccepted}
                     >
                       {loading ? (
                         <span className="flex items-center gap-2">
@@ -550,7 +600,7 @@ export const EnrollmentButton = forwardRef<EnrollmentButtonHandle, EnrollmentBut
                       size="lg"
                       onClick={handleEnroll}
                       className="w-full h-14 text-lg font-bold rounded-xl bg-white text-[#ff5c0a] hover:bg-gray-100"
-                      disabled={loading || paymentState === "redirecting" || !installmentPlan}
+                      disabled={loading || paymentState === "redirecting" || !installmentPlan || !termsAccepted}
                     >
                       {loading ? (
                         <span className="flex items-center gap-2">

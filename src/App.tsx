@@ -23,6 +23,9 @@ import CourseManage from "./pages/CourseManage";
 import StudentDashboard from "./pages/StudentDashboard";
 import StudentCourseView from "./pages/StudentCourseView";
 import PaymentReturn from "./pages/PaymentReturn";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
+import Refund from "./pages/Refund";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -72,6 +75,9 @@ const AppLayout = () => {
           <Route path="/student/dashboard" element={<ProtectedRoute requiredRole="user"><StudentDashboard /></ProtectedRoute>} />
           <Route path="/student/courses/:slug" element={<ProtectedRoute requiredRole="user"><StudentCourseView /></ProtectedRoute>} />
           <Route path="/payment/return" element={<PaymentReturn />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/refund" element={<Refund />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
